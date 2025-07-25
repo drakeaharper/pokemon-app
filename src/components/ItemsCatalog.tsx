@@ -139,7 +139,9 @@ const ItemsCatalog: React.FC = () => {
             ←
           </button>
           
-          <ItemCard item={item} />
+          <div className="w-full max-w-md">
+            <ItemCard item={item} />
+          </div>
           
           <button
             onClick={handleNextItem}
