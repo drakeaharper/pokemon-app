@@ -113,6 +113,31 @@ const NavigationBar: React.FC = () => {
           </Link>
 
           <Link
+            to="/abilities"
+            style={{
+              color: location.pathname === '/abilities' ? '#fff' : 'rgba(255,255,255,0.8)',
+              textDecoration: 'none',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              backgroundColor: location.pathname === '/abilities' ? 'rgba(255,255,255,0.2)' : 'transparent',
+              transition: 'all 0.3s ease',
+              fontWeight: location.pathname === '/abilities' ? 'bold' : 'normal'
+            }}
+            onMouseEnter={(e) => {
+              if (location.pathname !== '/abilities') {
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (location.pathname !== '/abilities') {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }
+            }}
+          >
+            Abilities
+          </Link>
+
+          <Link
             to="/about"
             style={{
               color: location.pathname === '/about' ? '#fff' : 'rgba(255,255,255,0.8)',

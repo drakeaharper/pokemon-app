@@ -6,6 +6,7 @@ import Homepage from './components/Homepage';
 import PokemonDetails from './components/PokemonDetails';
 import MovesDatabase from './components/MovesDatabase';
 import TypeChart from './components/TypeChart';
+import AbilityGlossary from './components/AbilityGlossary';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -30,6 +31,7 @@ function App() {
             <Route path="/about" element={<Homepage />} />
             <Route path="/moves" element={<MovesDatabase />} />
             <Route path="/types" element={<TypeChart />} />
+            <Route path="/abilities" element={<AbilityGlossary />} />
           </Routes>
         </div>
       </Router>
