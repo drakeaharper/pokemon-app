@@ -1,81 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Pokemon } from '../types/Pokemon';
-import { EvolutionDisplay as EvolutionDisplayType } from '../types/Evolution';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
-import { fetchEvolutionChain } from '../utils/evolutionUtils';
+import { usePokemon, useEvolutionChain } from '../hooks/usePokemonQueries';
 
 const PokemonDetails: React.FC = () => {
   const [pokemonNumber, setPokemonNumber] = useState<string>('');
-  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [evolutionData, setEvolutionData] = useState<EvolutionDisplayType | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
-  const fetchPokemon = async (searchTerm?: string) => {
-    const term = searchTerm || pokemonNumber;
-    if (!term) {
-      setError('Please enter a Pokemon number or name');
+  const { data: pokemon, isLoading, error: pokemonError } = usePokemon(searchTerm);
+  const { data: evolutionData } = useEvolutionChain(pokemon?.id || null);
+
+  const searchPokemon = (term?: string) => {
+    const searchValue = term || pokemonNumber;
+    if (!searchValue) {
       return;
     }
-
-    setLoading(true);
-    setError('');
-    setPokemon(null);
-    setEvolutionData(null);
-
-    try {
-      // Use the term as-is (PokeAPI handles both numbers and names)
-      const response = await axios.get<Pokemon>(
-        `https://pokeapi.co/api/v2/pokemon/${term.toLowerCase().trim()}`
-      );
-      setPokemon(response.data);
-      setPokemonNumber(response.data.id.toString());
-    } catch (err) {
-      setError('Pokemon not found. Please try a different number or name.');
-    } finally {
-      setLoading(false);
-    }
+    setSearchTerm(searchValue);
   };
 
   const handleEvolutionClick = (pokemonId: number) => {
-    fetchPokemon(pokemonId.toString());
+    searchPokemon(pokemonId.toString());
   };
 
   const handlePreviousPokemon = () => {
     if (pokemon && pokemon.id > 1) {
-      fetchPokemon((pokemon.id - 1).toString());
+      searchPokemon((pokemon.id - 1).toString());
     }
   };
 
   const handleNextPokemon = () => {
     if (pokemon && pokemon.id < 1025) {
-      fetchPokemon((pokemon.id + 1).toString());
+      searchPokemon((pokemon.id + 1).toString());
     }
   };
 
-  // Fetch evolution chain when pokemon changes
-  useEffect(() => {
-    if (pokemon) {
-      fetchEvolutionChain(pokemon.id).then(data => {
-        if (data) {
-          setEvolutionData(data);
-        }
-      });
-    }
-  }, [pokemon]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchPokemon();
+    searchPokemon();
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      fetchPokemon();
+      searchPokemon();
     }
   };
+
+  // Update pokemonNumber when a successful search occurs
+  useEffect(() => {
+    if (pokemon) {
+      setPokemonNumber(pokemon.id.toString());
+    }
+  }, [pokemon]);
+
+  const error = pokemonError ? 'Pokemon not found. Please try a different number or name.' : '';
 
   return (
     <div style={{ 
@@ -125,7 +103,7 @@ const PokemonDetails: React.FC = () => {
         </button>
       </form>
 
-      {loading && (
+      {isLoading && (
         <div style={{ textAlign: 'center', fontSize: '20px' }}>
           Loading...
         </div>
@@ -142,7 +120,7 @@ const PokemonDetails: React.FC = () => {
         </div>
       )}
 
-      {pokemon && !loading && (
+      {pokemon && !isLoading && (
         <>
           <div style={{
             display: 'flex',
