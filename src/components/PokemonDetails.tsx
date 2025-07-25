@@ -277,7 +277,9 @@ const PokemonDetails: React.FC = () => {
     <div style={{ 
       padding: '20px',
       maxWidth: '800px',
-      margin: '0 auto'
+      margin: '0 auto',
+      position: 'relative',
+      overflow: 'visible'
     }}>
       <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>
         Pokemon Finder
@@ -363,7 +365,9 @@ const PokemonDetails: React.FC = () => {
       {/* Filter Dropdowns */}
       <div style={{
         textAlign: 'center',
-        marginBottom: '20px'
+        marginBottom: '20px',
+        position: 'relative',
+        overflow: 'visible'
       }}>
         {/* Generation Filter */}
         <div className="mb-6">
