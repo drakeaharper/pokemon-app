@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
 import { usePokemon, useEvolutionChain } from '../hooks/usePokemonQueries';
+import { useFuzzySearch } from '../hooks/useFuzzySearch';
 
 const PokemonDetails: React.FC = () => {
-  const [pokemonNumber, setPokemonNumber] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const [pokemonNumber, setPokemonNumber] = useState<string>('393');
+  const [searchTerm, setSearchTerm] = useState<string | null>('393');
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const { data: pokemon, isLoading, error: pokemonError } = usePokemon(searchTerm);
   const { data: evolutionData } = useEvolutionChain(pokemon?.id || null);
+  const { searchResults } = useFuzzySearch(pokemonNumber);
 
   const searchPokemon = (term?: string) => {
     const searchValue = term || pokemonNumber;
@@ -16,6 +19,18 @@ const PokemonDetails: React.FC = () => {
       return;
     }
     setSearchTerm(searchValue);
+    setShowSuggestions(false);
+  };
+
+  const handleInputChange = (value: string) => {
+    setPokemonNumber(value);
+    setShowSuggestions(value.length > 0 && searchResults.length > 0);
+  };
+
+  const handleSuggestionClick = (pokemonName: string) => {
+    setPokemonNumber(pokemonName);
+    setSearchTerm(pokemonName);
+    setShowSuggestions(false);
   };
 
   const handleEvolutionClick = (pokemonId: number) => {
@@ -69,21 +84,60 @@ const PokemonDetails: React.FC = () => {
         textAlign: 'center',
         marginBottom: '30px'
       }}>
-        <input
-          type="text"
-          placeholder="Enter Pokemon number or name (e.g., 25 or pikachu)"
-          value={pokemonNumber}
-          onChange={(e) => setPokemonNumber(e.target.value)}
-          onKeyPress={handleKeyPress}
-          style={{
-            padding: '10px',
-            fontSize: '16px',
-            width: '350px',
-            marginRight: '10px',
-            borderRadius: '5px',
-            border: '2px solid #ddd'
-          }}
-        />
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <input
+            type="text"
+            placeholder="Enter Pokemon number or name (e.g., 25 or pikachu)"
+            value={pokemonNumber}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onKeyPress={handleKeyPress}
+            onFocus={() => setShowSuggestions(pokemonNumber.length > 0 && searchResults.length > 0)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            style={{
+              padding: '10px',
+              fontSize: '16px',
+              width: '350px',
+              marginRight: '10px',
+              borderRadius: '5px',
+              border: '2px solid #ddd'
+            }}
+          />
+          {showSuggestions && searchResults.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: '10px',
+              backgroundColor: 'white',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              zIndex: 1000,
+              maxHeight: '300px',
+              overflowY: 'auto'
+            }}>
+              {searchResults.map((result) => (
+                <div
+                  key={result.id}
+                  onClick={() => handleSuggestionClick(result.name)}
+                  style={{
+                    padding: '10px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #eee',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                >
+                  <span style={{ textTransform: 'capitalize' }}>{result.name}</span>
+                  <span style={{ color: '#666', fontSize: '12px' }}>#{result.id}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <button
           type="submit"
           style={{
