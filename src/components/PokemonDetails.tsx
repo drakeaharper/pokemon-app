@@ -3,6 +3,7 @@ import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
 import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse, usePokemonTypes, usePokemonByType } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
+import { GENERATIONS, getPokemonIdsForGeneration, getPokemonCountForGeneration, getGenerationById } from '../utils/generationUtils';
 
 const PokemonDetails: React.FC = () => {
   const [pokemonNumber, setPokemonNumber] = useState<string>('25');
@@ -14,6 +15,9 @@ const PokemonDetails: React.FC = () => {
   const [selectedType, setSelectedType] = useState<string>('');
   const [typeFilteredPokemon, setTypeFilteredPokemon] = useState<any[]>([]);
   const [currentTypeIndex, setCurrentTypeIndex] = useState<number>(0);
+  const [selectedGeneration, setSelectedGeneration] = useState<number | null>(null);
+  const [generationFilteredPokemon, setGenerationFilteredPokemon] = useState<number[]>([]);
+  const [currentGenerationIndex, setCurrentGenerationIndex] = useState<number>(0);
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const [previousPokemon, setPreviousPokemon] = useState<any>(null);
 
@@ -48,6 +52,7 @@ const PokemonDetails: React.FC = () => {
     setSearchTerm(pokemonName);
     setShowSuggestions(false);
     clearTypeFilter(); // Clear type filter when searching by name
+    clearGenerationFilter(); // Clear generation filter when searching by name
   };
 
   const handleTypeFilter = (typeName: string) => {
@@ -62,6 +67,49 @@ const PokemonDetails: React.FC = () => {
     setSelectedType('');
     setTypeFilteredPokemon([]);
     setCurrentTypeIndex(0);
+  };
+
+  const handleGenerationFilter = (generationId: number) => {
+    setSelectedGeneration(generationId);
+    setCurrentGenerationIndex(0);
+    const pokemonIds = getPokemonIdsForGeneration(generationId);
+    setGenerationFilteredPokemon(pokemonIds);
+    
+    // Clear name search and type filter when filtering by generation
+    setPokemonNumber('');
+    setSearchTerm(null);
+    clearTypeFilter();
+    
+    // Navigate to first Pokemon of the generation
+    if (pokemonIds.length > 0) {
+      setSearchTerm(pokemonIds[0].toString());
+    }
+  };
+
+  const clearGenerationFilter = () => {
+    setSelectedGeneration(null);
+    setGenerationFilteredPokemon([]);
+    setCurrentGenerationIndex(0);
+  };
+
+  const handlePreviousInGeneration = () => {
+    if (generationFilteredPokemon.length > 0 && currentGenerationIndex > 0) {
+      setIsNavigating(true);
+      setPreviousPokemon(pokemon);
+      setCurrentGenerationIndex(currentGenerationIndex - 1);
+      const prevPokemonId = generationFilteredPokemon[currentGenerationIndex - 1];
+      setSearchTerm(prevPokemonId.toString());
+    }
+  };
+
+  const handleNextInGeneration = () => {
+    if (generationFilteredPokemon.length > 0 && currentGenerationIndex < generationFilteredPokemon.length - 1) {
+      setIsNavigating(true);
+      setPreviousPokemon(pokemon);
+      setCurrentGenerationIndex(currentGenerationIndex + 1);
+      const nextPokemonId = generationFilteredPokemon[currentGenerationIndex + 1];
+      setSearchTerm(nextPokemonId.toString());
+    }
   };
 
   const handlePreviousInType = () => {
@@ -177,6 +225,16 @@ const PokemonDetails: React.FC = () => {
     }
   }, [pokemonByType, selectedType]);
 
+  // Update currentGenerationIndex when Pokemon changes during generation filtering
+  useEffect(() => {
+    if (pokemon && selectedGeneration && generationFilteredPokemon.length > 0) {
+      const pokemonIndex = generationFilteredPokemon.findIndex(id => id === pokemon.id);
+      if (pokemonIndex !== -1) {
+        setCurrentGenerationIndex(pokemonIndex);
+      }
+    }
+  }, [pokemon, selectedGeneration, generationFilteredPokemon]);
+
   const error = pokemonError ? 'Pokemon not found. Please try a different number or name.' : '';
 
   return (
@@ -266,11 +324,147 @@ const PokemonDetails: React.FC = () => {
         </button>
       </form>
 
-      {/* Type Filter Dropdown */}
+      {/* Filter Dropdowns */}
       <div style={{
         textAlign: 'center',
         marginBottom: '20px'
       }}>
+        {/* Generation Filter */}
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '10px',
+          marginBottom: '15px'
+        }}>
+          <label style={{
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#333'
+          }}>
+            Filter by Generation:
+          </label>
+          <select
+            value={selectedGeneration || ''}
+            onChange={(e) => {
+              if (e.target.value) {
+                handleGenerationFilter(parseInt(e.target.value));
+              } else {
+                clearGenerationFilter();
+              }
+            }}
+            style={{
+              padding: '8px 12px',
+              fontSize: '14px',
+              borderRadius: '5px',
+              border: '2px solid #ddd',
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              minWidth: '200px'
+            }}
+          >
+            <option value="">All Generations</option>
+            {GENERATIONS.map((generation) => (
+              <option key={generation.id} value={generation.id}>
+                {generation.name} - {generation.region} ({getPokemonCountForGeneration(generation.id)} Pokemon)
+              </option>
+            ))}
+          </select>
+          {selectedGeneration && (
+            <button
+              onClick={clearGenerationFilter}
+              style={{
+                padding: '8px 12px',
+                fontSize: '14px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
+            >
+              Clear Filter
+            </button>
+          )}
+        </div>
+
+        {/* Generation Navigation */}
+        {selectedGeneration && generationFilteredPokemon.length > 0 && (
+          <div style={{
+            marginBottom: '15px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '15px'
+          }}>
+            <button
+              onClick={handlePreviousInGeneration}
+              disabled={isNavigating || currentGenerationIndex <= 0}
+              style={{
+                backgroundColor: (isNavigating || currentGenerationIndex <= 0) ? '#ccc' : '#FF6B35',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: (isNavigating || currentGenerationIndex <= 0) ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.3s',
+                opacity: isNavigating ? 0.6 : 1
+              }}
+              onMouseOver={(e) => {
+                if (!isNavigating && currentGenerationIndex > 0) {
+                  e.currentTarget.style.backgroundColor = '#E55A2B';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isNavigating && currentGenerationIndex > 0) {
+                  e.currentTarget.style.backgroundColor = '#FF6B35';
+                }
+              }}
+            >
+              ← Previous {getGenerationById(selectedGeneration)?.region}
+            </button>
+            
+            <span style={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#666'
+            }}>
+              {currentGenerationIndex + 1} of {generationFilteredPokemon.length} {getGenerationById(selectedGeneration)?.region} Pokemon
+            </span>
+            
+            <button
+              onClick={handleNextInGeneration}
+              disabled={isNavigating || currentGenerationIndex >= generationFilteredPokemon.length - 1}
+              style={{
+                backgroundColor: (isNavigating || currentGenerationIndex >= generationFilteredPokemon.length - 1) ? '#ccc' : '#FF6B35',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: (isNavigating || currentGenerationIndex >= generationFilteredPokemon.length - 1) ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.3s',
+                opacity: isNavigating ? 0.6 : 1
+              }}
+              onMouseOver={(e) => {
+                if (!isNavigating && currentGenerationIndex < generationFilteredPokemon.length - 1) {
+                  e.currentTarget.style.backgroundColor = '#E55A2B';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isNavigating && currentGenerationIndex < generationFilteredPokemon.length - 1) {
+                  e.currentTarget.style.backgroundColor = '#FF6B35';
+                }
+              }}
+            >
+              Next {getGenerationById(selectedGeneration)?.region} →
+            </button>
+          </div>
+        )}
+
+        {/* Type Filter */}
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
