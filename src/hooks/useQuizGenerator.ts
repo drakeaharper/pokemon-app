@@ -73,12 +73,12 @@ export const useQuizGenerator = () => {
           stats: []
         };
 
-        // Generate wrong answers
-        const wrongAnswers = shuffleArray(
-          availablePokemon
-            .filter(p => p.name !== pokemonData.name)
-            .slice(0, 3)
-        ).map(p => formatPokemonName(p.name));
+        // Generate wrong answers by first filtering, then shuffling, then taking first 3
+        const wrongAnswerOptions = availablePokemon.filter(p => p.name !== pokemonData.name);
+        const shuffledWrongOptions = shuffleArray(wrongAnswerOptions);
+        const wrongAnswers = shuffledWrongOptions
+          .slice(0, 3)
+          .map(p => formatPokemonName(p.name));
 
         const correctAnswer = formatPokemonName(pokemonData.name);
         const allOptions = shuffleArray([correctAnswer, ...wrongAnswers]);
