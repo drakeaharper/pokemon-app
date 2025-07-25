@@ -31,6 +31,18 @@ const AbilityGlossary: React.FC = () => {
     setShowSuggestions(false);
   };
 
+  const handlePreviousAbility = () => {
+    if (ability && ability.id > 1) {
+      searchAbility((ability.id - 1).toString());
+    }
+  };
+
+  const handleNextAbility = () => {
+    if (ability && ability.id < 367) {
+      searchAbility((ability.id + 1).toString());
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     searchAbility();
@@ -183,8 +195,82 @@ const AbilityGlossary: React.FC = () => {
       )}
 
       {ability && !isLoading && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '20px',
+          margin: '20px 0'
+        }}>
+          <button
+            onClick={handlePreviousAbility}
+            disabled={ability.id <= 1}
+            style={{
+              backgroundColor: ability.id <= 1 ? '#ccc' : '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              fontSize: '24px',
+              cursor: ability.id <= 1 ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onMouseEnter={(e) => {
+              if (ability.id > 1) {
+                e.currentTarget.style.backgroundColor = '#45a049';
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (ability.id > 1) {
+                e.currentTarget.style.backgroundColor = '#4CAF50';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
+          >
+            ←
+          </button>
+          
           <AbilityCard ability={ability} />
+          
+          <button
+            onClick={handleNextAbility}
+            disabled={ability.id >= 367}
+            style={{
+              backgroundColor: ability.id >= 367 ? '#ccc' : '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              fontSize: '24px',
+              cursor: ability.id >= 367 ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onMouseEnter={(e) => {
+              if (ability.id < 367) {
+                e.currentTarget.style.backgroundColor = '#45a049';
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (ability.id < 367) {
+                e.currentTarget.style.backgroundColor = '#4CAF50';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
+          >
+            →
+          </button>
         </div>
       )}
 

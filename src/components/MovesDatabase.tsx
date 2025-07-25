@@ -31,6 +31,18 @@ const MovesDatabase: React.FC = () => {
     setShowSuggestions(false);
   };
 
+  const handlePreviousMove = () => {
+    if (move && move.id > 1) {
+      searchMove((move.id - 1).toString());
+    }
+  };
+
+  const handleNextMove = () => {
+    if (move && move.id < 937) {
+      searchMove((move.id + 1).toString());
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     searchMove();
@@ -158,8 +170,82 @@ const MovesDatabase: React.FC = () => {
       )}
 
       {move && !isLoading && (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '20px',
+          margin: '20px 0'
+        }}>
+          <button
+            onClick={handlePreviousMove}
+            disabled={move.id <= 1}
+            style={{
+              backgroundColor: move.id <= 1 ? '#ccc' : '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              fontSize: '24px',
+              cursor: move.id <= 1 ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onMouseEnter={(e) => {
+              if (move.id > 1) {
+                e.currentTarget.style.backgroundColor = '#45a049';
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (move.id > 1) {
+                e.currentTarget.style.backgroundColor = '#4CAF50';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
+          >
+            ←
+          </button>
+          
           <MoveCard move={move} />
+          
+          <button
+            onClick={handleNextMove}
+            disabled={move.id >= 937}
+            style={{
+              backgroundColor: move.id >= 937 ? '#ccc' : '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '50px',
+              height: '50px',
+              fontSize: '24px',
+              cursor: move.id >= 937 ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onMouseEnter={(e) => {
+              if (move.id < 937) {
+                e.currentTarget.style.backgroundColor = '#45a049';
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (move.id < 937) {
+                e.currentTarget.style.backgroundColor = '#4CAF50';
+                e.currentTarget.style.transform = 'scale(1)';
+              }
+            }}
+          >
+            →
+          </button>
         </div>
       )}
 
