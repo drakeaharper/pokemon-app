@@ -2,7 +2,7 @@
 
 A React TypeScript application that displays Pokemon information as interactive cards using the PokeAPI.
 
-🎮 **[Live Demo](https://drakeaharper.github.io/pokemon-app)**
+🎮 **[Live Demo](https://drakeaharper.github.io/pokemon-card-app)**
 
 ## Features
 
@@ -24,8 +24,8 @@ A React TypeScript application that displays Pokemon information as interactive 
 
 1. Clone the repository:
 ```bash
-git clone git@github.com:drakeaharper/pokemon-app.git
-cd pokemon-app
+git clone git@github.com:drakeaharper/pokemon-card-app.git
+cd pokemon-card-app
 ```
 
 2. Install dependencies:
