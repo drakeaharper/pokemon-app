@@ -40,138 +40,63 @@ const NavigationBar: React.FC = () => {
     { path: '/about', label: 'About', shortLabel: 'About' },
   ];
 
-  const renderNavLink = (item: typeof navigationItems[0], isMobile: boolean = false) => (
-    <Link
-      key={item.path}
-      to={item.path}
-      onClick={isMobile ? closeMobileMenu : undefined}
-      style={{
-        color: location.pathname === item.path ? '#fff' : 'rgba(255,255,255,0.8)',
-        textDecoration: 'none',
-        padding: isMobile ? '12px 20px' : '8px 16px',
-        borderRadius: isMobile ? '0' : '20px',
-        backgroundColor: location.pathname === item.path 
-          ? (isMobile ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)') 
-          : 'transparent',
-        transition: 'all 0.3s ease',
-        fontWeight: location.pathname === item.path ? 'bold' : 'normal',
-        display: 'block',
-        borderBottom: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
-        fontSize: isMobile ? '16px' : '14px'
-      }}
-      onMouseEnter={(e) => {
-        if (location.pathname !== item.path && !isMobile) {
-          e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (location.pathname !== item.path && !isMobile) {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }
-      }}
-    >
-      {isMobile ? item.label : item.shortLabel}
-    </Link>
-  );
+  const renderNavLink = (item: typeof navigationItems[0], isMobile: boolean = false) => {
+    const isActive = location.pathname === item.path;
+    const baseClasses = "no-underline transition-all duration-300 block";
+    const mobileClasses = isMobile 
+      ? "py-3 px-5 text-base border-b border-white/10" 
+      : "py-2 px-4 text-sm rounded-full";
+    const colorClasses = isActive 
+      ? "text-white font-bold" 
+      : "text-white/80 font-normal hover:bg-white/10";
+    const bgClasses = isActive 
+      ? (isMobile ? "bg-white/10" : "bg-white/20") 
+      : "bg-transparent";
+    
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        onClick={isMobile ? closeMobileMenu : undefined}
+        className={`${baseClasses} ${mobileClasses} ${colorClasses} ${bgClasses}`}
+      >
+        {isMobile ? item.label : item.shortLabel}
+      </Link>
+    );
+  };
 
   return (
     <>
-      <nav style={{
-        backgroundColor: '#4CAF50',
-        padding: '15px 20px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000
-      }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
+      <nav className="bg-green-500 px-5 py-4 shadow-md sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link 
             to="/" 
             onClick={closeMobileMenu}
-            style={{ 
-              textDecoration: 'none',
-              color: 'white',
-              fontSize: '24px',
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}
+            className="no-underline text-white text-2xl font-bold flex items-center gap-2"
           >
-            <span style={{ fontSize: '28px' }}>🎴</span>
+            <span className="text-3xl">🎴</span>
             <span className="pokemon-title-text">
               Pokemon Card App
             </span>
           </Link>
           
           {/* Desktop Navigation */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '10px', 
-            alignItems: 'center'
-          }} className="desktop-nav">
+          <div className="desktop-nav flex gap-2 items-center">
             {navigationItems.map(item => renderNavLink(item, false))}
           </div>
 
           {/* Mobile Hamburger Button */}
           <button
             onClick={toggleMobileMenu}
-            style={{
-              display: 'none',
-              background: 'none',
-              border: 'none',
-              color: 'white',
-              fontSize: '24px',
-              cursor: 'pointer',
-              padding: '5px',
-              borderRadius: '5px',
-              transition: 'background-color 0.3s ease'
-            }}
-            className="mobile-menu-button"
+            className="mobile-menu-button hidden bg-transparent border-none text-white text-2xl cursor-pointer p-1 rounded transition-colors duration-300 hover:bg-white/10"
             aria-label="Toggle mobile menu"
             aria-expanded={isMobileMenuOpen}
           >
-            <div style={{
-              width: '25px',
-              height: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}>
-              <span style={{
-                display: 'block',
-                height: '3px',
-                width: '100%',
-                backgroundColor: 'white',
-                borderRadius: '1px',
-                transition: 'all 0.3s ease',
-                transform: isMobileMenuOpen ? 'rotate(45deg) translate(6px, 6px)' : 'none'
-              }} />
-              <span style={{
-                display: 'block',
-                height: '3px',
-                width: '100%',
-                backgroundColor: 'white',
-                borderRadius: '1px',
-                transition: 'all 0.3s ease',
-                opacity: isMobileMenuOpen ? 0 : 1
-              }} />
-              <span style={{
-                display: 'block',
-                height: '3px',
-                width: '100%',
-                backgroundColor: 'white',
-                borderRadius: '1px',
-                transition: 'all 0.3s ease',
-                transform: isMobileMenuOpen ? 'rotate(-45deg) translate(8px, -8px)' : 'none'
-              }} />
+            <div className="w-6 h-5 flex flex-col justify-between">
+              <span className={`block h-0.5 w-full bg-white rounded-sm transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-x-1.5 translate-y-1.5' : ''}`} />
+              <span className={`block h-0.5 w-full bg-white rounded-sm transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : 'opacity-100'}`} />
+              <span className={`block h-0.5 w-full bg-white rounded-sm transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 translate-x-2 -translate-y-2' : ''}`} />
             </div>
           </button>
         </div>
@@ -180,16 +105,7 @@ const NavigationBar: React.FC = () => {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 999
-          }}
-          className="mobile-menu-overlay"
+          className="mobile-menu-overlay fixed inset-0 bg-black/50 z-40"
           onClick={closeMobileMenu}
           onTouchStart={closeMobileMenu}
         />
@@ -197,20 +113,11 @@ const NavigationBar: React.FC = () => {
 
       {/* Mobile Menu */}
       <div
-        style={{
-          position: 'fixed',
-          top: '69px', // Height of nav bar
-          left: 0,
-          right: 0,
-          backgroundColor: '#4CAF50',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          zIndex: 1001,
-          transform: isMobileMenuOpen ? 'translateY(0)' : 'translateY(-100%)',
-          transition: 'transform 0.3s ease',
-          opacity: isMobileMenuOpen ? 1 : 0,
-          visibility: isMobileMenuOpen ? 'visible' : 'hidden'
-        }}
-        className="mobile-menu"
+        className={`mobile-menu fixed top-16 left-0 right-0 bg-green-500 shadow-lg z-50 transition-all duration-300 ${
+          isMobileMenuOpen 
+            ? 'translate-y-0 opacity-100 visible' 
+            : '-translate-y-full opacity-0 invisible'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {navigationItems.map(item => renderNavLink(item, true))}
@@ -241,10 +148,6 @@ const NavigationBar: React.FC = () => {
             .mobile-menu-overlay {
               display: none !important;
             }
-          }
-
-          .mobile-menu-button:hover {
-            background-color: rgba(255,255,255,0.1);
           }
 
           /* Prevent text selection on mobile menu button */

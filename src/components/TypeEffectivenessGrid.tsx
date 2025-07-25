@@ -45,29 +45,16 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
   };
 
   return (
-    <div style={{ 
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '10px',
-      overflowX: 'auto'
-    }}>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: `100px repeat(${MAIN_TYPES.length}, 45px)`,
-        gap: '2px',
-        minWidth: '900px'
-      }}>
+    <div className="p-5 bg-gray-100 rounded-lg overflow-x-auto">
+      <div 
+        className="grid gap-0.5"
+        style={{
+          gridTemplateColumns: `100px repeat(${MAIN_TYPES.length}, 45px)`,
+          minWidth: '900px'
+        }}
+      >
         {/* Top-left corner cell */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#ddd',
-          borderRadius: '5px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          padding: '5px'
-        }}>
+        <div className="flex items-center justify-center bg-gray-300 rounded text-xs font-bold p-1">
           ATK → DEF
         </div>
 
@@ -76,23 +63,14 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
           <div
             key={`def-${defendingType}`}
             onClick={() => handleTypeClick(defendingType)}
+            className={`text-white flex items-center justify-center rounded cursor-pointer text-xs font-bold uppercase py-2 px-1 transition-all duration-200 ${
+              highlightedType && highlightedType !== defendingType ? 'opacity-50' : 'opacity-100'
+            } ${
+              highlightedType === defendingType ? 'scale-105 shadow-lg' : 'scale-100'
+            }`}
             style={{
               backgroundColor: typeColors[defendingType],
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontSize: '10px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              padding: '8px 4px',
-              textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-              opacity: highlightedType && highlightedType !== defendingType ? 0.5 : 1,
-              transform: highlightedType === defendingType ? 'scale(1.05)' : 'scale(1)',
-              transition: 'all 0.2s ease',
-              boxShadow: highlightedType === defendingType ? '0 2px 8px rgba(0,0,0,0.3)' : 'none'
+              textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
             }}
           >
             {defendingType.slice(0, 3)}
@@ -105,23 +83,14 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
             {/* Row header (attacking type) */}
             <div
               onClick={() => handleTypeClick(attackingType)}
+              className={`text-white flex items-center justify-start rounded cursor-pointer text-xs font-bold capitalize py-2 px-2.5 transition-all duration-200 ${
+                highlightedType && highlightedType !== attackingType ? 'opacity-50' : 'opacity-100'
+              } ${
+                highlightedType === attackingType ? 'scale-102 shadow-lg' : 'scale-100'
+              }`}
               style={{
                 backgroundColor: typeColors[attackingType],
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                textTransform: 'capitalize',
-                padding: '8px 10px',
-                textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                opacity: highlightedType && highlightedType !== attackingType ? 0.5 : 1,
-                transform: highlightedType === attackingType ? 'scale(1.02)' : 'scale(1)',
-                transition: 'all 0.2s ease',
-                boxShadow: highlightedType === attackingType ? '0 2px 8px rgba(0,0,0,0.3)' : 'none'
+                textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
               }}
             >
               {attackingType}
@@ -138,22 +107,14 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
                   key={`${attackingType}-${defendingType}`}
                   onMouseEnter={() => setHoveredCell({ attacking: attackingType, defending: defendingType })}
                   onMouseLeave={() => setHoveredCell(null)}
+                  className={`flex items-center justify-center rounded-sm cursor-pointer text-xs font-bold h-10 relative transition-all duration-200 ${
+                    isHovered ? 'border-2 border-gray-800 scale-110 shadow-lg' : 
+                    cellHighlighted ? 'border-2 border-gray-600' : 'border border-gray-300'
+                  } ${
+                    highlightedType && !cellHighlighted ? 'opacity-30' : 'opacity-100'
+                  }`}
                   style={{
-                    backgroundColor: getEffectivenessBackgroundColor(effectiveness),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '3px',
-                    cursor: 'pointer',
-                    fontSize: '11px',
-                    fontWeight: 'bold',
-                    height: '40px',
-                    border: isHovered ? '2px solid #333' : cellHighlighted ? '2px solid #666' : '1px solid #ccc',
-                    opacity: highlightedType && !cellHighlighted ? 0.3 : 1,
-                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-                    transition: 'all 0.2s ease',
-                    boxShadow: isHovered ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
-                    position: 'relative'
+                    backgroundColor: getEffectivenessBackgroundColor(effectiveness)
                   }}
                   title={`${attackingType.toUpperCase()} → ${defendingType.toUpperCase()}: ${effectiveness}x (${getEffectivenessDescription(effectiveness)})`}
                 >
@@ -166,70 +127,51 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
       </div>
 
       {/* Legend */}
-      <div style={{ 
-        marginTop: '20px',
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '20px',
-        flexWrap: 'wrap'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: getEffectivenessBackgroundColor(2),
-            borderRadius: '3px',
-            border: '1px solid #ccc'
-          }} />
-          <span style={{ fontSize: '14px' }}>2x Super Effective</span>
+      <div className="mt-5 flex justify-center gap-5 flex-wrap">
+        <div className="flex items-center gap-1">
+          <div 
+            className="w-5 h-5 rounded-sm border border-gray-300"
+            style={{ backgroundColor: getEffectivenessBackgroundColor(2) }}
+          />
+          <span className="text-sm">2x Super Effective</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: getEffectivenessBackgroundColor(1),
-            borderRadius: '3px',
-            border: '1px solid #ccc'
-          }} />
-          <span style={{ fontSize: '14px' }}>1x Normal</span>
+        <div className="flex items-center gap-1">
+          <div 
+            className="w-5 h-5 rounded-sm border border-gray-300"
+            style={{ backgroundColor: getEffectivenessBackgroundColor(1) }}
+          />
+          <span className="text-sm">1x Normal</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: getEffectivenessBackgroundColor(0.5),
-            borderRadius: '3px',
-            border: '1px solid #ccc'
-          }} />
-          <span style={{ fontSize: '14px' }}>½x Not Very Effective</span>
+        <div className="flex items-center gap-1">
+          <div 
+            className="w-5 h-5 rounded-sm border border-gray-300"
+            style={{ backgroundColor: getEffectivenessBackgroundColor(0.5) }}
+          />
+          <span className="text-sm">½x Not Very Effective</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            backgroundColor: getEffectivenessBackgroundColor(0),
-            borderRadius: '3px',
-            border: '1px solid #ccc'
-          }} />
-          <span style={{ fontSize: '14px' }}>0x No Effect</span>
+        <div className="flex items-center gap-1">
+          <div 
+            className="w-5 h-5 rounded-sm border border-gray-300"
+            style={{ backgroundColor: getEffectivenessBackgroundColor(0) }}
+          />
+          <span className="text-sm">0x No Effect</span>
         </div>
       </div>
 
       {/* Hover information */}
       {hoveredCell && (
-        <div style={{
-          marginTop: '15px',
-          textAlign: 'center',
-          padding: '10px',
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-          <strong style={{ textTransform: 'capitalize', color: typeColors[hoveredCell.attacking] }}>
+        <div className="mt-4 text-center p-2.5 bg-white rounded-lg shadow-md">
+          <strong 
+            className="capitalize"
+            style={{ color: typeColors[hoveredCell.attacking] }}
+          >
             {hoveredCell.attacking}
           </strong>
           <span> attacks </span>
-          <strong style={{ textTransform: 'capitalize', color: typeColors[hoveredCell.defending] }}>
+          <strong 
+            className="capitalize"
+            style={{ color: typeColors[hoveredCell.defending] }}
+          >
             {hoveredCell.defending}
           </strong>
           <span>: </span>
@@ -240,12 +182,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
         </div>
       )}
 
-      <div style={{ 
-        marginTop: '15px',
-        textAlign: 'center',
-        fontSize: '12px',
-        color: '#666'
-      }}>
+      <div className="mt-4 text-center text-xs text-gray-600">
         Click on type headers to highlight rows/columns • Hover over cells for details
       </div>
     </div>

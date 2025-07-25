@@ -64,35 +64,17 @@ const AbilityGlossary: React.FC = () => {
   const error = abilityError ? 'Ability not found. Please try a different name or ID.' : '';
 
   return (
-    <div style={{ 
-      padding: '20px',
-      maxWidth: '800px',
-      margin: '0 auto'
-    }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>
+    <div className="p-5 max-w-4xl mx-auto">
+      <h1 className="text-center mb-2.5 text-3xl font-bold">
         Pokemon Ability Glossary
       </h1>
       
-      <p style={{ 
-        textAlign: 'center', 
-        marginBottom: '30px',
-        fontSize: '16px',
-        color: '#666'
-      }}>
+      <p className="text-center mb-8 text-base text-gray-600">
         Comprehensive database of all Pokemon abilities with detailed descriptions
       </p>
       
-      <form onSubmit={handleSubmit} style={{ 
-        textAlign: 'center',
-        marginBottom: '30px',
-        padding: '0 20px'
-      }}>
-        <div style={{ 
-          position: 'relative', 
-          display: 'inline-block',
-          width: '100%',
-          maxWidth: '500px'
-        }}>
+      <form onSubmit={handleSubmit} className="text-center mb-8 px-5">
+        <div className="relative inline-block w-full max-w-lg">
           <input
             type="text"
             placeholder="Enter ability name or ID (e.g., stench, overgrow, 1)"
@@ -101,72 +83,29 @@ const AbilityGlossary: React.FC = () => {
             onKeyPress={handleKeyPress}
             onFocus={() => setShowSuggestions(abilitySearch.length > 0 && searchResults.length > 0)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-            style={{
-              padding: '10px',
-              fontSize: '16px',
-              width: '100%',
-              maxWidth: '400px',
-              minWidth: '250px',
-              marginBottom: '10px',
-              borderRadius: '5px',
-              border: '2px solid #ddd',
-              boxSizing: 'border-box'
-            }}
+            className="p-2.5 text-base w-full max-w-sm min-w-60 mb-2.5 rounded border-2 border-gray-300 box-border"
           />
           {showSuggestions && searchResults.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              backgroundColor: 'white',
-              border: '1px solid #ddd',
-              borderRadius: '5px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              zIndex: 1000,
-              maxHeight: '300px',
-              overflowY: 'auto'
-            }}>
+            <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-lg z-50 max-h-80 overflow-y-auto">
               {searchResults.map((result) => (
                 <div
                   key={result.id}
                   onClick={() => handleSuggestionClick(result.name)}
-                  style={{
-                    padding: '10px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #eee',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                  className="p-2.5 cursor-pointer border-b border-gray-200 flex justify-between items-center hover:bg-gray-100"
                 >
-                  <span style={{ textTransform: 'capitalize' }}>
+                  <span className="capitalize">
                     {result.name.replace('-', ' ')}
                   </span>
-                  <span style={{ color: '#666', fontSize: '12px' }}>#{result.id}</span>
+                  <span className="text-gray-600 text-xs">#{result.id}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
-        <div style={{ marginTop: '10px' }}>
+        <div className="mt-2.5">
           <button
             type="submit"
-            style={{
-              padding: '10px 20px',
-              fontSize: '16px',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              transition: 'background-color 0.3s',
-              minWidth: '100px'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+            className="py-2.5 px-5 text-base bg-green-500 text-white border-none rounded cursor-pointer transition-colors duration-300 min-w-25 hover:bg-green-600"
           >
             Search
           </button>
@@ -174,76 +113,28 @@ const AbilityGlossary: React.FC = () => {
       </form>
 
       {isLoading && (
-        <div style={{ 
-          textAlign: 'center', 
-          fontSize: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '10px',
-          minHeight: '200px'
-        }}>
-          <div style={{
-            width: '20px',
-            height: '20px',
-            border: '2px solid #4CAF50',
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
+        <div className="text-center text-xl flex items-center justify-center gap-2.5 min-h-48">
+          <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
           Loading ability data...
         </div>
       )}
 
       {error && (
-        <div style={{ 
-          textAlign: 'center', 
-          color: 'red',
-          fontSize: '18px',
-          marginBottom: '20px'
-        }}>
+        <div className="text-center text-red-500 text-lg mb-5">
           {error}
         </div>
       )}
 
       {ability && !isLoading && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '20px',
-          margin: '20px 0'
-        }}>
+        <div className="flex items-center justify-center gap-5 my-5">
           <button
             onClick={handlePreviousAbility}
             disabled={ability.id <= 1}
-            style={{
-              backgroundColor: ability.id <= 1 ? '#ccc' : '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50%',
-              width: '50px',
-              height: '50px',
-              fontSize: '24px',
-              cursor: ability.id <= 1 ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-            }}
-            onMouseEnter={(e) => {
-              if (ability.id > 1) {
-                e.currentTarget.style.backgroundColor = '#45a049';
-                e.currentTarget.style.transform = 'scale(1.1)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (ability.id > 1) {
-                e.currentTarget.style.backgroundColor = '#4CAF50';
-                e.currentTarget.style.transform = 'scale(1)';
-              }
-            }}
+            className={`text-white border-none rounded-full w-12 h-12 text-2xl flex items-center justify-center transition-all duration-300 shadow-md ${
+              ability.id <= 1 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-green-500 cursor-pointer hover:bg-green-600 hover:scale-110'
+            }`}
           >
             ←
           </button>
@@ -253,57 +144,22 @@ const AbilityGlossary: React.FC = () => {
           <button
             onClick={handleNextAbility}
             disabled={ability.id >= 367}
-            style={{
-              backgroundColor: ability.id >= 367 ? '#ccc' : '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '50%',
-              width: '50px',
-              height: '50px',
-              fontSize: '24px',
-              cursor: ability.id >= 367 ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-            }}
-            onMouseEnter={(e) => {
-              if (ability.id < 367) {
-                e.currentTarget.style.backgroundColor = '#45a049';
-                e.currentTarget.style.transform = 'scale(1.1)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (ability.id < 367) {
-                e.currentTarget.style.backgroundColor = '#4CAF50';
-                e.currentTarget.style.transform = 'scale(1)';
-              }
-            }}
+            className={`text-white border-none rounded-full w-12 h-12 text-2xl flex items-center justify-center transition-all duration-300 shadow-md ${
+              ability.id >= 367 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-green-500 cursor-pointer hover:bg-green-600 hover:scale-110'
+            }`}
           >
             →
           </button>
         </div>
       )}
 
-      <div style={{ 
-        textAlign: 'center',
-        marginTop: '40px',
-        fontSize: '14px',
-        color: '#666'
-      }}>
-        <p>Search by ability name (e.g., stench, overgrow, swift-swim) or ability ID (1-367)</p>
+      <div className="text-center mt-10 text-sm text-gray-600">
+        <p className="mb-2">Search by ability name (e.g., stench, overgrow, swift-swim) or ability ID (1-367)</p>
         <p>Popular abilities: overgrow, blaze, torrent, swarm, keen-eye, hyper-cutter</p>
       </div>
 
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
     </div>
   );
 };
