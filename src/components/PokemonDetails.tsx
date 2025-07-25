@@ -5,8 +5,8 @@ import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChain
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 
 const PokemonDetails: React.FC = () => {
-  const [pokemonNumber, setPokemonNumber] = useState<string>('393');
-  const [searchTerm, setSearchTerm] = useState<string | null>('393');
+  const [pokemonNumber, setPokemonNumber] = useState<string>('25');
+  const [searchTerm, setSearchTerm] = useState<string | null>('25');
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
   const [currentEvolutionChainId, setCurrentEvolutionChainId] = useState<number | null>(null);
