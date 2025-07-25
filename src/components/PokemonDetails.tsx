@@ -8,6 +8,7 @@ const PokemonDetails: React.FC = () => {
   const [pokemonNumber, setPokemonNumber] = useState<string>('393');
   const [searchTerm, setSearchTerm] = useState<string | null>('393');
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [isShiny, setIsShiny] = useState<boolean>(false);
 
   const { data: pokemon, isLoading, error: pokemonError } = usePokemon(searchTerm);
   const { data: evolutionData } = useEvolutionChain(pokemon?.id || null);
@@ -157,6 +158,52 @@ const PokemonDetails: React.FC = () => {
         </button>
       </form>
 
+      {pokemon && (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '10px',
+          marginTop: '20px',
+          marginBottom: '20px'
+        }}>
+          <label style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            color: '#333'
+          }}>
+            <span style={{ fontWeight: 'bold' }}>✨ Shiny</span>
+            <div
+              onClick={() => setIsShiny(!isShiny)}
+              style={{
+                width: '50px',
+                height: '26px',
+                backgroundColor: isShiny ? '#4CAF50' : '#ccc',
+                borderRadius: '13px',
+                position: 'relative',
+                transition: 'background-color 0.3s ease',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{
+                width: '22px',
+                height: '22px',
+                backgroundColor: 'white',
+                borderRadius: '50%',
+                position: 'absolute',
+                top: '2px',
+                left: isShiny ? '26px' : '2px',
+                transition: 'left 0.3s ease',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }} />
+            </div>
+          </label>
+        </div>
+      )}
+
       {isLoading && (
         <div style={{ textAlign: 'center', fontSize: '20px' }}>
           Loading...
@@ -217,7 +264,7 @@ const PokemonDetails: React.FC = () => {
               ←
             </button>
             
-            <PokemonCard pokemon={pokemon} />
+            <PokemonCard pokemon={pokemon} isShiny={isShiny} />
             
             <button
               onClick={handleNextPokemon}
@@ -258,6 +305,7 @@ const PokemonDetails: React.FC = () => {
             <EvolutionDisplay 
               evolutionData={evolutionData} 
               onEvolutionClick={handleEvolutionClick}
+              isShiny={isShiny}
             />
           )}
         </>

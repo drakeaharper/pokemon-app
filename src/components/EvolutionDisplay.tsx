@@ -4,13 +4,15 @@ import { EvolutionDisplay as EvolutionDisplayType, ProcessedEvolution } from '..
 interface EvolutionDisplayProps {
   evolutionData: EvolutionDisplayType;
   onEvolutionClick?: (pokemonId: number) => void;
+  isShiny?: boolean;
 }
 
 const EvolutionCard: React.FC<{ 
   evolution: ProcessedEvolution; 
   isCurrent?: boolean;
   onClick?: () => void;
-}> = ({ evolution, isCurrent = false, onClick }) => {
+  isShiny?: boolean;
+}> = ({ evolution, isCurrent = false, onClick, isShiny = false }) => {
   return (
     <div
       onClick={onClick}
@@ -39,8 +41,8 @@ const EvolutionCard: React.FC<{
       }}
     >
       <img
-        src={evolution.sprite}
-        alt={evolution.name}
+        src={isShiny && evolution.shinySprite ? evolution.shinySprite : evolution.sprite}
+        alt={`${isShiny ? 'Shiny ' : ''}${evolution.name}`}
         style={{
           width: '80px',
           height: '80px',
@@ -101,7 +103,7 @@ const Arrow: React.FC<{ direction?: 'right' | 'down' }> = ({ direction = 'right'
   );
 };
 
-const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEvolutionClick }) => {
+const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEvolutionClick, isShiny = false }) => {
   const { previous, current, next } = evolutionData;
 
   const handleEvolutionClick = (pokemonId: number) => {
@@ -133,6 +135,7 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
             <EvolutionCard 
               evolution={evolution} 
               onClick={() => handleEvolutionClick(evolution.id)}
+              isShiny={isShiny}
             />
             {index < previous.length - 1 && <Arrow />}
           </React.Fragment>
@@ -142,7 +145,7 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
         {previous.length > 0 && <Arrow />}
         
         {/* Current Pokemon */}
-        <EvolutionCard evolution={current} isCurrent={true} />
+        <EvolutionCard evolution={current} isCurrent={true} isShiny={isShiny} />
         
         {/* Next Evolutions */}
         {next.length > 0 && (
@@ -156,6 +159,7 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
                     <EvolutionCard 
                       evolution={evolution}
                       onClick={() => handleEvolutionClick(evolution.id)}
+                      isShiny={isShiny}
                     />
                   </React.Fragment>
                 ))}
@@ -181,6 +185,7 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
                           <EvolutionCard 
                             evolution={evolution}
                             onClick={() => handleEvolutionClick(evolution.id)}
+                            isShiny={isShiny}
                           />
                         </React.Fragment>
                       ))}

@@ -21,6 +21,7 @@ const buildEvolutionTree = (
     id: pokemonId,
     name: link.species.name,
     sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
+    shinySprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png`,
     evolutionDetails: link.evolution_details[0]
   };
 

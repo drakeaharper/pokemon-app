@@ -48,6 +48,7 @@ export interface ProcessedEvolution {
   id: number;
   name: string;
   sprite: string;
+  shinySprite?: string;
   evolutionDetails?: EvolutionDetail;
 }
 

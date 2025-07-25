@@ -3,6 +3,7 @@ import { Pokemon } from '../types/Pokemon';
 
 interface PokemonCardProps {
   pokemon: Pokemon;
+  isShiny?: boolean;
 }
 
 const typeColors: { [key: string]: string } = {
@@ -26,7 +27,7 @@ const typeColors: { [key: string]: string } = {
   fairy: '#EE99AC',
 };
 
-const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
+const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, isShiny = false }) => {
   const mainType = pokemon.types[0].type.name;
   const backgroundColor = typeColors[mainType] || '#68A090';
 
@@ -67,8 +68,11 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon }) => {
         marginBottom: '15px'
       }}>
         <img
-          src={pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default}
-          alt={pokemon.name}
+          src={isShiny 
+            ? (pokemon.sprites.other['official-artwork'].front_shiny || pokemon.sprites.front_shiny)
+            : (pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default)
+          }
+          alt={`${isShiny ? 'Shiny ' : ''}${pokemon.name}`}
           style={{ 
             width: '200px', 
             height: '200px',
