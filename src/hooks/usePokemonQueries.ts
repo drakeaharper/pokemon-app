@@ -268,3 +268,54 @@ export const usePokemonByTypeInGeneration = (typeName: string | null, generation
     gcTime: 1000 * 60 * 30, // 30 minutes
   });
 };
+
+// Hook to fetch Pokemon for multiple types
+export const usePokemonByMultipleTypes = (typeNames: string[], generationIds: number[]) => {
+  return useQuery({
+    queryKey: ['pokemonByMultipleTypes', typeNames.sort(), generationIds.sort()],
+    queryFn: async () => {
+      if (typeNames.length === 0) return [];
+      
+      const allPokemonMap = new Map<string, { name: string; url: string }>();
+      
+      // Fetch Pokemon for each type
+      for (const typeName of typeNames) {
+        try {
+          const response = await axios.get(`https://pokeapi.co/api/v2/type/${typeName.toLowerCase()}`);
+          const pokemonList = response.data.pokemon.map((pokemonEntry: any) => ({
+            name: pokemonEntry.pokemon.name,
+            url: pokemonEntry.pokemon.url
+          }));
+          
+          // Add all Pokemon from this type to the map (removes duplicates)
+          pokemonList.forEach((pokemon: any) => {
+            allPokemonMap.set(pokemon.name, pokemon);
+          });
+        } catch (error) {
+          console.warn(`Failed to fetch Pokemon for type ${typeName}:`, error);
+        }
+      }
+      
+      let combinedPokemonList = Array.from(allPokemonMap.values());
+      
+      // If generations are specified, filter Pokemon to only include those in the selected generations
+      if (generationIds.length > 0) {
+        const allGenerationPokemonIds: number[] = [];
+        generationIds.forEach(genId => {
+          allGenerationPokemonIds.push(...getPokemonIdsForGeneration(genId));
+        });
+        const generationPokemonIdsSet = new Set(allGenerationPokemonIds);
+        
+        combinedPokemonList = combinedPokemonList.filter((pokemon: any) => {
+          const pokemonId = parseInt(pokemon.url.match(/\/(\d+)\/$/)?.[1] || '0');
+          return generationPokemonIdsSet.has(pokemonId);
+        });
+      }
+      
+      return combinedPokemonList;
+    },
+    enabled: typeNames.length > 0,
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+};

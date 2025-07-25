@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
-import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse, usePokemonTypes, usePokemonByType, usePokemonTypesForGeneration, usePokemonByTypeInGeneration } from '../hooks/usePokemonQueries';
+import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse, usePokemonTypes, usePokemonTypesForGeneration, usePokemonByMultipleTypes } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 import { GENERATIONS, getPokemonIdsForGeneration, getPokemonCountForGeneration, getGenerationById } from '../utils/generationUtils';
 
@@ -28,8 +28,7 @@ const PokemonDetails: React.FC = () => {
   const { data: chainDataBackward } = useEvolutionChainByIdReverse(navigatingByChain === 'backward' ? currentEvolutionChainId : null);
   const { data: pokemonTypes } = usePokemonTypes();
   const { data: pokemonTypesForGeneration } = usePokemonTypesForGeneration(selectedGenerations[0] || null);
-  const { data: pokemonByType } = usePokemonByType(selectedTypes[0] || null);
-  const { data: pokemonByTypeInGeneration } = usePokemonByTypeInGeneration(selectedTypes[0] || null, selectedGenerations[0] || null);
+  const { data: pokemonByMultipleTypes } = usePokemonByMultipleTypes(selectedTypes, selectedGenerations);
 
   const searchPokemon = (term?: string) => {
     const searchValue = term || pokemonNumber;
@@ -249,20 +248,25 @@ const PokemonDetails: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainDataForward, chainDataBackward, navigatingByChain]);
 
-  // Update typeFilteredPokemon when pokemonByType data changes
+  // Update typeFilteredPokemon when pokemonByMultipleTypes data changes
   useEffect(() => {
-    if (selectedTypes.length > 0) {
-      // Use generation-filtered results if generation is selected, otherwise use all Pokemon of type
-      const relevantPokemonByType = selectedGenerations.length > 0 ? pokemonByTypeInGeneration : pokemonByType;
-      
-      if (relevantPokemonByType && relevantPokemonByType.length > 0) {
-        setTypeFilteredPokemon(relevantPokemonByType);
-        // Automatically navigate to first Pokemon of selected type
+    if (selectedTypes.length > 0 && pokemonByMultipleTypes) {
+      if (pokemonByMultipleTypes.length > 0) {
+        setTypeFilteredPokemon(pokemonByMultipleTypes);
+        // Automatically navigate to first Pokemon of selected types
         setCurrentTypeIndex(0);
-        setSearchTerm(relevantPokemonByType[0].name);
+        setSearchTerm(pokemonByMultipleTypes[0].name);
+      } else {
+        // No Pokemon found for the selected types/generations combination
+        setTypeFilteredPokemon([]);
+        setCurrentTypeIndex(0);
       }
+    } else if (selectedTypes.length === 0) {
+      // Clear type filtered Pokemon when no types are selected
+      setTypeFilteredPokemon([]);
+      setCurrentTypeIndex(0);
     }
-  }, [pokemonByType, pokemonByTypeInGeneration, selectedTypes, selectedGenerations]);
+  }, [pokemonByMultipleTypes, selectedTypes]);
 
   // Update currentGenerationIndex when Pokemon changes during generation filtering
   useEffect(() => {
