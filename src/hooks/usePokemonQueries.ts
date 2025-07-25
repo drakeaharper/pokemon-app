@@ -62,6 +62,15 @@ export const usePokemonList = () => {
   });
 };
 
+// Alias for quiz functionality
+export const useAllPokemon = () => {
+  const result = usePokemonList();
+  return {
+    ...result,
+    data: result.data ? { results: result.data } : undefined
+  };
+};
+
 export const useEvolutionChainById = (chainId: number | null) => {
   return useQuery({
     queryKey: ['evolutionChainById', chainId],

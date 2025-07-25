@@ -38,6 +38,7 @@ const NavigationBar: React.FC = () => {
     { path: '/types', label: 'Type Chart', shortLabel: 'Types' },
     { path: '/abilities', label: 'Abilities', shortLabel: 'Abilities' },
     { path: '/items', label: 'Items Catalog', shortLabel: 'Items' },
+    { path: '/quiz', label: 'Pokemon Quiz', shortLabel: 'Quiz' },
     { path: '/about', label: 'About', shortLabel: 'About' },
   ];
 

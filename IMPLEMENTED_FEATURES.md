@@ -77,7 +77,24 @@ Comprehensive database of all Pokemon items with detailed information.
 - **Responsive Design**: Consistent Tailwind CSS styling
 - **Category Organization**: Items grouped by type for easy browsing
 
-### 6. **About Page** (`/about`) - ✅ IMPLEMENTED
+### 6. **Pokemon Quiz** (`/quiz`) - ✅ IMPLEMENTED *(Recently Added)*
+Interactive quiz system to test Pokemon knowledge.
+- **Quiz Type Selection**: Choose from different quiz categories (currently Names)
+- **Customizable Settings**: Select number of questions (5, 10, 15, or 20)
+- **Mystery Pokemon Display**: Show Pokemon sprites without revealing names
+- **Multiple Choice Questions**: 4 answer options with 1 correct and 3 random incorrect answers
+- **Real-time Feedback**: Immediate feedback on correct/incorrect answers
+- **Progress Tracking**: Visual progress bar and live scoring
+- **Results Summary**: Detailed results with percentage score and performance messages
+- **Quiz Features**:
+  - Random Pokemon selection from first 1000 Pokemon for optimal performance
+  - High-quality official artwork sprites with fallback to regular sprites
+  - Timed questions with automatic progression
+  - Score calculation and performance evaluation
+- **Future Expandable**: Framework ready for additional quiz types (types, abilities, moves)
+- **Responsive Design**: Consistent Tailwind CSS styling across all screen sizes
+
+### 7. **About Page** (`/about`) - ✅ IMPLEMENTED
 Information about the application and its features.
 
 ## 🛠️ Technical Implementation
@@ -133,6 +150,7 @@ Information about the application and its features.
 ## 🚀 Recent Additions
 
 ### December 2024
+- **✅ Pokemon Quiz**: Interactive quiz system with multiple choice questions, scoring, and expandable quiz types
 - **✅ Items Catalog**: Comprehensive Pokemon items database with 2000+ items, categories, and detailed information
 - **✅ Tailwind CSS Integration**: Converted major components from inline styles to Tailwind utilities for better maintainability
 - **✅ Ability Glossary**: Complete Pokemon abilities database with detailed descriptions and Pokemon cross-reference
