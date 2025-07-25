@@ -102,7 +102,26 @@ Interactive quiz system to test Pokemon knowledge with multiple quiz types.
 - **Future Expandable**: Framework ready for additional quiz types (types, moves)
 - **Responsive Design**: Consistent Tailwind CSS styling across all screen sizes
 
-### 7. **About Page** (`/about`) - ✅ IMPLEMENTED
+### 7. **Berry Guide** (`/berries`) - ✅ IMPLEMENTED *(Recently Added)*
+Comprehensive database of all Pokemon berries with detailed information and effects.
+- **Berry Search**: Find berries by name or ID (1-64)
+- **Fuzzy Search**: Intelligent autocomplete suggestions for berry names
+- **Berry Cards**: Detailed cards displaying:
+  - Primary and secondary flavors with potency ratings
+  - Growth time, max harvest, size, and firmness information
+  - Battle properties (Natural Gift power and type)
+  - Smoothness and soil dryness ratings
+  - Visual flavor color coding for easy identification
+- **Berry Navigation**: Browse berries sequentially with previous/next buttons
+- **Complete Database**: All 64 Pokemon berries from PokeAPI including:
+  - Status berries (Cheri, Chesto, Pecha, etc.)
+  - Stat-boosting berries (Liechi, Ganlon, Salac, etc.)
+  - Pinch berries for emergency healing
+  - Contest berries for Pokemon competitions
+- **Visual Design**: Flavor-based color coding and clean card layout
+- **Growth Information**: Complete berry cultivation data
+
+### 8. **About Page** (`/about`) - ✅ IMPLEMENTED
 Information about the application and its features.
 
 ## 🚀 Enhanced Features
@@ -175,6 +194,13 @@ Enhanced user experience during Pokemon navigation to eliminate interface jumpin
 - **Visual Elements**: Item sprites and category-based color coding
 - **Game Context**: Flavor text and effect descriptions from various Pokemon games
 
+### Berry Data
+- **Complete Berry List**: All 64 Pokemon berries
+- **Detailed Properties**: Growth time, harvest yield, size, firmness, and soil requirements
+- **Flavor Profiles**: Five-flavor system (spicy, dry, sweet, bitter, sour) with potency ratings
+- **Battle Effects**: Natural Gift power and type for competitive play
+- **Visual Design**: Flavor-based color coding and berry sprites
+
 ## 🚀 Recent Additions
 
 ### December 2024
@@ -188,6 +214,7 @@ Enhanced user experience during Pokemon navigation to eliminate interface jumpin
 - **✅ Evolution Chain Navigation**: Enhanced evolution browsing with automatic gap-skipping
 - **✅ Type Filtering System**: Advanced Pokemon type filtering with dedicated navigation and progress indicators
 - **✅ Improved Navigation Loading**: Enhanced loading experience that eliminates interface jumpiness during Pokemon navigation
+- **✅ Berry Guide**: Comprehensive Pokemon berries database with flavor profiles, growth data, and battle properties
 
 ---
 

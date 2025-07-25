@@ -9,6 +9,7 @@ import TypeChart from './components/TypeChart';
 import AbilityGlossary from './components/AbilityGlossary';
 import ItemsCatalog from './components/ItemsCatalog';
 import PokemonQuiz from './components/PokemonQuiz';
+import BerriesGuide from './components/BerriesGuide';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ function App() {
             <Route path="/types" element={<TypeChart />} />
             <Route path="/abilities" element={<AbilityGlossary />} />
             <Route path="/items" element={<ItemsCatalog />} />
+            <Route path="/berries" element={<BerriesGuide />} />
             <Route path="/quiz" element={<PokemonQuiz />} />
           </Routes>
         </div>
