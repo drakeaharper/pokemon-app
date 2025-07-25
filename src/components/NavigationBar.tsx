@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const NavigationBar: React.FC = () => {
@@ -12,6 +12,25 @@ const NavigationBar: React.FC = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Close menu when route changes
+  useEffect(() => {
+    closeMobileMenu();
+  }, [location.pathname]);
 
   const navigationItems = [
     { path: '/', label: 'Pokemon Finder', shortLabel: 'Finder' },
@@ -168,11 +187,11 @@ const NavigationBar: React.FC = () => {
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 999,
-            display: 'none'
+            zIndex: 999
           }}
           className="mobile-menu-overlay"
           onClick={closeMobileMenu}
+          onTouchStart={closeMobileMenu}
         />
       )}
 
@@ -188,9 +207,11 @@ const NavigationBar: React.FC = () => {
           zIndex: 1001,
           transform: isMobileMenuOpen ? 'translateY(0)' : 'translateY(-100%)',
           transition: 'transform 0.3s ease',
-          display: 'none'
+          opacity: isMobileMenuOpen ? 1 : 0,
+          visibility: isMobileMenuOpen ? 'visible' : 'hidden'
         }}
         className="mobile-menu"
+        onClick={(e) => e.stopPropagation()}
       >
         {navigationItems.map(item => renderNavLink(item, true))}
       </div>
@@ -205,12 +226,6 @@ const NavigationBar: React.FC = () => {
             .mobile-menu-button {
               display: block !important;
             }
-            .mobile-menu {
-              display: block !important;
-            }
-            .mobile-menu-overlay {
-              display: block !important;
-            }
           }
           
           @media (max-width: 480px) {
@@ -219,8 +234,27 @@ const NavigationBar: React.FC = () => {
             }
           }
 
+          @media (min-width: 769px) {
+            .mobile-menu {
+              display: none !important;
+            }
+            .mobile-menu-overlay {
+              display: none !important;
+            }
+          }
+
           .mobile-menu-button:hover {
             background-color: rgba(255,255,255,0.1);
+          }
+
+          /* Prevent text selection on mobile menu button */
+          .mobile-menu-button {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
           }
         `}
       </style>
