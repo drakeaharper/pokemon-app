@@ -84,9 +84,15 @@ const AbilityGlossary: React.FC = () => {
       
       <form onSubmit={handleSubmit} style={{ 
         textAlign: 'center',
-        marginBottom: '30px'
+        marginBottom: '30px',
+        padding: '0 20px'
       }}>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+        <div style={{ 
+          position: 'relative', 
+          display: 'inline-block',
+          width: '100%',
+          maxWidth: '500px'
+        }}>
           <input
             type="text"
             placeholder="Enter ability name or ID (e.g., stench, overgrow, 1)"
@@ -98,10 +104,13 @@ const AbilityGlossary: React.FC = () => {
             style={{
               padding: '10px',
               fontSize: '16px',
-              width: '400px',
-              marginRight: '10px',
+              width: '100%',
+              maxWidth: '400px',
+              minWidth: '250px',
+              marginBottom: '10px',
               borderRadius: '5px',
-              border: '2px solid #ddd'
+              border: '2px solid #ddd',
+              boxSizing: 'border-box'
             }}
           />
           {showSuggestions && searchResults.length > 0 && (
@@ -109,7 +118,7 @@ const AbilityGlossary: React.FC = () => {
               position: 'absolute',
               top: '100%',
               left: 0,
-              right: '10px',
+              right: 0,
               backgroundColor: 'white',
               border: '1px solid #ddd',
               borderRadius: '5px',
@@ -142,23 +151,26 @@ const AbilityGlossary: React.FC = () => {
             </div>
           )}
         </div>
-        <button
-          type="submit"
-          style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
-        >
-          Search
-        </button>
+        <div style={{ marginTop: '10px' }}>
+          <button
+            type="submit"
+            style={{
+              padding: '10px 20px',
+              fontSize: '16px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s',
+              minWidth: '100px'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#45a049'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+          >
+            Search
+          </button>
+        </div>
       </form>
 
       {isLoading && (
