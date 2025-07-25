@@ -2,7 +2,7 @@
   "name": "pokemon-card-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://drakeaharper.github.io/pokemon-app",
+  "homepage": "https://drakeaharper.github.io/pokemon-card-app",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
