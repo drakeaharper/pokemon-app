@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Pokemon } from '../types/Pokemon';
 import { EvolutionDisplay } from '../types/Evolution';
 import { fetchEvolutionChain } from '../utils/evolutionUtils';
+import { getPokemonIdsForGeneration } from '../utils/generationUtils';
 
 interface PokemonListItem {
   name: string;
@@ -187,5 +188,83 @@ export const useEvolutionChainByIdReverse = (chainId: number | null) => {
     },
     enabled: !!chainId,
     staleTime: 1000 * 60 * 60 * 24, // 24 hours
+  });
+};
+
+// Get unique types for Pokemon in a specific generation
+export const usePokemonTypesForGeneration = (generationId: number | null) => {
+  return useQuery({
+    queryKey: ['pokemonTypesForGeneration', generationId],
+    queryFn: async () => {
+      if (!generationId) return null;
+      
+      const pokemonIds = getPokemonIdsForGeneration(generationId);
+      const typesSet = new Set<string>();
+      
+      // Sample a subset of Pokemon to determine types (for performance)
+      // We'll fetch every 5th Pokemon to get a good representative sample
+      const sampleIds = pokemonIds.filter((_, index) => index % 5 === 0);
+      
+      try {
+        const pokemonPromises = sampleIds.map(async (id) => {
+          try {
+            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+            return response.data.types.map((type: any) => type.type.name);
+          } catch (error) {
+            return [];
+          }
+        });
+        
+        const allTypes = await Promise.all(pokemonPromises);
+        
+        // Flatten and deduplicate types
+        allTypes.flat().forEach(type => typesSet.add(type));
+        
+        // Convert to array and sort
+        const uniqueTypes = Array.from(typesSet).sort();
+        
+        // Return in the same format as usePokemonTypes
+        return uniqueTypes.map(name => ({ name, url: `https://pokeapi.co/api/v2/type/${name}/` }));
+        
+      } catch (error) {
+        console.warn('Failed to fetch types for generation:', error);
+        return [];
+      }
+    },
+    enabled: !!generationId,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours - generation types rarely change
+    gcTime: 1000 * 60 * 60 * 24 * 7, // Keep for 7 days
+  });
+};
+
+// Enhanced usePokemonByType that respects generation filtering
+export const usePokemonByTypeInGeneration = (typeName: string | null, generationId: number | null) => {
+  return useQuery({
+    queryKey: ['pokemonByTypeInGeneration', typeName, generationId],
+    queryFn: async () => {
+      if (!typeName) return null;
+      
+      const response = await axios.get(`https://pokeapi.co/api/v2/type/${typeName.toLowerCase()}`);
+      let pokemonList = response.data.pokemon.map((pokemonEntry: any) => ({
+        name: pokemonEntry.pokemon.name,
+        url: pokemonEntry.pokemon.url
+      }));
+      
+      // If generation is specified, filter Pokemon to only include those in the generation
+      if (generationId) {
+        const generationPokemonIds = getPokemonIdsForGeneration(generationId);
+        const generationPokemonIdsSet = new Set(generationPokemonIds);
+        
+        pokemonList = pokemonList.filter((pokemon: any) => {
+          const pokemonId = parseInt(pokemon.url.match(/\/(\d+)\/$/)?.[1] || '0');
+          return generationPokemonIdsSet.has(pokemonId);
+        });
+      }
+      
+      return pokemonList;
+    },
+    enabled: !!typeName,
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
   });
 };
