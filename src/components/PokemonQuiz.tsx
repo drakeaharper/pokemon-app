@@ -185,7 +185,7 @@ const PokemonQuiz: React.FC = () => {
 
         {/* Quiz Question */}
         <div className="text-center mb-8">
-          <QuizCard pokemon={currentQuestion.pokemon} />
+          <QuizCard pokemon={currentQuestion.pokemon} quizType={selectedQuizType} />
         </div>
 
         {/* Answer Options */}

@@ -1,6 +1,6 @@
 import { Pokemon } from './Pokemon';
 
-export type QuizType = 'names' | 'types' | 'abilities' | 'moves';
+export type QuizType = 'names' | 'types' | 'abilities' | 'hidden-abilities' | 'moves';
 
 export interface QuizOption {
   id: string;
@@ -57,17 +57,23 @@ export const QUIZ_TYPES: QuizOption[] = [
     description: 'Identify Pokemon by their appearance',
     type: 'names'
   },
+  {
+    id: 'abilities',
+    label: 'Pokemon Abilities',
+    description: 'Match Pokemon with their abilities',
+    type: 'abilities'
+  },
+  {
+    id: 'hidden-abilities',
+    label: 'Hidden Abilities',
+    description: 'Identify Pokemon hidden abilities',
+    type: 'hidden-abilities'
+  },
   // Future quiz types can be added here
   // {
   //   id: 'types',
   //   label: 'Pokemon Types',
   //   description: 'Guess the type of Pokemon',
   //   type: 'types'
-  // },
-  // {
-  //   id: 'abilities',
-  //   label: 'Pokemon Abilities',
-  //   description: 'Match Pokemon with their abilities',
-  //   type: 'abilities'
   // }
 ];

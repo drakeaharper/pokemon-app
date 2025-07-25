@@ -1,12 +1,14 @@
 import React from 'react';
 import { Pokemon } from '../types/Pokemon';
+import { QuizType } from '../types/Quiz';
 
 interface QuizCardProps {
   pokemon: Pokemon;
+  quizType: QuizType;
   showShiny?: boolean;
 }
 
-const QuizCard: React.FC<QuizCardProps> = ({ pokemon, showShiny = false }) => {
+const QuizCard: React.FC<QuizCardProps> = ({ pokemon, quizType, showShiny = false }) => {
   // Use the official artwork for better quality, fallback to regular sprite
   const spriteUrl = showShiny 
     ? pokemon.sprites.front_shiny || pokemon.sprites.front_default
@@ -42,16 +44,26 @@ const QuizCard: React.FC<QuizCardProps> = ({ pokemon, showShiny = false }) => {
         </div>
       </div>
 
-      {/* Pokemon ID (without giving away the name) */}
+      {/* Pokemon ID and Name (show name for abilities quiz) */}
       <div className="text-center mb-4">
         <span className="text-gray-600 text-sm font-medium">
           Pokemon #{pokemon.id.toString().padStart(3, '0')}
         </span>
+        {(quizType === 'abilities' || quizType === 'hidden-abilities') && (
+          <div className="mt-2">
+            <h3 className="text-xl font-bold text-gray-800 capitalize">
+              {pokemon.name.replace(/-/g, ' ')}
+            </h3>
+          </div>
+        )}
       </div>
 
-      {/* Silhouette option toggle (future enhancement) */}
+      {/* Quiz prompt */}
       <div className="text-center text-xs text-gray-500 mt-4">
-        Who's that Pokemon?
+        {quizType === 'names' ? "Who's that Pokemon?" : 
+         quizType === 'abilities' ? "What's this Pokemon's ability?" : 
+         quizType === 'hidden-abilities' ? "What's this Pokemon's hidden ability?" :
+         "Answer the question below"}
       </div>
     </div>
   );

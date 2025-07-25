@@ -78,20 +78,28 @@ Comprehensive database of all Pokemon items with detailed information.
 - **Category Organization**: Items grouped by type for easy browsing
 
 ### 6. **Pokemon Quiz** (`/quiz`) - ✅ IMPLEMENTED *(Recently Added)*
-Interactive quiz system to test Pokemon knowledge.
-- **Quiz Type Selection**: Choose from different quiz categories (currently Names)
+Interactive quiz system to test Pokemon knowledge with multiple quiz types.
+- **Quiz Type Selection**: Choose from different quiz categories:
+  - **Names Quiz**: Identify Pokemon by their appearance (show sprite, guess name)
+  - **Abilities Quiz**: Match Pokemon with their abilities (show sprite + name, guess ability)
+  - **Hidden Abilities Quiz**: Identify Pokemon hidden abilities (show sprite + name, guess hidden ability)
 - **Customizable Settings**: Select number of questions (5, 10, 15, or 20)
-- **Mystery Pokemon Display**: Show Pokemon sprites without revealing names
+- **Dynamic Question Display**: 
+  - Names: Mystery Pokemon sprites without names
+  - Abilities/Hidden: Pokemon sprites WITH names for ability identification
 - **Multiple Choice Questions**: 4 answer options with 1 correct and 3 random incorrect answers
 - **Real-time Feedback**: Immediate feedback on correct/incorrect answers
 - **Progress Tracking**: Visual progress bar and live scoring
 - **Results Summary**: Detailed results with percentage score and performance messages
-- **Quiz Features**:
+- **Advanced Quiz Features**:
   - Random Pokemon selection from first 1000 Pokemon for optimal performance
   - High-quality official artwork sprites with fallback to regular sprites
+  - Intelligent answer generation using real Pokemon data from PokeAPI
+  - Hidden abilities quiz filters Pokemon with actual hidden abilities
+  - Fallback ability pools for rare cases
   - Timed questions with automatic progression
   - Score calculation and performance evaluation
-- **Future Expandable**: Framework ready for additional quiz types (types, abilities, moves)
+- **Future Expandable**: Framework ready for additional quiz types (types, moves)
 - **Responsive Design**: Consistent Tailwind CSS styling across all screen sizes
 
 ### 7. **About Page** (`/about`) - ✅ IMPLEMENTED
@@ -150,7 +158,7 @@ Information about the application and its features.
 ## 🚀 Recent Additions
 
 ### December 2024
-- **✅ Pokemon Quiz**: Interactive quiz system with multiple choice questions, scoring, and expandable quiz types
+- **✅ Pokemon Quiz**: Interactive quiz system with 3 quiz types (Names, Abilities, Hidden Abilities), intelligent question generation, and comprehensive scoring
 - **✅ Items Catalog**: Comprehensive Pokemon items database with 2000+ items, categories, and detailed information
 - **✅ Tailwind CSS Integration**: Converted major components from inline styles to Tailwind utilities for better maintainability
 - **✅ Ability Glossary**: Complete Pokemon abilities database with detailed descriptions and Pokemon cross-reference

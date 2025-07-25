@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAllPokemon } from './usePokemonQueries';
 import { QuizQuestion, QuizType } from '../types/Quiz';
 import { Pokemon } from '../types/Pokemon';
+import axios from 'axios';
 
 // Extract ID from PokeAPI URL
 const extractIdFromUrl = (url: string): number => {
@@ -35,7 +36,7 @@ export const useQuizGenerator = () => {
     type: QuizType,
     numberOfQuestions: number
   ): Promise<QuizQuestion[]> => {
-    if (!allPokemonData?.results || type !== 'names') {
+    if (!allPokemonData?.results) {
       return [];
     }
 
@@ -49,47 +50,217 @@ export const useQuizGenerator = () => {
 
       const questions: QuizQuestion[] = [];
 
-      for (const pokemonData of selectedPokemon) {
-        const pokemonId = extractIdFromUrl(pokemonData.url);
-        
-        // Create a simplified Pokemon object for quiz purposes
-        const pokemon: Pokemon = {
-          id: pokemonId,
-          name: pokemonData.name,
-          height: 0,
-          weight: 0,
-          sprites: {
-            front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
-            front_shiny: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png`,
-            other: {
-              'official-artwork': {
-                front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
-                front_shiny: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokemonId}.png`
+      if (type === 'names') {
+        // Names quiz - show Pokemon sprite, guess name
+        for (const pokemonData of selectedPokemon) {
+          const pokemonId = extractIdFromUrl(pokemonData.url);
+          
+          const pokemon: Pokemon = {
+            id: pokemonId,
+            name: pokemonData.name,
+            height: 0,
+            weight: 0,
+            sprites: {
+              front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
+              front_shiny: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonId}.png`,
+              other: {
+                'official-artwork': {
+                  front_default: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+                  front_shiny: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${pokemonId}.png`
+                }
+              }
+            },
+            abilities: [],
+            types: [],
+            stats: []
+          };
+
+          const wrongAnswerOptions = availablePokemon.filter(p => p.name !== pokemonData.name);
+          const shuffledWrongOptions = shuffleArray(wrongAnswerOptions);
+          const wrongAnswers = shuffledWrongOptions
+            .slice(0, 3)
+            .map(p => formatPokemonName(p.name));
+
+          const correctAnswer = formatPokemonName(pokemonData.name);
+          const allOptions = shuffleArray([correctAnswer, ...wrongAnswers]);
+
+          questions.push({
+            id: `question-${pokemonId}`,
+            pokemon,
+            correctAnswer,
+            options: allOptions,
+            type
+          });
+        }
+      } else if (type === 'abilities') {
+        // Abilities quiz - show Pokemon sprite and name, guess ability
+        for (const pokemonData of selectedPokemon) {
+          const pokemonId = extractIdFromUrl(pokemonData.url);
+          
+          try {
+            // Fetch full Pokemon data to get abilities
+            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+            const fullPokemonData = response.data;
+
+            // Skip Pokemon with no abilities
+            if (!fullPokemonData.abilities || fullPokemonData.abilities.length === 0) {
+              continue;
+            }
+
+            // Pick a random ability from this Pokemon
+            const randomAbility = fullPokemonData.abilities[Math.floor(Math.random() * fullPokemonData.abilities.length)];
+            const correctAbility = formatPokemonName(randomAbility.ability.name);
+
+            const pokemon: Pokemon = {
+              id: pokemonId,
+              name: pokemonData.name,
+              height: fullPokemonData.height,
+              weight: fullPokemonData.weight,
+              sprites: fullPokemonData.sprites,
+              abilities: fullPokemonData.abilities,
+              types: fullPokemonData.types,
+              stats: fullPokemonData.stats
+            };
+
+            // Generate wrong abilities from other Pokemon
+            const wrongAbilities: string[] = [];
+            let attempts = 0;
+            const maxAttempts = 20;
+            
+            while (wrongAbilities.length < 3 && attempts < maxAttempts) {
+              attempts++;
+              const randomPokemonIndex = Math.floor(Math.random() * availablePokemon.length);
+              const randomPokemonId = extractIdFromUrl(availablePokemon[randomPokemonIndex].url);
+              
+              try {
+                const randomResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${randomPokemonId}`);
+                const randomPokemonData = randomResponse.data;
+                
+                if (randomPokemonData.abilities && randomPokemonData.abilities.length > 0) {
+                  const randomOtherAbility = randomPokemonData.abilities[Math.floor(Math.random() * randomPokemonData.abilities.length)];
+                  const abilityName = formatPokemonName(randomOtherAbility.ability.name);
+                  
+                  // Make sure it's not the correct ability and not already added
+                  if (abilityName !== correctAbility && !wrongAbilities.includes(abilityName)) {
+                    wrongAbilities.push(abilityName);
+                  }
+                }
+              } catch (error) {
+                // Skip this Pokemon if there's an error
+                continue;
               }
             }
-          },
-          abilities: [],
-          types: [],
-          stats: []
-        };
 
-        // Generate wrong answers by first filtering, then shuffling, then taking first 3
-        const wrongAnswerOptions = availablePokemon.filter(p => p.name !== pokemonData.name);
-        const shuffledWrongOptions = shuffleArray(wrongAnswerOptions);
-        const wrongAnswers = shuffledWrongOptions
-          .slice(0, 3)
-          .map(p => formatPokemonName(p.name));
+            // If we couldn't get 3 wrong abilities, use some common ones as fallback
+            const fallbackAbilities = ['Overgrow', 'Blaze', 'Torrent', 'Swarm', 'Keen Eye', 'Hyper Cutter', 'Intimidate', 'Static'];
+            while (wrongAbilities.length < 3) {
+              const fallback = fallbackAbilities[Math.floor(Math.random() * fallbackAbilities.length)];
+              if (fallback !== correctAbility && !wrongAbilities.includes(fallback)) {
+                wrongAbilities.push(fallback);
+              }
+            }
 
-        const correctAnswer = formatPokemonName(pokemonData.name);
-        const allOptions = shuffleArray([correctAnswer, ...wrongAnswers]);
+            const allOptions = shuffleArray([correctAbility, ...wrongAbilities.slice(0, 3)]);
 
-        questions.push({
-          id: `question-${pokemonId}`,
-          pokemon,
-          correctAnswer,
-          options: allOptions,
-          type
-        });
+            questions.push({
+              id: `question-${pokemonId}`,
+              pokemon,
+              correctAnswer: correctAbility,
+              options: allOptions,
+              type
+            });
+          } catch (error) {
+            // Skip this Pokemon if we can't fetch its data
+            console.warn(`Failed to fetch data for Pokemon ID ${pokemonId}:`, error);
+            continue;
+          }
+        }
+      } else if (type === 'hidden-abilities') {
+        // Hidden abilities quiz - show Pokemon sprite and name, guess hidden ability
+        for (const pokemonData of selectedPokemon) {
+          const pokemonId = extractIdFromUrl(pokemonData.url);
+          
+          try {
+            // Fetch full Pokemon data to get abilities
+            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+            const fullPokemonData = response.data;
+
+            // Find hidden ability (is_hidden: true)
+            const hiddenAbility = fullPokemonData.abilities?.find((ability: any) => ability.is_hidden);
+            
+            // Skip Pokemon with no hidden abilities
+            if (!hiddenAbility) {
+              continue;
+            }
+
+            const correctAbility = formatPokemonName(hiddenAbility.ability.name);
+
+            const pokemon: Pokemon = {
+              id: pokemonId,
+              name: pokemonData.name,
+              height: fullPokemonData.height,
+              weight: fullPokemonData.weight,
+              sprites: fullPokemonData.sprites,
+              abilities: fullPokemonData.abilities,
+              types: fullPokemonData.types,
+              stats: fullPokemonData.stats
+            };
+
+            // Generate wrong hidden abilities from other Pokemon
+            const wrongAbilities: string[] = [];
+            let attempts = 0;
+            const maxAttempts = 30; // Increase attempts since hidden abilities are rarer
+            
+            while (wrongAbilities.length < 3 && attempts < maxAttempts) {
+              attempts++;
+              const randomPokemonIndex = Math.floor(Math.random() * availablePokemon.length);
+              const randomPokemonId = extractIdFromUrl(availablePokemon[randomPokemonIndex].url);
+              
+              try {
+                const randomResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${randomPokemonId}`);
+                const randomPokemonData = randomResponse.data;
+                
+                // Find hidden ability from this random Pokemon
+                const randomHiddenAbility = randomPokemonData.abilities?.find((ability: any) => ability.is_hidden);
+                
+                if (randomHiddenAbility) {
+                  const abilityName = formatPokemonName(randomHiddenAbility.ability.name);
+                  
+                  // Make sure it's not the correct ability and not already added
+                  if (abilityName !== correctAbility && !wrongAbilities.includes(abilityName)) {
+                    wrongAbilities.push(abilityName);
+                  }
+                }
+              } catch (error) {
+                // Skip this Pokemon if there's an error
+                continue;
+              }
+            }
+
+            // If we couldn't get 3 wrong hidden abilities, use some common hidden abilities as fallback
+            const fallbackHiddenAbilities = ['Chlorophyll', 'Solar Power', 'Drought', 'Speed Boost', 'Moody', 'Protean', 'Gale Wings', 'Pixilate'];
+            while (wrongAbilities.length < 3) {
+              const fallback = fallbackHiddenAbilities[Math.floor(Math.random() * fallbackHiddenAbilities.length)];
+              if (fallback !== correctAbility && !wrongAbilities.includes(fallback)) {
+                wrongAbilities.push(fallback);
+              }
+            }
+
+            const allOptions = shuffleArray([correctAbility, ...wrongAbilities.slice(0, 3)]);
+
+            questions.push({
+              id: `question-${pokemonId}`,
+              pokemon,
+              correctAnswer: correctAbility,
+              options: allOptions,
+              type
+            });
+          } catch (error) {
+            // Skip this Pokemon if we can't fetch its data
+            console.warn(`Failed to fetch data for Pokemon ID ${pokemonId}:`, error);
+            continue;
+          }
+        }
       }
 
       return questions;
