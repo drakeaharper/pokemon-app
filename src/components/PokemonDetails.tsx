@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
-import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse } from '../hooks/usePokemonQueries';
+import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse, usePokemonTypes, usePokemonByType } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 
 const PokemonDetails: React.FC = () => {
@@ -11,17 +11,28 @@ const PokemonDetails: React.FC = () => {
   const [isShiny, setIsShiny] = useState<boolean>(false);
   const [currentEvolutionChainId, setCurrentEvolutionChainId] = useState<number | null>(null);
   const [navigatingByChain, setNavigatingByChain] = useState<'forward' | 'backward' | null>(null);
+  const [selectedType, setSelectedType] = useState<string>('');
+  const [typeFilteredPokemon, setTypeFilteredPokemon] = useState<any[]>([]);
+  const [currentTypeIndex, setCurrentTypeIndex] = useState<number>(0);
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
+  const [previousPokemon, setPreviousPokemon] = useState<any>(null);
 
   const { data: pokemon, isLoading, error: pokemonError } = usePokemon(searchTerm);
   const { data: evolutionData } = useEvolutionChain(pokemon?.id || null);
   const { searchResults } = useFuzzySearch(pokemonNumber);
   const { data: chainDataForward } = useEvolutionChainById(navigatingByChain === 'forward' ? currentEvolutionChainId : null);
   const { data: chainDataBackward } = useEvolutionChainByIdReverse(navigatingByChain === 'backward' ? currentEvolutionChainId : null);
+  const { data: pokemonTypes } = usePokemonTypes();
+  const { data: pokemonByType } = usePokemonByType(selectedType);
 
   const searchPokemon = (term?: string) => {
     const searchValue = term || pokemonNumber;
     if (!searchValue) {
       return;
+    }
+    // Reset navigation state when doing a manual search
+    if (!isNavigating) {
+      setPreviousPokemon(null);
     }
     setSearchTerm(searchValue);
     setShowSuggestions(false);
@@ -36,6 +47,41 @@ const PokemonDetails: React.FC = () => {
     setPokemonNumber(pokemonName);
     setSearchTerm(pokemonName);
     setShowSuggestions(false);
+    clearTypeFilter(); // Clear type filter when searching by name
+  };
+
+  const handleTypeFilter = (typeName: string) => {
+    setSelectedType(typeName);
+    setCurrentTypeIndex(0);
+    // Clear name search when filtering by type
+    setPokemonNumber('');
+    setSearchTerm(null);
+  };
+
+  const clearTypeFilter = () => {
+    setSelectedType('');
+    setTypeFilteredPokemon([]);
+    setCurrentTypeIndex(0);
+  };
+
+  const handlePreviousInType = () => {
+    if (typeFilteredPokemon.length > 0 && currentTypeIndex > 0) {
+      setIsNavigating(true);
+      setPreviousPokemon(pokemon);
+      setCurrentTypeIndex(currentTypeIndex - 1);
+      const prevPokemon = typeFilteredPokemon[currentTypeIndex - 1];
+      setSearchTerm(prevPokemon.name);
+    }
+  };
+
+  const handleNextInType = () => {
+    if (typeFilteredPokemon.length > 0 && currentTypeIndex < typeFilteredPokemon.length - 1) {
+      setIsNavigating(true);
+      setPreviousPokemon(pokemon);
+      setCurrentTypeIndex(currentTypeIndex + 1);
+      const nextPokemon = typeFilteredPokemon[currentTypeIndex + 1];
+      setSearchTerm(nextPokemon.name);
+    }
   };
 
   const handleEvolutionClick = (pokemonId: number) => {
@@ -44,12 +90,16 @@ const PokemonDetails: React.FC = () => {
 
   const handlePreviousPokemon = () => {
     if (pokemon && pokemon.id > 1) {
+      setIsNavigating(true);
+      setPreviousPokemon(pokemon);
       searchPokemon((pokemon.id - 1).toString());
     }
   };
 
   const handleNextPokemon = () => {
     if (pokemon && pokemon.id < 1025) {
+      setIsNavigating(true);
+      setPreviousPokemon(pokemon);
       searchPokemon((pokemon.id + 1).toString());
     }
   };
@@ -84,8 +134,13 @@ const PokemonDetails: React.FC = () => {
   useEffect(() => {
     if (pokemon) {
       setPokemonNumber(pokemon.id.toString());
+      // Reset navigation state when new Pokemon loads
+      if (isNavigating) {
+        setIsNavigating(false);
+        setPreviousPokemon(null);
+      }
     }
-  }, [pokemon]);
+  }, [pokemon, isNavigating]);
 
   // Extract evolution chain ID from current evolution data
   useEffect(() => {
@@ -109,6 +164,18 @@ const PokemonDetails: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainDataForward, chainDataBackward, navigatingByChain]);
+
+  // Update typeFilteredPokemon when pokemonByType data changes
+  useEffect(() => {
+    if (pokemonByType && selectedType) {
+      setTypeFilteredPokemon(pokemonByType);
+      if (pokemonByType.length > 0) {
+        // Automatically navigate to first Pokemon of selected type
+        setCurrentTypeIndex(0);
+        setSearchTerm(pokemonByType[0].name);
+      }
+    }
+  }, [pokemonByType, selectedType]);
 
   const error = pokemonError ? 'Pokemon not found. Please try a different number or name.' : '';
 
@@ -199,6 +266,145 @@ const PokemonDetails: React.FC = () => {
         </button>
       </form>
 
+      {/* Type Filter Dropdown */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '20px'
+      }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <label style={{
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#333'
+          }}>
+            Filter by Type:
+          </label>
+          <select
+            value={selectedType}
+            onChange={(e) => {
+              if (e.target.value) {
+                handleTypeFilter(e.target.value);
+              } else {
+                clearTypeFilter();
+              }
+            }}
+            style={{
+              padding: '8px 12px',
+              fontSize: '14px',
+              borderRadius: '5px',
+              border: '2px solid #ddd',
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              minWidth: '150px'
+            }}
+          >
+            <option value="">All Types</option>
+            {pokemonTypes?.map((type: { name: string; url: string }) => (
+              <option key={type.name} value={type.name}>
+                {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
+              </option>
+            ))}
+          </select>
+          {selectedType && (
+            <button
+              onClick={clearTypeFilter}
+              style={{
+                padding: '8px 12px',
+                fontSize: '14px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
+            >
+              Clear Filter
+            </button>
+          )}
+        </div>
+        
+        {/* Type Filter Navigation */}
+        {selectedType && typeFilteredPokemon.length > 0 && (
+          <div style={{
+            marginTop: '15px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '15px'
+          }}>
+            <button
+              onClick={handlePreviousInType}
+              disabled={isNavigating || currentTypeIndex <= 0}
+              style={{
+                backgroundColor: (isNavigating || currentTypeIndex <= 0) ? '#ccc' : '#2196F3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: (isNavigating || currentTypeIndex <= 0) ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.3s',
+                opacity: isNavigating ? 0.6 : 1
+              }}
+              onMouseOver={(e) => {
+                if (!isNavigating && currentTypeIndex > 0) {
+                  e.currentTarget.style.backgroundColor = '#1976D2';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isNavigating && currentTypeIndex > 0) {
+                  e.currentTarget.style.backgroundColor = '#2196F3';
+                }
+              }}
+            >
+              ← Previous {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}
+            </button>
+            
+            <span style={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#666'
+            }}>
+              {currentTypeIndex + 1} of {typeFilteredPokemon.length} {selectedType} Pokemon
+            </span>
+            
+            <button
+              onClick={handleNextInType}
+              disabled={isNavigating || currentTypeIndex >= typeFilteredPokemon.length - 1}
+              style={{
+                backgroundColor: (isNavigating || currentTypeIndex >= typeFilteredPokemon.length - 1) ? '#ccc' : '#2196F3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '25px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: (isNavigating || currentTypeIndex >= typeFilteredPokemon.length - 1) ? 'not-allowed' : 'pointer',
+                transition: 'background-color 0.3s',
+                opacity: isNavigating ? 0.6 : 1
+              }}
+              onMouseOver={(e) => {
+                if (!isNavigating && currentTypeIndex < typeFilteredPokemon.length - 1) {
+                  e.currentTarget.style.backgroundColor = '#1976D2';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isNavigating && currentTypeIndex < typeFilteredPokemon.length - 1) {
+                  e.currentTarget.style.backgroundColor = '#2196F3';
+                }
+              }}
+            >
+              Next {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} →
+            </button>
+          </div>
+        )}
+      </div>
+
       {pokemon && (
         <div style={{
           display: 'flex',
@@ -245,7 +451,7 @@ const PokemonDetails: React.FC = () => {
         </div>
       )}
 
-      {isLoading && (
+      {isLoading && !isNavigating && !pokemon && (
         <div style={{ textAlign: 'center', fontSize: '20px' }}>
           Loading...
         </div>
@@ -262,7 +468,7 @@ const PokemonDetails: React.FC = () => {
         </div>
       )}
 
-      {pokemon && !isLoading && (
+      {(pokemon || (isNavigating && previousPokemon)) && (
         <>
           <div style={{
             display: 'flex',
@@ -273,30 +479,31 @@ const PokemonDetails: React.FC = () => {
           }}>
             <button
               onClick={handlePreviousPokemon}
-              disabled={pokemon.id <= 1}
+              disabled={isNavigating || (pokemon || previousPokemon)?.id <= 1}
               style={{
-                backgroundColor: pokemon.id <= 1 ? '#ccc' : '#4CAF50',
+                backgroundColor: (isNavigating || (pokemon || previousPokemon)?.id <= 1) ? '#ccc' : '#4CAF50',
                 color: 'white',
                 border: 'none',
                 borderRadius: '50%',
                 width: '50px',
                 height: '50px',
                 fontSize: '24px',
-                cursor: pokemon.id <= 1 ? 'not-allowed' : 'pointer',
+                cursor: (isNavigating || (pokemon || previousPokemon)?.id <= 1) ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                opacity: isNavigating ? 0.6 : 1
               }}
               onMouseEnter={(e) => {
-                if (pokemon.id > 1) {
+                if (!isNavigating && (pokemon || previousPokemon)?.id > 1) {
                   e.currentTarget.style.backgroundColor = '#45a049';
                   e.currentTarget.style.transform = 'scale(1.1)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (pokemon.id > 1) {
+                if (!isNavigating && (pokemon || previousPokemon)?.id > 1) {
                   e.currentTarget.style.backgroundColor = '#4CAF50';
                   e.currentTarget.style.transform = 'scale(1)';
                 }
@@ -305,34 +512,52 @@ const PokemonDetails: React.FC = () => {
               ←
             </button>
             
-            <PokemonCard pokemon={pokemon} isShiny={isShiny} />
+            <div style={{ position: 'relative' }}>
+              <PokemonCard pokemon={pokemon || previousPokemon} isShiny={isShiny} />
+              {isNavigating && (
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  backgroundColor: 'rgba(0,0,0,0.7)',
+                  color: 'white',
+                  padding: '5px 10px',
+                  borderRadius: '15px',
+                  fontSize: '12px',
+                  fontWeight: 'bold'
+                }}>
+                  Loading...
+                </div>
+              )}
+            </div>
             
             <button
               onClick={handleNextPokemon}
-              disabled={pokemon.id >= 1025}
+              disabled={isNavigating || (pokemon || previousPokemon)?.id >= 1025}
               style={{
-                backgroundColor: pokemon.id >= 1025 ? '#ccc' : '#4CAF50',
+                backgroundColor: (isNavigating || (pokemon || previousPokemon)?.id >= 1025) ? '#ccc' : '#4CAF50',
                 color: 'white',
                 border: 'none',
                 borderRadius: '50%',
                 width: '50px',
                 height: '50px',
                 fontSize: '24px',
-                cursor: pokemon.id >= 1025 ? 'not-allowed' : 'pointer',
+                cursor: (isNavigating || (pokemon || previousPokemon)?.id >= 1025) ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.3s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                opacity: isNavigating ? 0.6 : 1
               }}
               onMouseEnter={(e) => {
-                if (pokemon.id < 1025) {
+                if (!isNavigating && (pokemon || previousPokemon)?.id < 1025) {
                   e.currentTarget.style.backgroundColor = '#45a049';
                   e.currentTarget.style.transform = 'scale(1.1)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (pokemon.id < 1025) {
+                if (!isNavigating && (pokemon || previousPokemon)?.id < 1025) {
                   e.currentTarget.style.backgroundColor = '#4CAF50';
                   e.currentTarget.style.transform = 'scale(1)';
                 }
@@ -342,7 +567,7 @@ const PokemonDetails: React.FC = () => {
             </button>
           </div>
           
-          {evolutionData && (
+          {evolutionData && !isNavigating && (
             <>
               <EvolutionDisplay 
                 evolutionData={evolutionData} 

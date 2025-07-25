@@ -71,6 +71,40 @@ export const useAllPokemon = () => {
   };
 };
 
+// Fetch Pokemon types for filtering
+export const usePokemonTypes = () => {
+  return useQuery({
+    queryKey: ['pokemonTypes'],
+    queryFn: async () => {
+      const response = await axios.get('https://pokeapi.co/api/v2/type');
+      return response.data.results.map((type: any) => ({
+        name: type.name,
+        url: type.url
+      }));
+    },
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours - types rarely change
+    gcTime: 1000 * 60 * 60 * 24 * 7, // Keep for 7 days
+  });
+};
+
+// Fetch Pokemon by type
+export const usePokemonByType = (typeName: string | null) => {
+  return useQuery({
+    queryKey: ['pokemonByType', typeName],
+    queryFn: async () => {
+      if (!typeName) return null;
+      const response = await axios.get(`https://pokeapi.co/api/v2/type/${typeName.toLowerCase()}`);
+      return response.data.pokemon.map((pokemonEntry: any) => ({
+        name: pokemonEntry.pokemon.name,
+        url: pokemonEntry.pokemon.url
+      }));
+    },
+    enabled: !!typeName,
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+};
+
 export const useEvolutionChainById = (chainId: number | null) => {
   return useQuery({
     queryKey: ['evolutionChainById', chainId],
