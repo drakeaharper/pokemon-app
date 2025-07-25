@@ -6,38 +6,6 @@ const getPokemonIdFromUrl = (url: string): number => {
   return matches ? parseInt(matches[1]) : 0;
 };
 
-const processEvolutionLink = async (
-  link: EvolutionChainLink,
-  previousEvolutions: ProcessedEvolution[] = [],
-  currentPokemonName: string
-): Promise<{
-  allEvolutions: ProcessedEvolution[];
-  currentIndex: number;
-}> => {
-  const pokemonId = getPokemonIdFromUrl(link.species.url);
-  
-  const currentEvolution: ProcessedEvolution = {
-    id: pokemonId,
-    name: link.species.name,
-    sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`,
-    evolutionDetails: link.evolution_details[0]
-  };
-
-  let allEvolutions = [...previousEvolutions, currentEvolution];
-  let currentIndex = currentPokemonName === link.species.name ? allEvolutions.length - 1 : -1;
-
-  if (link.evolves_to.length > 0) {
-    for (const evolution of link.evolves_to) {
-      const result = await processEvolutionLink(evolution, allEvolutions, currentPokemonName);
-      if (result.currentIndex !== -1) {
-        return result;
-      }
-    }
-  }
-
-  return { allEvolutions, currentIndex };
-};
-
 const buildEvolutionTree = (
   link: EvolutionChainLink,
   currentPokemonName: string,
