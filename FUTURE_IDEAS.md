@@ -20,7 +20,6 @@
 ## 🎮 Interactive Tools:
 - **Move Tutor** - Which Pokemon can learn specific moves
 - **Breeding Calculator** - Egg groups and compatibility
-- **Shiny Gallery** - Alternative color variants
 
 ## 💡 Additional Enhancement Ideas:
 
