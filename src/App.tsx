@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NavigationBar from './components/NavigationBar';
 import Homepage from './components/Homepage';
 import PokemonDetails from './components/PokemonDetails';
+import MovesDatabase from './components/MovesDatabase';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -26,6 +27,7 @@ function App() {
           <Routes>
             <Route path="/" element={<PokemonDetails />} />
             <Route path="/about" element={<Homepage />} />
+            <Route path="/moves" element={<MovesDatabase />} />
           </Routes>
         </div>
       </Router>
