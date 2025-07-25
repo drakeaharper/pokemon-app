@@ -126,7 +126,8 @@ export const fetchEvolutionChain = async (pokemonId: number): Promise<EvolutionD
     return {
       previous,
       current,
-      next
+      next,
+      chainId: evolutionData.id
     };
   } catch (error) {
     console.error('Error fetching evolution chain:', error);

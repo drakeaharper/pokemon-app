@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
-import { usePokemon, useEvolutionChain } from '../hooks/usePokemonQueries';
+import { usePokemon, useEvolutionChain, useEvolutionChainById } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 
 const PokemonDetails: React.FC = () => {
@@ -9,10 +9,13 @@ const PokemonDetails: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string | null>('393');
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
+  const [currentEvolutionChainId, setCurrentEvolutionChainId] = useState<number | null>(null);
+  const [navigatingByChain, setNavigatingByChain] = useState<boolean>(false);
 
   const { data: pokemon, isLoading, error: pokemonError } = usePokemon(searchTerm);
   const { data: evolutionData } = useEvolutionChain(pokemon?.id || null);
   const { searchResults } = useFuzzySearch(pokemonNumber);
+  const { data: chainFirstPokemonId } = useEvolutionChainById(navigatingByChain ? currentEvolutionChainId : null);
 
   const searchPokemon = (term?: string) => {
     const searchValue = term || pokemonNumber;
@@ -50,6 +53,20 @@ const PokemonDetails: React.FC = () => {
     }
   };
 
+  const handlePreviousChain = () => {
+    if (currentEvolutionChainId && currentEvolutionChainId > 1) {
+      setCurrentEvolutionChainId(currentEvolutionChainId - 1);
+      setNavigatingByChain(true);
+    }
+  };
+
+  const handleNextChain = () => {
+    if (currentEvolutionChainId && currentEvolutionChainId < 500) { // Approximate max chain ID
+      setCurrentEvolutionChainId(currentEvolutionChainId + 1);
+      setNavigatingByChain(true);
+    }
+  };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +85,27 @@ const PokemonDetails: React.FC = () => {
       setPokemonNumber(pokemon.id.toString());
     }
   }, [pokemon]);
+
+  // Extract evolution chain ID from current evolution data
+  useEffect(() => {
+    if (evolutionData && !navigatingByChain) {
+      // Get the chain ID from the evolution data
+      // We'll need to track this from the API response
+      const chainId = (evolutionData as any).chainId || currentEvolutionChainId;
+      if (chainId) {
+        setCurrentEvolutionChainId(chainId);
+      }
+    }
+  }, [evolutionData, navigatingByChain, currentEvolutionChainId]);
+
+  // Navigate to first Pokemon in chain when chain ID changes
+  useEffect(() => {
+    if (chainFirstPokemonId && navigatingByChain) {
+      searchPokemon(chainFirstPokemonId.toString());
+      setNavigatingByChain(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainFirstPokemonId, navigatingByChain]);
 
   const error = pokemonError ? 'Pokemon not found. Please try a different number or name.' : '';
 
@@ -302,11 +340,96 @@ const PokemonDetails: React.FC = () => {
           </div>
           
           {evolutionData && (
-            <EvolutionDisplay 
-              evolutionData={evolutionData} 
-              onEvolutionClick={handleEvolutionClick}
-              isShiny={isShiny}
-            />
+            <>
+              <EvolutionDisplay 
+                evolutionData={evolutionData} 
+                onEvolutionClick={handleEvolutionClick}
+                isShiny={isShiny}
+              />
+              
+              {/* Evolution Chain Navigation */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '20px',
+                marginTop: '20px'
+              }}>
+                <button
+                  onClick={handlePreviousChain}
+                  disabled={!currentEvolutionChainId || currentEvolutionChainId <= 1}
+                  style={{
+                    backgroundColor: currentEvolutionChainId && currentEvolutionChainId > 1 ? '#9C27B0' : '#ccc',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '25px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    cursor: currentEvolutionChainId && currentEvolutionChainId > 1 ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    transition: 'all 0.3s ease',
+                    opacity: currentEvolutionChainId && currentEvolutionChainId > 1 ? 1 : 0.5
+                  }}
+                  onMouseEnter={(e) => {
+                    if (currentEvolutionChainId && currentEvolutionChainId > 1) {
+                      e.currentTarget.style.backgroundColor = '#7B1FA2';
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentEvolutionChainId && currentEvolutionChainId > 1) {
+                      e.currentTarget.style.backgroundColor = '#9C27B0';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }
+                  }}
+                >
+                  ← Previous Chain
+                </button>
+                
+                <span style={{
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  color: '#666'
+                }}>
+                  Evolution Chain #{currentEvolutionChainId || '?'}
+                </span>
+                
+                <button
+                  onClick={handleNextChain}
+                  disabled={!currentEvolutionChainId || currentEvolutionChainId >= 500}
+                  style={{
+                    backgroundColor: currentEvolutionChainId && currentEvolutionChainId < 500 ? '#9C27B0' : '#ccc',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '25px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    cursor: currentEvolutionChainId && currentEvolutionChainId < 500 ? 'pointer' : 'not-allowed',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    transition: 'all 0.3s ease',
+                    opacity: currentEvolutionChainId && currentEvolutionChainId < 500 ? 1 : 0.5
+                  }}
+                  onMouseEnter={(e) => {
+                    if (currentEvolutionChainId && currentEvolutionChainId < 500) {
+                      e.currentTarget.style.backgroundColor = '#7B1FA2';
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentEvolutionChainId && currentEvolutionChainId < 500) {
+                      e.currentTarget.style.backgroundColor = '#9C27B0';
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }
+                  }}
+                >
+                  Next Chain →
+                </button>
+              </div>
+            </>
           )}
         </>
       )}

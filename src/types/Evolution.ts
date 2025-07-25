@@ -56,4 +56,5 @@ export interface EvolutionDisplay {
   previous: ProcessedEvolution[];
   current: ProcessedEvolution;
   next: ProcessedEvolution[][];
+  chainId?: number;
 }

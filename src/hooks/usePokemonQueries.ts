@@ -61,3 +61,28 @@ export const usePokemonList = () => {
     gcTime: 1000 * 60 * 60 * 24 * 7, // Keep for 7 days
   });
 };
+
+export const useEvolutionChainById = (chainId: number | null) => {
+  return useQuery({
+    queryKey: ['evolutionChainById', chainId],
+    queryFn: async (): Promise<number | null> => {
+      if (!chainId) return null;
+      
+      try {
+        const response = await axios.get(
+          `https://pokeapi.co/api/v2/evolution-chain/${chainId}`
+        );
+        
+        // Return the ID of the first Pokemon in the chain
+        const firstPokemonUrl = response.data.chain.species.url;
+        const matches = firstPokemonUrl.match(/\/(\d+)\/$/);
+        return matches ? parseInt(matches[1]) : null;
+      } catch (error) {
+        // Chain doesn't exist
+        return null;
+      }
+    },
+    enabled: !!chainId,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
+  });
+};
