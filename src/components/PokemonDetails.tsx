@@ -13,9 +13,10 @@ const PokemonDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const fetchPokemon = async () => {
-    if (!pokemonNumber || isNaN(Number(pokemonNumber))) {
-      setError('Please enter a valid Pokemon number');
+  const fetchPokemon = async (searchTerm?: string) => {
+    const term = searchTerm || pokemonNumber;
+    if (!term) {
+      setError('Please enter a Pokemon number or name');
       return;
     }
 
@@ -25,15 +26,21 @@ const PokemonDetails: React.FC = () => {
     setEvolutionData(null);
 
     try {
+      // Use the term as-is (PokeAPI handles both numbers and names)
       const response = await axios.get<Pokemon>(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonNumber}`
+        `https://pokeapi.co/api/v2/pokemon/${term.toLowerCase().trim()}`
       );
       setPokemon(response.data);
+      setPokemonNumber(response.data.id.toString());
     } catch (err) {
-      setError('Pokemon not found. Please try a different number.');
+      setError('Pokemon not found. Please try a different number or name.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEvolutionClick = (pokemonId: number) => {
+    fetchPokemon(pokemonId.toString());
   };
 
   // Fetch evolution chain when pokemon changes
@@ -73,21 +80,19 @@ const PokemonDetails: React.FC = () => {
         marginBottom: '30px'
       }}>
         <input
-          type="number"
-          placeholder="Enter Pokemon number (e.g., 25 for Pikachu)"
+          type="text"
+          placeholder="Enter Pokemon number or name (e.g., 25 or pikachu)"
           value={pokemonNumber}
           onChange={(e) => setPokemonNumber(e.target.value)}
           onKeyPress={handleKeyPress}
           style={{
             padding: '10px',
             fontSize: '16px',
-            width: '300px',
+            width: '350px',
             marginRight: '10px',
             borderRadius: '5px',
             border: '2px solid #ddd'
           }}
-          min="1"
-          max="1010"
         />
         <button
           type="submit"
@@ -127,10 +132,13 @@ const PokemonDetails: React.FC = () => {
 
       {pokemon && !loading && (
         <>
-          {evolutionData && (
-            <EvolutionDisplay evolutionData={evolutionData} />
-          )}
           <PokemonCard pokemon={pokemon} />
+          {evolutionData && (
+            <EvolutionDisplay 
+              evolutionData={evolutionData} 
+              onEvolutionClick={handleEvolutionClick}
+            />
+          )}
         </>
       )}
 
@@ -140,8 +148,8 @@ const PokemonDetails: React.FC = () => {
         fontSize: '14px',
         color: '#666'
       }}>
-        <p>Try Pokemon numbers 1-1010</p>
-        <p>Popular Pokemon: 25 (Pikachu), 1 (Bulbasaur), 6 (Charizard), 150 (Mewtwo)</p>
+        <p>Try Pokemon numbers 1-1010 or names</p>
+        <p>Popular Pokemon: 25/pikachu, 1/bulbasaur, 6/charizard, 150/mewtwo</p>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { EvolutionDisplay as EvolutionDisplayType, ProcessedEvolution } from '..
 
 interface EvolutionDisplayProps {
   evolutionData: EvolutionDisplayType;
+  onEvolutionClick?: (pokemonId: number) => void;
 }
 
 const EvolutionCard: React.FC<{ 
@@ -100,19 +101,12 @@ const Arrow: React.FC<{ direction?: 'right' | 'down' }> = ({ direction = 'right'
   );
 };
 
-const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData }) => {
+const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEvolutionClick }) => {
   const { previous, current, next } = evolutionData;
 
   const handleEvolutionClick = (pokemonId: number) => {
-    // Update the input field and trigger search
-    const input = document.querySelector('input[type="number"]') as HTMLInputElement;
-    if (input) {
-      input.value = pokemonId.toString();
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-      const form = input.closest('form');
-      if (form) {
-        form.dispatchEvent(new Event('submit', { bubbles: true }));
-      }
+    if (onEvolutionClick) {
+      onEvolutionClick(pokemonId);
     }
   };
 
