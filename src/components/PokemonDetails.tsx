@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
+import MultiSelect from './MultiSelect';
 import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse, usePokemonTypes, usePokemonTypesForGeneration, usePokemonByMultipleTypes } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
-import { GENERATIONS, getPokemonIdsForGeneration, getPokemonCountForGeneration, getGenerationById } from '../utils/generationUtils';
+import { GENERATIONS, getPokemonIdsForGeneration, getPokemonCountForGeneration } from '../utils/generationUtils';
 
 const PokemonDetails: React.FC = () => {
   const [pokemonNumber, setPokemonNumber] = useState<string>('25');
@@ -56,21 +57,16 @@ const PokemonDetails: React.FC = () => {
     clearGenerationFilter(); // Clear generation filter when searching by name
   };
 
-  const handleTypeFilter = (typeName: string) => {
-    if (!selectedTypes.includes(typeName)) {
-      const newSelectedTypes = [...selectedTypes, typeName];
-      setSelectedTypes(newSelectedTypes);
-      setCurrentTypeIndex(0);
+  const handleTypeChange = (typeNames: (string | number)[]) => {
+    const newSelectedTypes = typeNames.map(name => String(name));
+    setSelectedTypes(newSelectedTypes);
+    setCurrentTypeIndex(0);
+    
+    if (newSelectedTypes.length > 0) {
       // Clear name search when filtering by type
       setPokemonNumber('');
       setSearchTerm(null);
     }
-  };
-
-  const removeTypeFilter = (typeName: string) => {
-    const newSelectedTypes = selectedTypes.filter(type => type !== typeName);
-    setSelectedTypes(newSelectedTypes);
-    setCurrentTypeIndex(0);
   };
 
   const clearTypeFilter = () => {
@@ -79,12 +75,12 @@ const PokemonDetails: React.FC = () => {
     setCurrentTypeIndex(0);
   };
 
-  const handleGenerationFilter = (generationId: number) => {
-    if (!selectedGenerations.includes(generationId)) {
-      const newSelectedGenerations = [...selectedGenerations, generationId];
-      setSelectedGenerations(newSelectedGenerations);
-      setCurrentGenerationIndex(0);
-      
+  const handleGenerationChange = (generationIds: (string | number)[]) => {
+    const newSelectedGenerations = generationIds.map(id => Number(id));
+    setSelectedGenerations(newSelectedGenerations);
+    setCurrentGenerationIndex(0);
+    
+    if (newSelectedGenerations.length > 0) {
       // Calculate combined Pokemon IDs from all selected generations
       const allPokemonIds: number[] = [];
       newSelectedGenerations.forEach(genId => {
@@ -101,21 +97,6 @@ const PokemonDetails: React.FC = () => {
       if (allPokemonIds.length > 0) {
         setSearchTerm(Math.min(...allPokemonIds).toString());
       }
-    }
-  };
-
-  const removeGenerationFilter = (generationId: number) => {
-    const newSelectedGenerations = selectedGenerations.filter(gen => gen !== generationId);
-    setSelectedGenerations(newSelectedGenerations);
-    setCurrentGenerationIndex(0);
-    
-    if (newSelectedGenerations.length > 0) {
-      // Recalculate Pokemon IDs for remaining generations
-      const allPokemonIds: number[] = [];
-      newSelectedGenerations.forEach(genId => {
-        allPokemonIds.push(...getPokemonIdsForGeneration(genId));
-      });
-      setGenerationFilteredPokemon(allPokemonIds.sort((a, b) => a - b));
     } else {
       setGenerationFilteredPokemon([]);
     }
@@ -385,121 +366,20 @@ const PokemonDetails: React.FC = () => {
         marginBottom: '20px'
       }}>
         {/* Generation Filter */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '10px',
-          marginBottom: '15px'
-        }}>
-          <label style={{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#333'
-          }}>
-            Filter by Generation:
-          </label>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
-            {/* Selected Generations Tags */}
-            {selectedGenerations.length > 0 && (
-              <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '5px',
-                justifyContent: 'center',
-                marginBottom: '5px'
-              }}>
-                {selectedGenerations.map((genId) => {
-                  const generation = getGenerationById(genId);
-                  return (
-                    <div
-                      key={genId}
-                      style={{
-                        backgroundColor: '#FF6B35',
-                        color: 'white',
-                        padding: '4px 8px',
-                        borderRadius: '15px',
-                        fontSize: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '5px'
-                      }}
-                    >
-                      {generation?.region}
-                      <button
-                        onClick={() => removeGenerationFilter(genId)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: 'white',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          padding: '0',
-                          marginLeft: '2px'
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}>
-              <select
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) {
-                    handleGenerationFilter(parseInt(e.target.value));
-                  }
-                }}
-                style={{
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  borderRadius: '5px',
-                  border: '2px solid #ddd',
-                  backgroundColor: 'white',
-                  cursor: 'pointer',
-                  minWidth: '200px'
-                }}
-              >
-                <option value="">+ Add Generation</option>
-                {GENERATIONS.filter(gen => !selectedGenerations.includes(gen.id)).map((generation) => (
-                  <option key={generation.id} value={generation.id}>
-                    {generation.name} - {generation.region} ({getPokemonCountForGeneration(generation.id)} Pokemon)
-                  </option>
-                ))}
-              </select>
-              {selectedGenerations.length > 0 && (
-                <button
-                  onClick={clearGenerationFilter}
-                  style={{
-                    padding: '8px 12px',
-                    fontSize: '14px',
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
-                >
-                  Clear All
-                </button>
-              )}
-            </div>
-          </div>
+        <div className="mb-6">
+          <MultiSelect
+            label="Filter by Generation"
+            options={GENERATIONS.map(gen => ({
+              id: gen.id,
+              name: gen.region,
+              description: `${gen.name} (${getPokemonCountForGeneration(gen.id)} Pokemon)`
+            }))}
+            selectedValues={selectedGenerations}
+            onChange={handleGenerationChange}
+            placeholder="Select generations..."
+            color="orange"
+            className="max-w-sm mx-auto"
+          />
         </div>
 
         {/* Generation Navigation */}
@@ -578,120 +458,20 @@ const PokemonDetails: React.FC = () => {
         )}
 
         {/* Type Filter */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <label style={{
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#333'
-          }}>
-            Filter by Type:
-          </label>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '10px'
-          }}>
-            {/* Selected Types Tags */}
-            {selectedTypes.length > 0 && (
-              <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '5px',
-                justifyContent: 'center',
-                marginBottom: '5px'
-              }}>
-                {selectedTypes.map((typeName) => (
-                  <div
-                    key={typeName}
-                    style={{
-                      backgroundColor: '#2196F3',
-                      color: 'white',
-                      padding: '4px 8px',
-                      borderRadius: '15px',
-                      fontSize: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px'
-                    }}
-                  >
-                    {typeName.charAt(0).toUpperCase() + typeName.slice(1)}
-                    <button
-                      onClick={() => removeTypeFilter(typeName)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: 'white',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        padding: '0',
-                        marginLeft: '2px'
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}>
-              <select
-                value=""
-                onChange={(e) => {
-                  if (e.target.value) {
-                    handleTypeFilter(e.target.value);
-                  }
-                }}
-                style={{
-                  padding: '8px 12px',
-                  fontSize: '14px',
-                  borderRadius: '5px',
-                  border: '2px solid #ddd',
-                  backgroundColor: 'white',
-                  cursor: 'pointer',
-                  minWidth: '150px'
-                }}
-              >
-                <option value="">+ Add Type</option>
-                {/* Show generation-specific types if generation is selected, otherwise show all types */}
-                {(selectedGenerations.length > 0 ? pokemonTypesForGeneration : pokemonTypes)
-                  ?.filter((type: { name: string; url: string }) => !selectedTypes.includes(type.name))
-                  .map((type: { name: string; url: string }) => (
-                    <option key={type.name} value={type.name}>
-                      {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
-                    </option>
-                  ))}
-              </select>
-              {selectedTypes.length > 0 && (
-                <button
-                  onClick={clearTypeFilter}
-                  style={{
-                    padding: '8px 12px',
-                    fontSize: '14px',
-                    backgroundColor: '#f44336',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
-                >
-                  Clear All
-                </button>
-              )}
-            </div>
-          </div>
+        <div className="mb-6">
+          <MultiSelect
+            label="Filter by Type"
+            options={(selectedGenerations.length > 0 ? pokemonTypesForGeneration : pokemonTypes)
+              ?.map((type: { name: string; url: string }) => ({
+                id: type.name,
+                name: type.name.charAt(0).toUpperCase() + type.name.slice(1)
+              })) || []}
+            selectedValues={selectedTypes}
+            onChange={handleTypeChange}
+            placeholder="Select types..."
+            color="blue"
+            className="max-w-sm mx-auto"
+          />
         </div>
         
         {/* Type Filter Navigation */}
