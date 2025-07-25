@@ -331,7 +331,8 @@ const PokemonDetails: React.FC = () => {
       }}>
         {/* Generation Filter */}
         <div style={{
-          display: 'inline-flex',
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           gap: '10px',
           marginBottom: '15px'
@@ -343,50 +344,56 @@ const PokemonDetails: React.FC = () => {
           }}>
             Filter by Generation:
           </label>
-          <select
-            value={selectedGeneration || ''}
-            onChange={(e) => {
-              if (e.target.value) {
-                handleGenerationFilter(parseInt(e.target.value));
-              } else {
-                clearGenerationFilter();
-              }
-            }}
-            style={{
-              padding: '8px 12px',
-              fontSize: '14px',
-              borderRadius: '5px',
-              border: '2px solid #ddd',
-              backgroundColor: 'white',
-              cursor: 'pointer',
-              minWidth: '200px'
-            }}
-          >
-            <option value="">All Generations</option>
-            {GENERATIONS.map((generation) => (
-              <option key={generation.id} value={generation.id}>
-                {generation.name} - {generation.region} ({getPokemonCountForGeneration(generation.id)} Pokemon)
-              </option>
-            ))}
-          </select>
-          {selectedGeneration && (
-            <button
-              onClick={clearGenerationFilter}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <select
+              value={selectedGeneration || ''}
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleGenerationFilter(parseInt(e.target.value));
+                } else {
+                  clearGenerationFilter();
+                }
+              }}
               style={{
                 padding: '8px 12px',
                 fontSize: '14px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
                 borderRadius: '5px',
-                cursor: 'pointer'
+                border: '2px solid #ddd',
+                backgroundColor: 'white',
+                cursor: 'pointer',
+                minWidth: '200px'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
             >
-              Clear Filter
-            </button>
-          )}
+              <option value="">All Generations</option>
+              {GENERATIONS.map((generation) => (
+                <option key={generation.id} value={generation.id}>
+                  {generation.name} - {generation.region} ({getPokemonCountForGeneration(generation.id)} Pokemon)
+                </option>
+              ))}
+            </select>
+            {selectedGeneration && (
+              <button
+                onClick={clearGenerationFilter}
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
+              >
+                Clear Filter
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Generation Navigation */}
@@ -466,7 +473,8 @@ const PokemonDetails: React.FC = () => {
 
         {/* Type Filter */}
         <div style={{
-          display: 'inline-flex',
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           gap: '10px'
         }}>
@@ -477,50 +485,56 @@ const PokemonDetails: React.FC = () => {
           }}>
             Filter by Type:
           </label>
-          <select
-            value={selectedType}
-            onChange={(e) => {
-              if (e.target.value) {
-                handleTypeFilter(e.target.value);
-              } else {
-                clearTypeFilter();
-              }
-            }}
-            style={{
-              padding: '8px 12px',
-              fontSize: '14px',
-              borderRadius: '5px',
-              border: '2px solid #ddd',
-              backgroundColor: 'white',
-              cursor: 'pointer',
-              minWidth: '150px'
-            }}
-          >
-            <option value="">All Types</option>
-            {pokemonTypes?.map((type: { name: string; url: string }) => (
-              <option key={type.name} value={type.name}>
-                {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
-              </option>
-            ))}
-          </select>
-          {selectedType && (
-            <button
-              onClick={clearTypeFilter}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <select
+              value={selectedType}
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleTypeFilter(e.target.value);
+                } else {
+                  clearTypeFilter();
+                }
+              }}
               style={{
                 padding: '8px 12px',
                 fontSize: '14px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
                 borderRadius: '5px',
-                cursor: 'pointer'
+                border: '2px solid #ddd',
+                backgroundColor: 'white',
+                cursor: 'pointer',
+                minWidth: '150px'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
             >
-              Clear Filter
-            </button>
-          )}
+              <option value="">All Types</option>
+              {pokemonTypes?.map((type: { name: string; url: string }) => (
+                <option key={type.name} value={type.name}>
+                  {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
+                </option>
+              ))}
+            </select>
+            {selectedType && (
+              <button
+                onClick={clearTypeFilter}
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  backgroundColor: '#f44336',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#d32f2f'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f44336'}
+              >
+                Clear Filter
+              </button>
+            )}
+          </div>
         </div>
         
         {/* Type Filter Navigation */}
