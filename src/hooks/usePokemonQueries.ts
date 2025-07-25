@@ -65,22 +65,82 @@ export const usePokemonList = () => {
 export const useEvolutionChainById = (chainId: number | null) => {
   return useQuery({
     queryKey: ['evolutionChainById', chainId],
-    queryFn: async (): Promise<number | null> => {
+    queryFn: async (): Promise<{ pokemonId: number; actualChainId: number } | null> => {
       if (!chainId) return null;
       
-      try {
-        const response = await axios.get(
-          `https://pokeapi.co/api/v2/evolution-chain/${chainId}`
-        );
-        
-        // Return the ID of the first Pokemon in the chain
-        const firstPokemonUrl = response.data.chain.species.url;
-        const matches = firstPokemonUrl.match(/\/(\d+)\/$/);
-        return matches ? parseInt(matches[1]) : null;
-      } catch (error) {
-        // Chain doesn't exist
-        return null;
+      let currentChainId = chainId;
+      let attempts = 0;
+      const maxAttempts = 10; // Prevent infinite loops
+      
+      while (attempts < maxAttempts) {
+        try {
+          const response = await axios.get(
+            `https://pokeapi.co/api/v2/evolution-chain/${currentChainId}`
+          );
+          
+          // Return the ID of the first Pokemon in the chain and the actual chain ID found
+          const firstPokemonUrl = response.data.chain.species.url;
+          const matches = firstPokemonUrl.match(/\/(\d+)\/$/);
+          const pokemonId = matches ? parseInt(matches[1]) : null;
+          
+          if (pokemonId) {
+            return { pokemonId, actualChainId: currentChainId };
+          }
+          
+          // If no Pokemon ID found, try next chain
+          currentChainId++;
+          attempts++;
+        } catch (error) {
+          // Chain doesn't exist, try the next one
+          currentChainId++;
+          attempts++;
+        }
       }
+      
+      return null; // No valid chain found after max attempts
+    },
+    enabled: !!chainId,
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours
+  });
+};
+
+// Similar logic for going backwards
+export const useEvolutionChainByIdReverse = (chainId: number | null) => {
+  return useQuery({
+    queryKey: ['evolutionChainByIdReverse', chainId],
+    queryFn: async (): Promise<{ pokemonId: number; actualChainId: number } | null> => {
+      if (!chainId) return null;
+      
+      let currentChainId = chainId;
+      let attempts = 0;
+      const maxAttempts = 10; // Prevent infinite loops
+      
+      while (attempts < maxAttempts && currentChainId > 0) {
+        try {
+          const response = await axios.get(
+            `https://pokeapi.co/api/v2/evolution-chain/${currentChainId}`
+          );
+          
+          // Return the ID of the first Pokemon in the chain and the actual chain ID found
+          const firstPokemonUrl = response.data.chain.species.url;
+          const matches = firstPokemonUrl.match(/\/(\d+)\/$/);
+          const pokemonId = matches ? parseInt(matches[1]) : null;
+          
+          if (pokemonId) {
+            return { pokemonId, actualChainId: currentChainId };
+          }
+          
+          // If no Pokemon ID found, try previous chain
+          currentChainId--;
+          attempts++;
+        } catch (error) {
+          // Chain doesn't exist, try the previous one
+          currentChainId--;
+          attempts++;
+        }
+      }
+      
+      return null; // No valid chain found after max attempts
     },
     enabled: !!chainId,
     staleTime: 1000 * 60 * 60 * 24, // 24 hours

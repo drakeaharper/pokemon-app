@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
-import { usePokemon, useEvolutionChain, useEvolutionChainById } from '../hooks/usePokemonQueries';
+import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 
 const PokemonDetails: React.FC = () => {
@@ -10,12 +10,13 @@ const PokemonDetails: React.FC = () => {
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
   const [currentEvolutionChainId, setCurrentEvolutionChainId] = useState<number | null>(null);
-  const [navigatingByChain, setNavigatingByChain] = useState<boolean>(false);
+  const [navigatingByChain, setNavigatingByChain] = useState<'forward' | 'backward' | null>(null);
 
   const { data: pokemon, isLoading, error: pokemonError } = usePokemon(searchTerm);
   const { data: evolutionData } = useEvolutionChain(pokemon?.id || null);
   const { searchResults } = useFuzzySearch(pokemonNumber);
-  const { data: chainFirstPokemonId } = useEvolutionChainById(navigatingByChain ? currentEvolutionChainId : null);
+  const { data: chainDataForward } = useEvolutionChainById(navigatingByChain === 'forward' ? currentEvolutionChainId : null);
+  const { data: chainDataBackward } = useEvolutionChainByIdReverse(navigatingByChain === 'backward' ? currentEvolutionChainId : null);
 
   const searchPokemon = (term?: string) => {
     const searchValue = term || pokemonNumber;
@@ -56,14 +57,14 @@ const PokemonDetails: React.FC = () => {
   const handlePreviousChain = () => {
     if (currentEvolutionChainId && currentEvolutionChainId > 1) {
       setCurrentEvolutionChainId(currentEvolutionChainId - 1);
-      setNavigatingByChain(true);
+      setNavigatingByChain('backward');
     }
   };
 
   const handleNextChain = () => {
     if (currentEvolutionChainId && currentEvolutionChainId < 549) { // Max evolution chain ID
       setCurrentEvolutionChainId(currentEvolutionChainId + 1);
-      setNavigatingByChain(true);
+      setNavigatingByChain('forward');
     }
   };
 
@@ -100,12 +101,14 @@ const PokemonDetails: React.FC = () => {
 
   // Navigate to first Pokemon in chain when chain ID changes
   useEffect(() => {
-    if (chainFirstPokemonId && navigatingByChain) {
-      searchPokemon(chainFirstPokemonId.toString());
-      setNavigatingByChain(false);
+    const chainData = navigatingByChain === 'forward' ? chainDataForward : chainDataBackward;
+    if (chainData && navigatingByChain) {
+      searchPokemon(chainData.pokemonId.toString());
+      setCurrentEvolutionChainId(chainData.actualChainId);
+      setNavigatingByChain(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainFirstPokemonId, navigatingByChain]);
+  }, [chainDataForward, chainDataBackward, navigatingByChain]);
 
   const error = pokemonError ? 'Pokemon not found. Please try a different number or name.' : '';
 
