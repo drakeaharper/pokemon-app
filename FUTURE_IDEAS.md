@@ -2,10 +2,9 @@
 
 ## 🎯 High-Impact Pages We Could Add:
 
-1. **Items Catalog** (`/items`) - Browse Pokeballs, berries, evolution stones, and battle items
-2. **Location Explorer** (`/locations`) - Regions, routes, and areas from the games
-3. **Berry Guide** (`/berries`) - Effects, flavors, and growth information
-4. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
+1. **Location Explorer** (`/locations`) - Regions, routes, and areas from the games
+2. **Berry Guide** (`/berries`) - Effects, flavors, and growth information
+3. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
 
 ## 📊 Advanced Features:
 - **Team Builder** - Create and save Pokemon teams with move/ability analysis

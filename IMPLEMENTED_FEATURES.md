@@ -57,7 +57,27 @@ Comprehensive database of all Pokemon abilities with detailed descriptions.
 - **Cross-Reference**: See which Pokemon can have each ability
 - **Responsive Design**: Consistent styling with other app components
 
-### 5. **About Page** (`/about`) - ✅ IMPLEMENTED
+### 5. **Items Catalog** (`/items`) - ✅ IMPLEMENTED *(Recently Added)*
+Comprehensive database of all Pokemon items with detailed information.
+- **Item Search**: Find items by name or ID (1-2000+)
+- **Fuzzy Search**: Autocomplete suggestions for item names
+- **Item Cards**: Detailed cards displaying:
+  - Item name, ID, category, and sprite
+  - Cost information and fling power
+  - Effect descriptions and flavor text
+  - Item attributes (countable, holdable, etc.)
+  - Category-based color coding for visual organization
+- **Item Navigation**: Browse items sequentially with previous/next buttons
+- **Complete Database**: All Pokemon items from PokeAPI including:
+  - Pokeballs (Master Ball, Ultra Ball, etc.)
+  - Medicine (Potions, Full Heal, etc.) 
+  - Evolution Items (Fire Stone, Thunder Stone, etc.)
+  - Battle Items (X Attack, X Defense, etc.)
+  - Berries, Collectibles, and more
+- **Responsive Design**: Consistent Tailwind CSS styling
+- **Category Organization**: Items grouped by type for easy browsing
+
+### 6. **About Page** (`/about`) - ✅ IMPLEMENTED
 Information about the application and its features.
 
 ## 🛠️ Technical Implementation
@@ -103,9 +123,18 @@ Information about the application and its features.
 - **Pokemon Cross-Reference**: Which Pokemon can have each ability
 - **Hidden vs Normal**: Clear distinction between ability types
 
+### Item Data
+- **Complete Item List**: All 2000+ Pokemon items
+- **Item Categories**: 20+ different categories including Pokeballs, Medicine, Evolution Items
+- **Detailed Information**: Names, descriptions, effects, costs, and attributes
+- **Visual Elements**: Item sprites and category-based color coding
+- **Game Context**: Flavor text and effect descriptions from various Pokemon games
+
 ## 🚀 Recent Additions
 
 ### December 2024
+- **✅ Items Catalog**: Comprehensive Pokemon items database with 2000+ items, categories, and detailed information
+- **✅ Tailwind CSS Integration**: Converted major components from inline styles to Tailwind utilities for better maintainability
 - **✅ Ability Glossary**: Complete Pokemon abilities database with detailed descriptions and Pokemon cross-reference
 - **✅ Type Effectiveness Chart**: Interactive 18x18 type matchup grid with hover effects and click highlighting
 - **✅ Move Database**: Complete Pokemon moves database with search functionality
