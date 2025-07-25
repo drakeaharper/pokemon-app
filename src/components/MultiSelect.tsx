@@ -58,13 +58,6 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
   const colors = colorClasses[color];
 
-  const handleToggleOption = (optionId: string | number) => {
-    if (selectedValues.includes(optionId)) {
-      onChange(selectedValues.filter(id => id !== optionId));
-    } else {
-      onChange([...selectedValues, optionId]);
-    }
-  };
 
   const handleRemoveOption = (optionId: string | number) => {
     onChange(selectedValues.filter(id => id !== optionId));
@@ -138,7 +131,6 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                   <Listbox.Option
                     key={option.id}
                     value={option.id}
-                    onClick={() => handleToggleOption(option.id)}
                     className={({ active }) => `
                       relative cursor-default select-none py-2 pl-4 pr-4 
                       ${active ? colors.option : 'text-gray-900'}
