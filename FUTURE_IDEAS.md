@@ -2,13 +2,11 @@
 
 ## 🎯 High-Impact Pages We Could Add:
 
-1. **Move Database** (`/moves`) - Search and browse all Pokemon moves with damage, accuracy, PP, and descriptions
-2. **Type Effectiveness Chart** (`/types`) - Interactive type matchup grid showing weaknesses/resistances
-3. **Ability Glossary** (`/abilities`) - Complete list of all abilities with detailed descriptions
-4. **Items Catalog** (`/items`) - Browse Pokeballs, berries, evolution stones, and battle items
-5. **Location Explorer** (`/locations`) - Regions, routes, and areas from the games
-6. **Berry Guide** (`/berries`) - Effects, flavors, and growth information
-7. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
+1. **Ability Glossary** (`/abilities`) - Complete list of all abilities with detailed descriptions
+2. **Items Catalog** (`/items`) - Browse Pokeballs, berries, evolution stones, and battle items
+3. **Location Explorer** (`/locations`) - Regions, routes, and areas from the games
+4. **Berry Guide** (`/berries`) - Effects, flavors, and growth information
+5. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
 
 ## 📊 Advanced Features:
 - **Team Builder** - Create and save Pokemon teams with move/ability analysis

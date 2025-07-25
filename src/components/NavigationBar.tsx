@@ -88,6 +88,31 @@ const NavigationBar: React.FC = () => {
           </Link>
 
           <Link
+            to="/types"
+            style={{
+              color: location.pathname === '/types' ? '#fff' : 'rgba(255,255,255,0.8)',
+              textDecoration: 'none',
+              padding: '8px 16px',
+              borderRadius: '20px',
+              backgroundColor: location.pathname === '/types' ? 'rgba(255,255,255,0.2)' : 'transparent',
+              transition: 'all 0.3s ease',
+              fontWeight: location.pathname === '/types' ? 'bold' : 'normal'
+            }}
+            onMouseEnter={(e) => {
+              if (location.pathname !== '/types') {
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (location.pathname !== '/types') {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }
+            }}
+          >
+            Type Chart
+          </Link>
+
+          <Link
             to="/about"
             style={{
               color: location.pathname === '/about' ? '#fff' : 'rgba(255,255,255,0.8)',

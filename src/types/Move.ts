@@ -41,6 +41,7 @@ export interface Move {
 export interface MoveListItem {
   name: string;
   url: string;
+  id: number;
 }
 
 export interface MovesListResponse {
