@@ -61,7 +61,7 @@ const PokemonDetails: React.FC = () => {
   };
 
   const handleNextChain = () => {
-    if (currentEvolutionChainId && currentEvolutionChainId < 500) { // Approximate max chain ID
+    if (currentEvolutionChainId && currentEvolutionChainId < 549) { // Max evolution chain ID
       setCurrentEvolutionChainId(currentEvolutionChainId + 1);
       setNavigatingByChain(true);
     }
@@ -398,29 +398,29 @@ const PokemonDetails: React.FC = () => {
                 
                 <button
                   onClick={handleNextChain}
-                  disabled={!currentEvolutionChainId || currentEvolutionChainId >= 500}
+                  disabled={!currentEvolutionChainId || currentEvolutionChainId >= 549}
                   style={{
-                    backgroundColor: currentEvolutionChainId && currentEvolutionChainId < 500 ? '#9C27B0' : '#ccc',
+                    backgroundColor: currentEvolutionChainId && currentEvolutionChainId < 549 ? '#9C27B0' : '#ccc',
                     color: 'white',
                     border: 'none',
                     borderRadius: '25px',
                     padding: '10px 20px',
                     fontSize: '14px',
-                    cursor: currentEvolutionChainId && currentEvolutionChainId < 500 ? 'pointer' : 'not-allowed',
+                    cursor: currentEvolutionChainId && currentEvolutionChainId < 549 ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '5px',
                     transition: 'all 0.3s ease',
-                    opacity: currentEvolutionChainId && currentEvolutionChainId < 500 ? 1 : 0.5
+                    opacity: currentEvolutionChainId && currentEvolutionChainId < 549 ? 1 : 0.5
                   }}
                   onMouseEnter={(e) => {
-                    if (currentEvolutionChainId && currentEvolutionChainId < 500) {
+                    if (currentEvolutionChainId && currentEvolutionChainId < 549) {
                       e.currentTarget.style.backgroundColor = '#7B1FA2';
                       e.currentTarget.style.transform = 'scale(1.05)';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (currentEvolutionChainId && currentEvolutionChainId < 500) {
+                    if (currentEvolutionChainId && currentEvolutionChainId < 549) {
                       e.currentTarget.style.backgroundColor = '#9C27B0';
                       e.currentTarget.style.transform = 'scale(1)';
                     }
