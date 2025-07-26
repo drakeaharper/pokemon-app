@@ -66,7 +66,7 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
         <div className="space-y-3">
           {/* Dominant Flavor */}
           <div className="bg-gray-50 rounded-lg p-3">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Primary Flavor</h3>
+            <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">Primary Flavor</h3>
             <div className="flex items-center gap-2">
               <div 
                 className="w-4 h-4 rounded-full"
@@ -80,7 +80,7 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
           {/* All Flavors */}
           {berry.flavors.length > 1 && (
             <div className="bg-gray-50 rounded-lg p-3">
-              <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">All Flavors</h3>
+              <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">All Flavors</h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {berry.flavors.map((flavor) => (
                   <div key={flavor.flavor.name} className="flex justify-between">
@@ -94,7 +94,7 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
 
           {/* Growth Information */}
           <div className="bg-gray-50 rounded-lg p-3">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Growth Info</h3>
+            <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">Growth Info</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex justify-between">
                 <span>Growth Time:</span>
@@ -117,7 +117,7 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
 
           {/* Battle Properties */}
           <div className="bg-gray-50 rounded-lg p-3">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Battle Properties</h3>
+            <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">Battle Properties</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex justify-between">
                 <span>Natural Gift Power:</span>
