@@ -48,7 +48,7 @@ const MoveCard: React.FC<MoveCardProps> = ({ move }) => {
       border: '2px solid #333',
       borderRadius: '15px',
       padding: '20px',
-      maxWidth: '400px',
+      width: '400px',
       margin: '10px',
       backgroundColor,
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
