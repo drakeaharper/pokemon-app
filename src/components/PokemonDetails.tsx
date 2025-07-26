@@ -454,48 +454,39 @@ const PokemonDetails: React.FC = () => {
 
       {(pokemon || (isNavigating && previousPokemon)) && (
         <>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '20px',
-            margin: '20px 0'
-          }}>
+          {/* Navigation Buttons */}
+          <div className="flex justify-center items-center gap-6 mb-8">
             <button
               onClick={handlePreviousPokemon}
               disabled={isNavigating || (pokemon || previousPokemon)?.id <= 1}
-              style={{
-                backgroundColor: (isNavigating || (pokemon || previousPokemon)?.id <= 1) ? '#ccc' : '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '50px',
-                height: '50px',
-                fontSize: '24px',
-                cursor: (isNavigating || (pokemon || previousPokemon)?.id <= 1) ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                opacity: isNavigating ? 0.6 : 1
-              }}
-              onMouseEnter={(e) => {
-                if (!isNavigating && (pokemon || previousPokemon)?.id > 1) {
-                  e.currentTarget.style.backgroundColor = '#45a049';
-                  e.currentTarget.style.transform = 'scale(1.1)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isNavigating && (pokemon || previousPokemon)?.id > 1) {
-                  e.currentTarget.style.backgroundColor = '#4CAF50';
-                  e.currentTarget.style.transform = 'scale(1)';
-                }
-              }}
+              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                (isNavigating || (pokemon || previousPokemon)?.id <= 1)
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                  : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-md'
+              } ${isNavigating ? 'opacity-60' : 'opacity-100'}`}
             >
-              ←
+              ← Previous Pokemon
             </button>
             
+            <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              Pokemon {(pokemon || previousPokemon)?.id} of 1025
+            </span>
+            
+            <button
+              onClick={handleNextPokemon}
+              disabled={isNavigating || (pokemon || previousPokemon)?.id >= 1025}
+              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                (isNavigating || (pokemon || previousPokemon)?.id >= 1025)
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                  : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-md'
+              } ${isNavigating ? 'opacity-60' : 'opacity-100'}`}
+            >
+              Next Pokemon →
+            </button>
+          </div>
+
+          {/* Pokemon Card */}
+          <div className="flex justify-center mb-8">
             <div style={{ position: 'relative' }}>
               <PokemonCard pokemon={pokemon || previousPokemon} isShiny={isShiny} />
               {isNavigating && (
@@ -514,41 +505,6 @@ const PokemonDetails: React.FC = () => {
                 </div>
               )}
             </div>
-            
-            <button
-              onClick={handleNextPokemon}
-              disabled={isNavigating || (pokemon || previousPokemon)?.id >= 1025}
-              style={{
-                backgroundColor: (isNavigating || (pokemon || previousPokemon)?.id >= 1025) ? '#ccc' : '#4CAF50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50%',
-                width: '50px',
-                height: '50px',
-                fontSize: '24px',
-                cursor: (isNavigating || (pokemon || previousPokemon)?.id >= 1025) ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                opacity: isNavigating ? 0.6 : 1
-              }}
-              onMouseEnter={(e) => {
-                if (!isNavigating && (pokemon || previousPokemon)?.id < 1025) {
-                  e.currentTarget.style.backgroundColor = '#45a049';
-                  e.currentTarget.style.transform = 'scale(1.1)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isNavigating && (pokemon || previousPokemon)?.id < 1025) {
-                  e.currentTarget.style.backgroundColor = '#4CAF50';
-                  e.currentTarget.style.transform = 'scale(1)';
-                }
-              }}
-            >
-              →
-            </button>
           </div>
           
           {evolutionData && !isNavigating && (

@@ -126,35 +126,45 @@ const ItemsCatalog: React.FC = () => {
       )}
 
       {item && !isLoading && (
-        <div className="flex items-center justify-center gap-5 my-5">
-          <button
-            onClick={handlePreviousItem}
-            disabled={item.id <= 1}
-            className={`text-white border-none rounded-full w-12 h-12 text-2xl flex items-center justify-center transition-all duration-300 shadow-md ${
-              item.id <= 1 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-green-500 cursor-pointer hover:bg-green-600 hover:scale-110'
-            }`}
-          >
-            ←
-          </button>
-          
-          <div className="w-full max-w-md">
-            <ItemCard item={item} />
+        <>
+          {/* Navigation Buttons */}
+          <div className="flex justify-center items-center gap-6 mb-8">
+            <button
+              onClick={handlePreviousItem}
+              disabled={item.id <= 1}
+              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                item.id <= 1 
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                  : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-md'
+              }`}
+            >
+              ← Previous Item
+            </button>
+            
+            <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+              Item {item.id} of 2000
+            </span>
+            
+            <button
+              onClick={handleNextItem}
+              disabled={item.id >= 2000}
+              className={`px-4 py-2 rounded-full font-medium transition-all ${
+                item.id >= 2000 
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                  : 'bg-green-500 text-white hover:bg-green-600 hover:scale-105 shadow-md'
+              }`}
+            >
+              Next Item →
+            </button>
           </div>
-          
-          <button
-            onClick={handleNextItem}
-            disabled={item.id >= 2000}
-            className={`text-white border-none rounded-full w-12 h-12 text-2xl flex items-center justify-center transition-all duration-300 shadow-md ${
-              item.id >= 2000 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-green-500 cursor-pointer hover:bg-green-600 hover:scale-110'
-            }`}
-          >
-            →
-          </button>
-        </div>
+
+          {/* Item Card */}
+          <div className="flex justify-center">
+            <div className="w-full max-w-md">
+              <ItemCard item={item} />
+            </div>
+          </div>
+        </>
       )}
 
       <div className="text-center mt-10 text-sm text-gray-600">
