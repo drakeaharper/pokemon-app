@@ -3,7 +3,6 @@
 ## 🎯 High-Impact Pages We Could Add:
 
 1. **Location Explorer** (`/locations`) - Regions, routes, and areas from the games
-2. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
 
 ## 📊 Advanced Features:
 - **Team Builder** - Create and save Pokemon teams with move/ability analysis
@@ -19,9 +18,7 @@
 ## 💡 Additional Enhancement Ideas:
 
 ### Search & Filter Improvements
-- Advanced filtering by type, generation, stats
 - Search by ability or move
-- Filter by evolution stage
 - "Similar Pokemon" recommendations
 
 ### Data Visualization
