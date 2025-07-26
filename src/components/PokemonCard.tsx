@@ -32,17 +32,18 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, isShiny = false }) =
   const backgroundColor = typeColors[mainType] || '#68A090';
 
   return (
-    <div style={{
-      border: '2px solid #333',
-      borderRadius: '15px',
-      padding: '20px',
-      maxWidth: '400px',
-      margin: '20px auto',
-      backgroundColor,
-      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      color: '#fff',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div 
+      className="border-2 border-gray-300 dark:border-gray-600"
+      style={{
+        borderRadius: '15px',
+        padding: '20px',
+        maxWidth: '400px',
+        margin: '20px auto',
+        backgroundColor,
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        color: '#fff',
+        fontFamily: 'Arial, sans-serif'
+      }}>
       <div style={{ textAlign: 'center', marginBottom: '10px' }}>
         <h2 style={{ 
           textTransform: 'capitalize', 

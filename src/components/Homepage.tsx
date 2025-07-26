@@ -2,60 +2,41 @@ import React from 'react';
 
 const Homepage: React.FC = () => {
   return (
-    <div style={{ 
-      padding: '40px 20px',
-      maxWidth: '800px',
-      margin: '0 auto',
-      lineHeight: '1.6'
-    }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '30px', color: '#333' }}>
+    <div className="px-5 py-10 max-w-4xl mx-auto">
+      <h1 className="text-center mb-8 text-4xl font-bold text-gray-800 dark:text-gray-100">
         About Pokemon Card App
       </h1>
       
-      <div style={{ 
-        backgroundColor: '#f9f9f9',
-        padding: '30px',
-        borderRadius: '15px',
-        marginBottom: '30px'
-      }}>
-        <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Features</h2>
-        <ul style={{ fontSize: '16px', color: '#555' }}>
-          <li><strong>Smart Search:</strong> Find Pokemon by number or name with fuzzy matching and autocomplete</li>
-          <li><strong>Evolution Chains:</strong> Interactive evolution trees with clickable Pokemon cards</li>
-          <li><strong>Navigation:</strong> Browse Pokemon sequentially with left/right arrows</li>
-          <li><strong>Rich Data:</strong> View stats, types, height, weight, and official artwork</li>
-          <li><strong>Performance:</strong> Lightning-fast searches with intelligent caching</li>
+      <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl mb-8 transition-colors duration-200">
+        <h2 className="text-green-500 dark:text-green-400 text-2xl font-bold mb-4">Features</h2>
+        <ul className="text-gray-700 dark:text-gray-300 space-y-2">
+          <li><strong className="text-gray-900 dark:text-gray-100">Smart Search:</strong> Find Pokemon by number or name with fuzzy matching and autocomplete</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">Evolution Chains:</strong> Interactive evolution trees with clickable Pokemon cards</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">Navigation:</strong> Browse Pokemon sequentially with left/right arrows</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">Rich Data:</strong> View stats, types, height, weight, and official artwork</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">Performance:</strong> Lightning-fast searches with intelligent caching</li>
         </ul>
       </div>
 
-      <div style={{ 
-        backgroundColor: '#e8f5e9',
-        padding: '30px',
-        borderRadius: '15px',
-        marginBottom: '30px'
-      }}>
-        <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Technology Stack</h2>
-        <ul style={{ fontSize: '16px', color: '#555' }}>
-          <li><strong>React + TypeScript:</strong> Modern, type-safe component architecture</li>
-          <li><strong>TanStack Query:</strong> Efficient data caching and state management</li>
-          <li><strong>Fuse.js:</strong> Intelligent fuzzy search with autocomplete</li>
-          <li><strong>PokeAPI:</strong> Comprehensive Pokemon database with 1,025+ Pokemon</li>
-          <li><strong>GitHub Pages:</strong> Automated deployment with CI/CD</li>
+      <div className="bg-green-50 dark:bg-gray-800 p-8 rounded-2xl mb-8 transition-colors duration-200">
+        <h2 className="text-green-500 dark:text-green-400 text-2xl font-bold mb-4">Technology Stack</h2>
+        <ul className="text-gray-700 dark:text-gray-300 space-y-2">
+          <li><strong className="text-gray-900 dark:text-gray-100">React + TypeScript:</strong> Modern, type-safe component architecture</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">TanStack Query:</strong> Efficient data caching and state management</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">Fuse.js:</strong> Intelligent fuzzy search with autocomplete</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">PokeAPI:</strong> Comprehensive Pokemon database with 1,025+ Pokemon</li>
+          <li><strong className="text-gray-900 dark:text-gray-100">GitHub Pages:</strong> Automated deployment with CI/CD</li>
         </ul>
       </div>
 
-      <div style={{ 
-        backgroundColor: '#fff3e0',
-        padding: '30px',
-        borderRadius: '15px'
-      }}>
-        <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Data Source</h2>
-        <p style={{ fontSize: '16px', color: '#555', margin: 0 }}>
+      <div className="bg-orange-50 dark:bg-gray-800 p-8 rounded-2xl mb-8 transition-colors duration-200">
+        <h2 className="text-green-500 dark:text-green-400 text-2xl font-bold mb-4">Data Source</h2>
+        <p className="text-gray-700 dark:text-gray-300">
           All Pokemon data is sourced from <a 
             href="https://pokeapi.co" 
             target="_blank" 
             rel="noopener noreferrer"
-            style={{ color: '#4CAF50', textDecoration: 'none', fontWeight: 'bold' }}
+            className="text-green-500 dark:text-green-400 font-bold hover:underline"
           >
             PokeAPI
           </a>, the comprehensive RESTful API for Pokemon information. 
@@ -64,12 +45,7 @@ const Homepage: React.FC = () => {
         </p>
       </div>
 
-      <div style={{ 
-        textAlign: 'center',
-        marginTop: '40px',
-        fontSize: '14px',
-        color: '#666'
-      }}>
+      <div className="text-center mt-10 text-sm text-gray-600 dark:text-gray-400">
         <p>
           Built with ❤️ using React, TypeScript, and the PokeAPI
         </p>

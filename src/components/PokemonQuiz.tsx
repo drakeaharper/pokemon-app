@@ -97,11 +97,11 @@ const PokemonQuiz: React.FC = () => {
   if (currentPhase === 'selection') {
     return (
       <div className="p-5 max-w-4xl mx-auto">
-        <h1 className="text-center mb-2.5 text-3xl font-bold">
+        <h1 className="text-center mb-2.5 text-3xl font-bold text-gray-800 dark:text-gray-100">
           Pokemon Quiz
         </h1>
         
-        <p className="text-center mb-8 text-base text-gray-600">
+        <p className="text-center mb-8 text-base text-gray-600 dark:text-gray-400">
           Test your Pokemon knowledge with different quiz types
         </p>
 
@@ -290,7 +290,7 @@ const PokemonQuiz: React.FC = () => {
     
     return (
       <div className="p-5 max-w-4xl mx-auto">
-        <h1 className="text-center mb-6 text-3xl font-bold">
+        <h1 className="text-center mb-6 text-3xl font-bold text-gray-800 dark:text-gray-100">
           Quiz Results
         </h1>
 

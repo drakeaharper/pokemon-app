@@ -1,6 +1,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 import NavigationBar from './components/NavigationBar';
 import Homepage from './components/Homepage';
 import PokemonDetails from './components/PokemonDetails';
@@ -26,21 +27,23 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="App">
-          <NavigationBar />
-          <Routes>
-            <Route path="/" element={<PokemonDetails />} />
-            <Route path="/about" element={<Homepage />} />
-            <Route path="/moves" element={<MovesDatabase />} />
-            <Route path="/types" element={<TypeChart />} />
-            <Route path="/abilities" element={<AbilityGlossary />} />
-            <Route path="/items" element={<ItemsCatalog />} />
-            <Route path="/berries" element={<BerriesGuide />} />
-            <Route path="/quiz" element={<PokemonQuiz />} />
-          </Routes>
-        </div>
-      </Router>
+      <DarkModeProvider>
+        <Router>
+          <div className="App min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+            <NavigationBar />
+            <Routes>
+              <Route path="/" element={<PokemonDetails />} />
+              <Route path="/about" element={<Homepage />} />
+              <Route path="/moves" element={<MovesDatabase />} />
+              <Route path="/types" element={<TypeChart />} />
+              <Route path="/abilities" element={<AbilityGlossary />} />
+              <Route path="/items" element={<ItemsCatalog />} />
+              <Route path="/berries" element={<BerriesGuide />} />
+              <Route path="/quiz" element={<PokemonQuiz />} />
+            </Routes>
+          </div>
+        </Router>
+      </DarkModeProvider>
     </QueryClientProvider>
   );
 }

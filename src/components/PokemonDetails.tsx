@@ -274,7 +274,7 @@ const PokemonDetails: React.FC = () => {
       position: 'relative',
       overflow: 'visible'
     }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>
+      <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-gray-100">
         Pokemon Finder
       </h1>
       
@@ -405,15 +405,8 @@ const PokemonDetails: React.FC = () => {
           marginTop: '20px',
           marginBottom: '20px'
         }}>
-          <label style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            color: '#333'
-          }}>
-            <span style={{ fontWeight: 'bold' }}>✨ Shiny</span>
+          <label className="flex items-center gap-2 cursor-pointer text-gray-800 dark:text-gray-200 text-lg">
+            <span className="font-bold">✨ Shiny</span>
             <div
               onClick={() => setIsShiny(!isShiny)}
               style={{

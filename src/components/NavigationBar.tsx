@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useDarkMode } from '../contexts/DarkModeContext';
 
 const NavigationBar: React.FC = () => {
   const location = useLocation();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => {
@@ -70,7 +72,7 @@ const NavigationBar: React.FC = () => {
 
   return (
     <>
-      <nav className="bg-green-500 px-5 py-4 shadow-md sticky top-0 z-50">
+      <nav className="bg-green-500 dark:bg-gray-800 px-5 py-4 shadow-md sticky top-0 z-50 transition-colors duration-200">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link 
@@ -87,6 +89,23 @@ const NavigationBar: React.FC = () => {
           {/* Desktop Navigation */}
           <div className="desktop-nav flex gap-2 items-center">
             {navigationItems.map(item => renderNavLink(item, false))}
+            
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="ml-4 p-2 rounded-full bg-white/20 hover:bg-white/30 text-white transition-all duration-200"
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fillRule="evenodd" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+              )}
+            </button>
           </div>
 
           {/* Mobile Hamburger Button */}
@@ -116,7 +135,7 @@ const NavigationBar: React.FC = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`mobile-menu fixed top-16 left-0 right-0 bg-green-500 shadow-lg z-50 transition-all duration-300 ${
+        className={`mobile-menu fixed top-16 left-0 right-0 bg-green-500 dark:bg-gray-800 shadow-lg z-50 transition-all duration-300 ${
           isMobileMenuOpen 
             ? 'translate-y-0 opacity-100 visible' 
             : '-translate-y-full opacity-0 invisible'
@@ -124,6 +143,18 @@ const NavigationBar: React.FC = () => {
         onClick={(e) => e.stopPropagation()}
       >
         {navigationItems.map(item => renderNavLink(item, true))}
+        
+        {/* Dark Mode Toggle in Mobile Menu */}
+        <button
+          onClick={() => {
+            toggleDarkMode();
+            closeMobileMenu();
+          }}
+          className="w-full py-3 px-5 text-base text-white/80 font-normal hover:bg-white/10 transition-all duration-300 flex items-center justify-between"
+        >
+          <span>Dark Mode</span>
+          <span className="text-sm">{isDarkMode ? 'ON' : 'OFF'}</span>
+        </button>
       </div>
 
       {/* CSS for responsive behavior */}

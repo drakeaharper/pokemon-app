@@ -43,7 +43,6 @@
 - Progressive web app (PWA) features
 
 ### UI/UX Improvements
-- Dark mode toggle
 - Animated transitions between Pokemon
 - Keyboard navigation shortcuts
 - Mobile swipe gestures
