@@ -140,7 +140,7 @@ const BerriesGuide: React.FC = () => {
                 ← Previous Berry
               </button>
               
-              <span className="text-lg font-semibold text-gray-700">
+              <span className="text-lg font-semibold text-gray-700 dark:text-gray-300">
                 Berry {berry.id} of 64
               </span>
               

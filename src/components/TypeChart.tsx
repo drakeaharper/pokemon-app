@@ -19,7 +19,7 @@ const TypeChart: React.FC = () => {
         margin: '0 auto',
         textAlign: 'center'
       }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-white">
           Pokemon Type Effectiveness Chart
         </h1>
         <div style={{ 
@@ -60,7 +60,7 @@ const TypeChart: React.FC = () => {
         margin: '0 auto',
         textAlign: 'center'
       }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-white">
           Pokemon Type Effectiveness Chart
         </h1>
         <div style={{ 
@@ -82,7 +82,7 @@ const TypeChart: React.FC = () => {
         margin: '0 auto',
         textAlign: 'center'
       }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-white">
           Pokemon Type Effectiveness Chart
         </h1>
         <div style={{ fontSize: '18px' }}>
@@ -98,16 +98,11 @@ const TypeChart: React.FC = () => {
       maxWidth: '1200px',
       margin: '0 auto'
     }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>
+      <h1 className="text-center mb-2.5 text-3xl font-bold text-gray-800 dark:text-white">
         Pokemon Type Effectiveness Chart
       </h1>
       
-      <p style={{ 
-        textAlign: 'center', 
-        marginBottom: '30px',
-        fontSize: '16px',
-        color: '#666'
-      }}>
+      <p className="text-center mb-8 text-base text-gray-600 dark:text-gray-400">
         Interactive type matchup chart showing attack effectiveness
       </p>
 
@@ -115,36 +110,25 @@ const TypeChart: React.FC = () => {
         <TypeEffectivenessGrid effectivenessMatrix={effectivenessMatrix} />
       </div>
 
-      <div style={{ 
-        textAlign: 'center',
-        marginTop: '30px',
-        fontSize: '14px',
-        color: '#666'
-      }}>
-        <div style={{ marginBottom: '10px' }}>
+      <div className="text-center mt-8 text-sm text-gray-600 dark:text-gray-400">
+        <div className="mb-2.5">
           <strong>How to read this chart:</strong>
         </div>
-        <div style={{ marginBottom: '5px' }}>
+        <div className="mb-1.5">
           • Find the attacking type on the left (rows)
         </div>
-        <div style={{ marginBottom: '5px' }}>
+        <div className="mb-1.5">
           • Find the defending type on the top (columns)
         </div>
-        <div style={{ marginBottom: '5px' }}>
+        <div className="mb-1.5">
           • The intersection shows the damage multiplier
         </div>
-        <div style={{ marginBottom: '15px' }}>
+        <div className="mb-4">
           • Click type headers to highlight, hover cells for details
         </div>
         
-        <div style={{
-          display: 'inline-block',
-          backgroundColor: '#f9f9f9',
-          padding: '15px',
-          borderRadius: '8px',
-          fontSize: '13px'
-        }}>
-          <div style={{ marginBottom: '8px' }}>
+        <div className="inline-block bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-xs text-gray-800 dark:text-gray-200">
+          <div className="mb-2">
             <strong>Examples:</strong>
           </div>
           <div>Fire attacks Grass = 2x (Super Effective)</div>

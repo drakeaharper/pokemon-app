@@ -65,23 +65,23 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
         {/* Berry Properties */}
         <div className="space-y-3">
           {/* Dominant Flavor */}
-          <div className="bg-gray-50 rounded-lg p-3">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">Primary Flavor</h3>
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+            <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-2">Primary Flavor</h3>
             <div className="flex items-center gap-2">
               <div 
                 className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: dominantColor }}
               ></div>
-              <span className="capitalize font-medium">{dominantFlavor?.flavor.name}</span>
+              <span className="capitalize font-medium text-gray-800 dark:text-gray-200">{dominantFlavor?.flavor.name}</span>
               <span className="text-gray-600 dark:text-gray-400">({dominantFlavor?.potency} potency)</span>
             </div>
           </div>
 
           {/* All Flavors */}
           {berry.flavors.length > 1 && (
-            <div className="bg-gray-50 rounded-lg p-3">
-              <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">All Flavors</h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+              <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-2">All Flavors</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-800 dark:text-gray-300">
                 {berry.flavors.map((flavor) => (
                   <div key={flavor.flavor.name} className="flex justify-between">
                     <span className="capitalize">{flavor.flavor.name}:</span>
@@ -93,9 +93,9 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
           )}
 
           {/* Growth Information */}
-          <div className="bg-gray-50 rounded-lg p-3">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">Growth Info</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+            <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-2">Growth Info</h3>
+            <div className="grid grid-cols-2 gap-2 text-sm text-gray-800 dark:text-gray-300">
               <div className="flex justify-between">
                 <span>Growth Time:</span>
                 <span className="font-medium">{berry.growth_time}h</span>
@@ -116,9 +116,9 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
           </div>
 
           {/* Battle Properties */}
-          <div className="bg-gray-50 rounded-lg p-3">
-            <h3 className="font-semibold text-gray-700 dark:text-gray-100 mb-2">Battle Properties</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+            <h3 className="font-semibold text-gray-700 dark:text-gray-200 mb-2">Battle Properties</h3>
+            <div className="grid grid-cols-2 gap-2 text-sm text-gray-800 dark:text-gray-300">
               <div className="flex justify-between">
                 <span>Natural Gift Power:</span>
                 <span className="font-medium">{berry.natural_gift_power}</span>

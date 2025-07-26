@@ -29,66 +29,30 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
   const totalPokemon = ability.pokemon.length;
 
   return (
-    <div style={{
-      border: '2px solid #333',
-      borderRadius: '15px',
-      padding: '20px',
-      maxWidth: '500px',
-      margin: '10px',
-      backgroundColor: '#f8f9fa',
-      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      color: '#333',
-      fontFamily: 'Arial, sans-serif'
-    }}>
+    <div className="border-2 border-gray-800 dark:border-gray-300 rounded-2xl p-5 max-w-lg my-2.5 bg-gray-50 dark:bg-gray-800 shadow-md text-gray-800 dark:text-gray-200 font-sans transition-colors duration-200">
       <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-        <h3 style={{ 
-          textTransform: 'capitalize', 
-          margin: '0',
-          fontSize: '24px',
-          color: '#2c3e50'
-        }}>
+        <h3 className="capitalize m-0 text-2xl text-gray-800 dark:text-gray-100">
           {englishName.replace('-', ' ')}
         </h3>
-        <p style={{ 
-          margin: '5px 0', 
-          fontSize: '14px',
-          color: '#7f8c8d',
-          fontWeight: 'bold' 
-        }}>
+        <p className="my-1.5 text-sm text-gray-500 dark:text-gray-400 font-bold">
           #{ability.id} • Generation {generationNumber}
         </p>
       </div>
 
       {englishEffect && (
-        <div style={{ 
-          backgroundColor: '#e8f4f8', 
-          borderRadius: '10px', 
-          padding: '15px',
-          marginBottom: '15px',
-          border: '1px solid #d6eaf8'
-        }}>
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#2980b9' }}>
+        <div className="bg-blue-50 dark:bg-gray-700 rounded-lg p-4 mb-4 border border-blue-200 dark:border-gray-600">
+          <h4 className="m-0 mb-2 text-base text-blue-600 dark:text-blue-400">
             Effect
           </h4>
-          <p style={{ 
-            margin: '0', 
-            fontSize: '14px', 
-            lineHeight: '1.5',
-            color: '#34495e'
-          }}>
+          <p className="m-0 text-sm leading-6 text-gray-700 dark:text-gray-300">
             {englishEffect.effect}
           </p>
           {englishEffect.short_effect && englishEffect.short_effect !== englishEffect.effect && (
             <div style={{ marginTop: '10px' }}>
-              <strong style={{ fontSize: '13px', color: '#2980b9' }}>
+              <strong className="text-xs text-blue-600 dark:text-blue-400">
                 Short Effect:
               </strong>
-              <p style={{ 
-                margin: '3px 0 0 0', 
-                fontSize: '13px',
-                fontStyle: 'italic',
-                color: '#5d6d7e'
-              }}>
+              <p className="mt-1 mb-0 text-xs italic text-gray-600 dark:text-gray-400">
                 {englishEffect.short_effect}
               </p>
             </div>
@@ -97,34 +61,18 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
       )}
 
       {englishFlavorText && (
-        <div style={{ 
-          backgroundColor: '#fef9e7', 
-          borderRadius: '10px', 
-          padding: '15px',
-          marginBottom: '15px',
-          border: '1px solid #f7dc6f'
-        }}>
-          <h4 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#d68910' }}>
+        <div className="bg-yellow-50 dark:bg-gray-700 rounded-lg p-4 mb-4 border border-yellow-200 dark:border-gray-600">
+          <h4 className="m-0 mb-2 text-base text-yellow-600 dark:text-yellow-400">
             Description
           </h4>
-          <p style={{ 
-            margin: '0', 
-            fontSize: '14px', 
-            lineHeight: '1.4',
-            fontStyle: 'italic',
-            color: '#7d6608'
-          }}>
+          <p className="m-0 text-sm leading-5 italic text-yellow-800 dark:text-yellow-300">
             {englishFlavorText.replace(/\n/g, ' ')}
           </p>
         </div>
       )}
 
-      <div style={{ 
-        backgroundColor: '#f4f6f7', 
-        borderRadius: '10px', 
-        padding: '15px'
-      }}>
-        <h4 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#2c3e50' }}>
+      <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+        <h4 className="m-0 mb-2.5 text-base text-gray-800 dark:text-gray-200">
           Pokemon with this Ability ({totalPokemon})
         </h4>
         <div style={{ 
@@ -152,23 +100,13 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
           ))}
         </div>
         {totalPokemon > 8 && (
-          <p style={{ 
-            margin: '0', 
-            fontSize: '12px', 
-            color: '#7f8c8d',
-            textAlign: 'center'
-          }}>
+          <p className="m-0 text-xs text-gray-500 dark:text-gray-400 text-center">
             ...and {totalPokemon - 8} more Pokemon
           </p>
         )}
-        <div style={{ 
-          marginTop: '8px',
-          fontSize: '11px',
-          textAlign: 'center',
-          color: '#95a5a6'
-        }}>
-          <span style={{ color: '#27ae60' }}>●</span> Normal Ability • 
-          <span style={{ color: '#e74c3c' }}> ●</span> Hidden Ability
+        <div className="mt-2 text-xs text-center text-gray-400 dark:text-gray-500">
+          <span className="text-green-500">●</span> Normal Ability • 
+          <span className="text-red-500"> ●</span> Hidden Ability
         </div>
       </div>
     </div>

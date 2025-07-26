@@ -45,7 +45,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
   };
 
   return (
-    <div className="p-5 bg-gray-100 rounded-lg overflow-x-auto">
+    <div className="p-5 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-x-auto">
       <div 
         className="grid gap-0.5"
         style={{
@@ -54,7 +54,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
         }}
       >
         {/* Top-left corner cell */}
-        <div className="flex items-center justify-center bg-gray-300 rounded text-xs font-bold p-1">
+        <div className="flex items-center justify-center bg-gray-300 dark:bg-gray-600 rounded text-xs font-bold p-1 text-gray-800 dark:text-gray-200">
           ATK → DEF
         </div>
 
@@ -108,8 +108,8 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
                   onMouseEnter={() => setHoveredCell({ attacking: attackingType, defending: defendingType })}
                   onMouseLeave={() => setHoveredCell(null)}
                   className={`flex items-center justify-center rounded-sm cursor-pointer text-xs font-bold h-10 relative transition-all duration-200 ${
-                    isHovered ? 'border-2 border-gray-800 scale-110 shadow-lg' : 
-                    cellHighlighted ? 'border-2 border-gray-600' : 'border border-gray-300'
+                    isHovered ? 'border-2 border-gray-800 dark:border-gray-200 scale-110 shadow-lg' : 
+                    cellHighlighted ? 'border-2 border-gray-600 dark:border-gray-400' : 'border border-gray-300 dark:border-gray-600'
                   } ${
                     highlightedType && !cellHighlighted ? 'opacity-30' : 'opacity-100'
                   }`}
@@ -127,31 +127,31 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
       </div>
 
       {/* Legend */}
-      <div className="mt-5 flex justify-center gap-5 flex-wrap">
+      <div className="mt-5 flex justify-center gap-5 flex-wrap text-gray-800 dark:text-gray-200">
         <div className="flex items-center gap-1">
           <div 
-            className="w-5 h-5 rounded-sm border border-gray-300"
+            className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600"
             style={{ backgroundColor: getEffectivenessBackgroundColor(2) }}
           />
           <span className="text-sm">2x Super Effective</span>
         </div>
         <div className="flex items-center gap-1">
           <div 
-            className="w-5 h-5 rounded-sm border border-gray-300"
+            className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600"
             style={{ backgroundColor: getEffectivenessBackgroundColor(1) }}
           />
           <span className="text-sm">1x Normal</span>
         </div>
         <div className="flex items-center gap-1">
           <div 
-            className="w-5 h-5 rounded-sm border border-gray-300"
+            className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600"
             style={{ backgroundColor: getEffectivenessBackgroundColor(0.5) }}
           />
           <span className="text-sm">½x Not Very Effective</span>
         </div>
         <div className="flex items-center gap-1">
           <div 
-            className="w-5 h-5 rounded-sm border border-gray-300"
+            className="w-5 h-5 rounded-sm border border-gray-300 dark:border-gray-600"
             style={{ backgroundColor: getEffectivenessBackgroundColor(0) }}
           />
           <span className="text-sm">0x No Effect</span>
@@ -160,7 +160,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
 
       {/* Hover information */}
       {hoveredCell && (
-        <div className="mt-4 text-center p-2.5 bg-white rounded-lg shadow-md">
+        <div className="mt-4 text-center p-2.5 bg-white dark:bg-gray-700 rounded-lg shadow-md text-gray-800 dark:text-gray-200">
           <strong 
             className="capitalize"
             style={{ color: typeColors[hoveredCell.attacking] }}
@@ -182,7 +182,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
         </div>
       )}
 
-      <div className="mt-4 text-center text-xs text-gray-600">
+      <div className="mt-4 text-center text-xs text-gray-600 dark:text-gray-400">
         Click on type headers to highlight rows/columns • Hover over cells for details
       </div>
     </div>

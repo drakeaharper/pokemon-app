@@ -43,14 +43,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   const categoryName = item.category.name.replace(/-/g, ' ');
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 transition-all duration-300 hover:shadow-lg hover:scale-105 border border-gray-200">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 transition-all duration-300 hover:shadow-lg hover:scale-105 border border-gray-200 dark:border-gray-600">
       {/* Header with name and ID */}
       <div className="flex justify-between items-start mb-3">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 capitalize">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 capitalize">
             {displayName}
           </h3>
-          <span className="text-sm text-gray-500">#{item.id}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">#{item.id}</span>
         </div>
         
         {/* Item sprite */}
@@ -82,7 +82,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
       {/* Cost */}
       {item.cost !== null && item.cost > 0 && (
         <div className="mb-3">
-          <span className="text-sm font-medium text-gray-600">
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
             Cost: <span className="text-yellow-600 font-bold">₽{item.cost.toLocaleString()}</span>
           </span>
         </div>
@@ -91,8 +91,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
       {/* Effect */}
       {englishEffect && (
         <div className="mb-3">
-          <h4 className="text-sm font-semibold text-gray-700 mb-1">Effect:</h4>
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Effect:</h4>
+          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {englishEffect.short_effect || englishEffect.effect}
           </p>
         </div>
@@ -101,8 +101,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
       {/* Flavor text */}
       {englishFlavorText && (
         <div className="mb-3">
-          <h4 className="text-sm font-semibold text-gray-700 mb-1">Description:</h4>
-          <p className="text-sm text-gray-600 italic leading-relaxed">
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Description:</h4>
+          <p className="text-sm text-gray-600 dark:text-gray-400 italic leading-relaxed">
             "{englishFlavorText.text}"
           </p>
         </div>
@@ -111,12 +111,12 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
       {/* Attributes */}
       {item.attributes && item.attributes.length > 0 && (
         <div className="mt-4">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2">Attributes:</h4>
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Attributes:</h4>
           <div className="flex flex-wrap gap-1">
             {item.attributes.map((attribute, index) => (
               <span 
                 key={index}
-                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs capitalize"
+                className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-xs capitalize"
               >
                 {attribute.name.replace(/-/g, ' ')}
               </span>
@@ -127,8 +127,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
 
       {/* Fling power if applicable */}
       {item.fling_power && item.fling_power > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <span className="text-xs text-gray-500">
+        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             Fling Power: <span className="font-semibold">{item.fling_power}</span>
           </span>
         </div>
