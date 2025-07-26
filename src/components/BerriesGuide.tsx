@@ -66,7 +66,7 @@ const BerriesGuide: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800 p-5 transition-colors duration-200">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-white">
           🍓 Berry Guide
         </h1>
         

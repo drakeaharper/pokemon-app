@@ -97,7 +97,7 @@ const PokemonQuiz: React.FC = () => {
   if (currentPhase === 'selection') {
     return (
       <div className="p-5 max-w-4xl mx-auto">
-        <h1 className="text-center mb-2.5 text-3xl font-bold text-gray-800 dark:text-gray-100">
+        <h1 className="text-center mb-2.5 text-3xl font-bold text-gray-800 dark:text-white">
           Pokemon Quiz
         </h1>
         
@@ -108,7 +108,7 @@ const PokemonQuiz: React.FC = () => {
         <div className="max-w-2xl mx-auto">
           {/* Quiz Type Selection */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-200">Choose Quiz Type</h2>
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">Choose Quiz Type</h2>
             <div className="grid gap-4">
               {QUIZ_TYPES.map((quizType) => (
                 <button
@@ -129,7 +129,7 @@ const PokemonQuiz: React.FC = () => {
 
           {/* Number of Questions */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-200">Number of Questions</h2>
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">Number of Questions</h2>
             <div className="flex justify-center gap-4">
               {[5, 10, 15, 20].map((num) => (
                 <button
@@ -149,7 +149,7 @@ const PokemonQuiz: React.FC = () => {
 
           {/* Generation Filter */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-200">Generation Filter (Optional)</h2>
+            <h2 className="text-xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">Generation Filter (Optional)</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <button
                 onClick={() => setSelectedGeneration(null)}
@@ -290,7 +290,7 @@ const PokemonQuiz: React.FC = () => {
     
     return (
       <div className="p-5 max-w-4xl mx-auto">
-        <h1 className="text-center mb-6 text-3xl font-bold text-gray-800 dark:text-gray-100">
+        <h1 className="text-center mb-6 text-3xl font-bold text-gray-800 dark:text-white">
           Quiz Results
         </h1>
 

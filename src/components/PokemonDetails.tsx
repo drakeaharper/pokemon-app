@@ -274,7 +274,7 @@ const PokemonDetails: React.FC = () => {
       position: 'relative',
       overflow: 'visible'
     }}>
-      <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-gray-100">
+      <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-white">
         Pokemon Finder
       </h1>
       

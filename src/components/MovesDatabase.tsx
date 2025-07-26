@@ -65,7 +65,7 @@ const MovesDatabase: React.FC = () => {
 
   return (
     <div className="p-5 max-w-4xl mx-auto">
-      <h1 className="text-center mb-8 text-3xl font-bold">
+      <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-white">
         Pokemon Moves Database
       </h1>
       

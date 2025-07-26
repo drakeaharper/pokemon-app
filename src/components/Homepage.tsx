@@ -3,7 +3,7 @@ import React from 'react';
 const Homepage: React.FC = () => {
   return (
     <div className="px-5 py-10 max-w-4xl mx-auto">
-      <h1 className="text-center mb-8 text-4xl font-bold text-gray-800 dark:text-gray-100">
+      <h1 className="text-center mb-8 text-4xl font-bold text-gray-800 dark:text-white">
         About Pokemon Card App
       </h1>
       

@@ -65,11 +65,11 @@ const ItemsCatalog: React.FC = () => {
 
   return (
     <div className="p-5 max-w-4xl mx-auto">
-      <h1 className="text-center mb-2.5 text-3xl font-bold">
+      <h1 className="text-center mb-2.5 text-3xl font-bold text-gray-800 dark:text-white">
         Pokemon Items Catalog
       </h1>
       
-      <p className="text-center mb-8 text-base text-gray-600">
+      <p className="text-center mb-8 text-base text-gray-600 dark:text-gray-300">
         Browse Pokeballs, berries, evolution stones, battle items, and more
       </p>
       
