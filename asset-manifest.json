@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/pokemon-card-app/static/css/main.ef041eac.css",
-    "main.js": "/pokemon-card-app/static/js/main.dd20a1e9.js",
+    "main.css": "/pokemon-card-app/static/css/main.39bcc522.css",
+    "main.js": "/pokemon-card-app/static/js/main.e877e1a0.js",
     "static/js/453.8e1a0d19.chunk.js": "/pokemon-card-app/static/js/453.8e1a0d19.chunk.js",
     "index.html": "/pokemon-card-app/index.html",
-    "main.ef041eac.css.map": "/pokemon-card-app/static/css/main.ef041eac.css.map",
-    "main.dd20a1e9.js.map": "/pokemon-card-app/static/js/main.dd20a1e9.js.map",
+    "main.39bcc522.css.map": "/pokemon-card-app/static/css/main.39bcc522.css.map",
+    "main.e877e1a0.js.map": "/pokemon-card-app/static/js/main.e877e1a0.js.map",
     "453.8e1a0d19.chunk.js.map": "/pokemon-card-app/static/js/453.8e1a0d19.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ef041eac.css",
-    "static/js/main.dd20a1e9.js"
+    "static/css/main.39bcc522.css",
+    "static/js/main.e877e1a0.js"
   ]
 }
