@@ -261,6 +261,103 @@ export const useQuizGenerator = () => {
             continue;
           }
         }
+      } else if (type === 'types') {
+        // Types quiz - show Pokemon sprite and name, guess types
+        for (const pokemonData of selectedPokemon) {
+          const pokemonId = extractIdFromUrl(pokemonData.url);
+          
+          try {
+            // Fetch full Pokemon data to get types
+            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+            const fullPokemonData = response.data;
+
+            // Skip Pokemon with no types (shouldn't happen)
+            if (!fullPokemonData.types || fullPokemonData.types.length === 0) {
+              continue;
+            }
+
+            // Format Pokemon types
+            const pokemonTypes = fullPokemonData.types
+              .map((typeObj: any) => formatPokemonName(typeObj.type.name))
+              .sort(); // Sort alphabetically for consistency
+
+            // Create correct answer string
+            const correctAnswer = pokemonTypes.join('/');
+
+            const pokemon: Pokemon = {
+              id: pokemonId,
+              name: pokemonData.name,
+              height: fullPokemonData.height,
+              weight: fullPokemonData.weight,
+              sprites: fullPokemonData.sprites,
+              abilities: fullPokemonData.abilities,
+              types: fullPokemonData.types,
+              stats: fullPokemonData.stats
+            };
+
+            // Generate wrong type combinations
+            const allTypes = [
+              'Normal', 'Fire', 'Water', 'Electric', 'Grass', 'Ice', 
+              'Fighting', 'Poison', 'Ground', 'Flying', 'Psychic', 
+              'Bug', 'Rock', 'Ghost', 'Dragon', 'Dark', 'Steel', 'Fairy'
+            ];
+
+            const wrongAnswers: string[] = [];
+            let attempts = 0;
+            const maxAttempts = 50;
+
+            while (wrongAnswers.length < 3 && attempts < maxAttempts) {
+              attempts++;
+              
+              // Generate random type combination (1 or 2 types)
+              const numTypes = Math.random() < 0.6 ? 1 : 2; // 60% single type, 40% dual type
+              const randomTypes: string[] = [];
+              
+              // Pick random types
+              const shuffledTypes = shuffleArray(allTypes);
+              for (let i = 0; i < numTypes && i < shuffledTypes.length; i++) {
+                randomTypes.push(shuffledTypes[i]);
+              }
+              
+              const wrongAnswer = randomTypes.sort().join('/');
+              
+              // Make sure it's not the correct answer and not already added
+              if (wrongAnswer !== correctAnswer && !wrongAnswers.includes(wrongAnswer)) {
+                wrongAnswers.push(wrongAnswer);
+              }
+            }
+
+            // If we still need more wrong answers, generate some specific ones
+            if (wrongAnswers.length < 3) {
+              const commonWrongCombos = [
+                'Fire/Flying', 'Water/Ground', 'Electric/Flying', 'Grass/Poison',
+                'Ice/Water', 'Fighting/Normal', 'Psychic/Fairy', 'Bug/Flying',
+                'Rock/Ground', 'Ghost/Dark', 'Dragon/Flying', 'Steel/Rock',
+                'Normal', 'Fire', 'Water', 'Electric', 'Grass'
+              ];
+              
+              for (const combo of shuffleArray(commonWrongCombos)) {
+                if (combo !== correctAnswer && !wrongAnswers.includes(combo) && wrongAnswers.length < 3) {
+                  wrongAnswers.push(combo);
+                }
+              }
+            }
+
+            const allOptions = shuffleArray([correctAnswer, ...wrongAnswers.slice(0, 3)]);
+
+            questions.push({
+              id: `question-${pokemonId}`,
+              pokemon,
+              correctAnswer,
+              options: allOptions,
+              type
+            });
+          } catch (error) {
+            // Skip this Pokemon if we can't fetch its data
+            console.warn(`Failed to fetch data for Pokemon ID ${pokemonId}:`, error);
+            continue;
+          }
+        }
       }
 
       return questions;

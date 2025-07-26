@@ -58,6 +58,12 @@ export const QUIZ_TYPES: QuizOption[] = [
     type: 'names'
   },
   {
+    id: 'types',
+    label: 'Pokemon Types',
+    description: 'Guess the type(s) of Pokemon',
+    type: 'types'
+  },
+  {
     id: 'abilities',
     label: 'Pokemon Abilities',
     description: 'Match Pokemon with their abilities',
@@ -68,12 +74,5 @@ export const QUIZ_TYPES: QuizOption[] = [
     label: 'Hidden Abilities',
     description: 'Identify Pokemon hidden abilities',
     type: 'hidden-abilities'
-  },
-  // Future quiz types can be added here
-  // {
-  //   id: 'types',
-  //   label: 'Pokemon Types',
-  //   description: 'Guess the type of Pokemon',
-  //   type: 'types'
-  // }
+  }
 ];

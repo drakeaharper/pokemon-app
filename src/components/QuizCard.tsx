@@ -49,7 +49,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ pokemon, quizType, showShiny = fals
         <span className="text-gray-600 text-sm font-medium">
           Pokemon #{pokemon.id.toString().padStart(3, '0')}
         </span>
-        {(quizType === 'abilities' || quizType === 'hidden-abilities') && (
+        {(quizType === 'abilities' || quizType === 'hidden-abilities' || quizType === 'types') && (
           <div className="mt-2">
             <h3 className="text-xl font-bold text-gray-800 capitalize">
               {pokemon.name.replace(/-/g, ' ')}
@@ -61,6 +61,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ pokemon, quizType, showShiny = fals
       {/* Quiz prompt */}
       <div className="text-center text-xs text-gray-500 mt-4">
         {quizType === 'names' ? "Who's that Pokemon?" : 
+         quizType === 'types' ? "What type(s) is this Pokemon?" :
          quizType === 'abilities' ? "What's this Pokemon's ability?" : 
          quizType === 'hidden-abilities' ? "What's this Pokemon's hidden ability?" :
          "Answer the question below"}
