@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useAllPokemon } from './usePokemonQueries';
 import { QuizQuestion, QuizType } from '../types/Quiz';
 import { Pokemon } from '../types/Pokemon';
+import { getPokemonIdsForGeneration } from '../utils/generationUtils';
 import axios from 'axios';
 
 // Extract ID from PokeAPI URL
@@ -34,7 +35,8 @@ export const useQuizGenerator = () => {
 
   const generateQuizQuestions = useCallback(async (
     type: QuizType,
-    numberOfQuestions: number
+    numberOfQuestions: number,
+    generationFilter?: number
   ): Promise<QuizQuestion[]> => {
     if (!allPokemonData?.results) {
       return [];
@@ -43,10 +45,25 @@ export const useQuizGenerator = () => {
     setIsGenerating(true);
 
     try {
-      // Get random Pokemon IDs for questions (limit to first 1000 for performance)
-      const availablePokemon = allPokemonData.results.slice(0, 1000);
+      // Apply generation filter if specified
+      let availablePokemon = allPokemonData.results.slice(0, 1000); // limit for performance
+      
+      if (generationFilter) {
+        const generationPokemonIds = new Set(getPokemonIdsForGeneration(generationFilter));
+        availablePokemon = availablePokemon.filter(pokemon => {
+          const pokemonId = extractIdFromUrl(pokemon.url);
+          return generationPokemonIds.has(pokemonId);
+        });
+      }
+      
+      // Ensure we have enough Pokemon for the quiz
+      if (availablePokemon.length < numberOfQuestions) {
+        console.warn(`Not enough Pokemon in generation ${generationFilter} for ${numberOfQuestions} questions. Available: ${availablePokemon.length}`);
+        // Fall back to using all available Pokemon in the generation
+      }
+      
       const shuffledPokemon = shuffleArray(availablePokemon);
-      const selectedPokemon = shuffledPokemon.slice(0, numberOfQuestions);
+      const selectedPokemon = shuffledPokemon.slice(0, Math.min(numberOfQuestions, availablePokemon.length));
 
       const questions: QuizQuestion[] = [];
 

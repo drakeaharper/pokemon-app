@@ -38,6 +38,7 @@ export interface QuizSettings {
   numberOfQuestions: number;
   timeLimit?: number; // in seconds, optional
   difficulty?: 'easy' | 'medium' | 'hard';
+  generationFilter?: number; // optional generation ID to filter Pokemon
 }
 
 export interface QuizState {

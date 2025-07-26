@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import QuizCard from './QuizCard';
 import { useQuizGenerator } from '../hooks/useQuizGenerator';
 import { QUIZ_TYPES, QuizType, QuizQuestion, QuizAnswer, QuizResult } from '../types/Quiz';
+import { GENERATIONS } from '../utils/generationUtils';
 
 type QuizPhase = 'selection' | 'quiz' | 'results';
 
@@ -9,6 +10,7 @@ const PokemonQuiz: React.FC = () => {
   const [currentPhase, setCurrentPhase] = useState<QuizPhase>('selection');
   const [selectedQuizType, setSelectedQuizType] = useState<QuizType>('names');
   const [numberOfQuestions, setNumberOfQuestions] = useState<number>(5);
+  const [selectedGeneration, setSelectedGeneration] = useState<number | null>(null);
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
@@ -19,7 +21,7 @@ const PokemonQuiz: React.FC = () => {
   const { generateQuizQuestions, isGenerating } = useQuizGenerator();
 
   const startQuiz = async () => {
-    const generatedQuestions = await generateQuizQuestions(selectedQuizType, numberOfQuestions);
+    const generatedQuestions = await generateQuizQuestions(selectedQuizType, numberOfQuestions, selectedGeneration || undefined);
     if (generatedQuestions.length > 0) {
       setQuestions(generatedQuestions);
       setCurrentQuestionIndex(0);
@@ -74,6 +76,7 @@ const PokemonQuiz: React.FC = () => {
     setAnswers([]);
     setSelectedAnswer('');
     setShowResult(false);
+    setSelectedGeneration(null);
   };
 
   const calculateResults = (): QuizResult => {
@@ -139,6 +142,38 @@ const PokemonQuiz: React.FC = () => {
                   }`}
                 >
                   {num}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Generation Filter */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold mb-4 text-center">Generation Filter (Optional)</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <button
+                onClick={() => setSelectedGeneration(null)}
+                className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                  selectedGeneration === null
+                    ? 'border-green-500 bg-green-50 text-green-800'
+                    : 'border-gray-300 bg-white hover:border-green-300'
+                }`}
+              >
+                <h4 className="font-bold text-sm">All Generations</h4>
+                <p className="text-xs text-gray-600">No filter</p>
+              </button>
+              {GENERATIONS.map((gen) => (
+                <button
+                  key={gen.id}
+                  onClick={() => setSelectedGeneration(gen.id)}
+                  className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                    selectedGeneration === gen.id
+                      ? 'border-green-500 bg-green-50 text-green-800'
+                      : 'border-gray-300 bg-white hover:border-green-300'
+                  }`}
+                >
+                  <h4 className="font-bold text-sm">{gen.region}</h4>
+                  <p className="text-xs text-gray-600">{gen.name}</p>
                 </button>
               ))}
             </div>

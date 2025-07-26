@@ -3,8 +3,7 @@
 ## 🎯 High-Impact Pages We Could Add:
 
 1. **Location Explorer** (`/locations`) - Regions, routes, and areas from the games
-2. ~~**Berry Guide** (`/berries`) - Effects, flavors, and growth information~~ ✅ **IMPLEMENTED**
-3. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
+2. **Evolution Trees** (`/evolution`) - Visual family trees for all Pokemon families
 
 ## 📊 Advanced Features:
 - **Team Builder** - Create and save Pokemon teams with move/ability analysis
