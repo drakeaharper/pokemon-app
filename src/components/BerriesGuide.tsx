@@ -64,9 +64,9 @@ const BerriesGuide: React.FC = () => {
   const error = berryError ? 'Berry not found. Please try a different number or name.' : '';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50 p-5">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800 p-5 transition-colors duration-200">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
           🍓 Berry Guide
         </h1>
         
@@ -81,20 +81,20 @@ const BerriesGuide: React.FC = () => {
               onKeyPress={handleKeyPress}
               onFocus={() => setShowSuggestions(berryNumber.length > 0 && searchResults.length > 0)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-              className="w-80 px-4 py-3 text-lg border-2 border-green-300 rounded-lg focus:outline-none focus:border-green-500 bg-white shadow-md"
+              className="w-80 px-4 py-3 text-lg border-2 border-green-300 dark:border-green-600 rounded-lg focus:outline-none focus:border-green-500 bg-white dark:bg-gray-800 dark:text-gray-100 shadow-md"
             />
             
             {/* Search Suggestions */}
             {showSuggestions && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto mt-1">
+              <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto mt-1">
                 {searchResults.map((result) => (
                   <div
                     key={result.id}
                     onClick={() => handleSuggestionClick(result.name)}
-                    className="px-4 py-3 cursor-pointer hover:bg-green-50 border-b border-gray-100 last:border-b-0 flex justify-between items-center"
+                    className="px-4 py-3 cursor-pointer hover:bg-green-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-b-0 flex justify-between items-center"
                   >
-                    <span className="capitalize font-medium">{result.name} Berry</span>
-                    <span className="text-gray-500 text-sm">#{result.id}</span>
+                    <span className="capitalize font-medium text-gray-900 dark:text-gray-100">{result.name} Berry</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">#{result.id}</span>
                   </div>
                 ))}
               </div>
