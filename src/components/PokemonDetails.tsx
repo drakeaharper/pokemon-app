@@ -29,6 +29,7 @@ const PokemonDetails: React.FC = () => {
   const { data: pokemonTypesForGeneration } = usePokemonTypesForGeneration(selectedGenerations[0] || null);
   const { data: pokemonByMultipleTypes } = usePokemonByMultipleTypes(selectedTypes, selectedGenerations);
 
+
   const searchPokemon = (term?: string) => {
     const searchValue = term || pokemonNumber;
     if (!searchValue) {
@@ -126,6 +127,44 @@ const PokemonDetails: React.FC = () => {
       return allPokemon;
     }
   };
+
+  // Prefetch adjacent Pokemon for smooth navigation
+  const prefetchAdjacentPokemon = () => {
+    if (!pokemon) return [];
+    
+    const filteredList = getFilteredPokemonList();
+    const currentIndex = filteredList.findIndex(p => {
+      const pokemonId = p.id || parseInt(p.url.match(/\/(\d+)\/$/)?.[1] || '0');
+      return pokemonId === pokemon.id;
+    });
+    
+    const prefetchIds = [];
+    if (currentIndex >= 0) {
+      // Prefetch 2 Pokemon in each direction
+      for (let i = 1; i <= 2; i++) {
+        // Previous Pokemon
+        if (currentIndex - i >= 0) {
+          const prevPokemon = filteredList[currentIndex - i];
+          const prevId = prevPokemon.id || parseInt(prevPokemon.url.match(/\/(\d+)\/$/)?.[1] || '0');
+          prefetchIds.push(prevId.toString());
+        }
+        // Next Pokemon
+        if (currentIndex + i < filteredList.length) {
+          const nextPokemon = filteredList[currentIndex + i];
+          const nextId = nextPokemon.id || parseInt(nextPokemon.url.match(/\/(\d+)\/$/)?.[1] || '0');
+          prefetchIds.push(nextId.toString());
+        }
+      }
+    }
+    return prefetchIds;
+  };
+
+  // Get prefetch IDs and use them to cache Pokemon data
+  const prefetchIds = prefetchAdjacentPokemon();
+  usePokemon(prefetchIds[0] || null);
+  usePokemon(prefetchIds[1] || null); 
+  usePokemon(prefetchIds[2] || null);
+  usePokemon(prefetchIds[3] || null);
 
   const handleEvolutionClick = (pokemonId: number) => {
     searchPokemon(pokemonId.toString());
@@ -435,7 +474,7 @@ const PokemonDetails: React.FC = () => {
         </div>
       )}
 
-      {isLoading && !isNavigating && !pokemon && (
+      {isLoading && !isNavigating && !pokemon && !previousPokemon && (
         <div style={{ textAlign: 'center', fontSize: '20px' }}>
           Loading...
         </div>
@@ -452,7 +491,7 @@ const PokemonDetails: React.FC = () => {
         </div>
       )}
 
-      {(pokemon || (isNavigating && previousPokemon)) && (
+      {(pokemon || previousPokemon) && (
         <>
           {/* Navigation Buttons */}
           <div className="flex justify-center items-center gap-6 mb-8">
@@ -488,22 +527,11 @@ const PokemonDetails: React.FC = () => {
           {/* Pokemon Card */}
           <div className="flex justify-center mb-8">
             <div style={{ position: 'relative' }}>
-              <PokemonCard pokemon={pokemon || previousPokemon} isShiny={isShiny} />
-              {isNavigating && (
-                <div style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  backgroundColor: 'rgba(0,0,0,0.7)',
-                  color: 'white',
-                  padding: '5px 10px',
-                  borderRadius: '15px',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  Loading...
-                </div>
-              )}
+              <PokemonCard 
+                pokemon={pokemon || previousPokemon} 
+                isShiny={isShiny} 
+                key={(pokemon || previousPokemon)?.id} 
+              />
             </div>
           </div>
           
