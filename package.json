@@ -4,8 +4,6 @@
   "private": true,
   "homepage": "https://drakeaharper.github.io/pokemon-card-app",
   "dependencies": {
-    "@headlessui/react": "^2.2.6",
-    "@heroicons/react": "^2.2.0",
     "@playwright/test": "^1.54.1",
     "@tanstack/react-query": "^5.83.0",
     "@testing-library/dom": "^10.4.0",
