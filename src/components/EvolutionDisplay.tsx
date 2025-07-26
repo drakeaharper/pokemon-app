@@ -112,22 +112,6 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
     }
   };
 
-  const handlePreviousEvolution = () => {
-    if (previous.length > 0) {
-      const previousPokemon = previous[previous.length - 1];
-      handleEvolutionClick(previousPokemon.id);
-    }
-  };
-
-  const handleNextEvolution = () => {
-    if (next.length > 0 && next[0].length > 0) {
-      const nextPokemon = next[0][0];
-      handleEvolutionClick(nextPokemon.id);
-    }
-  };
-
-  const hasPrevious = previous.length > 0;
-  const hasNext = next.length > 0 && next[0].length > 0;
 
   return (
     <div style={{
@@ -140,58 +124,14 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
     }}>
       <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Evolution Chain</h3>
       
+      {/* Evolution Chain */}
       <div style={{
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
-        gap: '20px'
+        flexWrap: 'wrap',
+        gap: '10px'
       }}>
-        {/* Left Navigation Arrow */}
-        <button
-          onClick={handlePreviousEvolution}
-          disabled={!hasPrevious}
-          style={{
-            backgroundColor: hasPrevious ? '#4CAF50' : '#ccc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            fontSize: '20px',
-            cursor: hasPrevious ? 'pointer' : 'not-allowed',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s ease',
-            flexShrink: 0,
-            opacity: hasPrevious ? 1 : 0.5
-          }}
-          onMouseEnter={(e) => {
-            if (hasPrevious) {
-              e.currentTarget.style.backgroundColor = '#45a049';
-              e.currentTarget.style.transform = 'scale(1.1)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (hasPrevious) {
-              e.currentTarget.style.backgroundColor = '#4CAF50';
-              e.currentTarget.style.transform = 'scale(1)';
-            }
-          }}
-          title={hasPrevious ? `Go to ${previous[previous.length - 1].name}` : ''}
-        >
-          ←
-        </button>
-
-        {/* Evolution Chain */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '10px',
-          flex: 1
-        }}>
         {/* Previous Evolutions */}
         {previous.map((evolution, index) => (
           <React.Fragment key={evolution.id}>
@@ -259,44 +199,6 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
             )}
           </>
         )}
-        </div>
-
-        {/* Right Navigation Arrow */}
-        <button
-          onClick={handleNextEvolution}
-          disabled={!hasNext}
-          style={{
-            backgroundColor: hasNext ? '#4CAF50' : '#ccc',
-            color: 'white',
-            border: 'none',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            fontSize: '20px',
-            cursor: hasNext ? 'pointer' : 'not-allowed',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.3s ease',
-            flexShrink: 0,
-            opacity: hasNext ? 1 : 0.5
-          }}
-          onMouseEnter={(e) => {
-            if (hasNext) {
-              e.currentTarget.style.backgroundColor = '#45a049';
-              e.currentTarget.style.transform = 'scale(1.1)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (hasNext) {
-              e.currentTarget.style.backgroundColor = '#4CAF50';
-              e.currentTarget.style.transform = 'scale(1)';
-            }
-          }}
-          title={hasNext ? `Go to ${next[0][0].name}` : ''}
-        >
-          →
-        </button>
       </div>
       
       {next.length > 1 && (

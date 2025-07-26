@@ -15,10 +15,8 @@ const PokemonDetails: React.FC = () => {
   const [navigatingByChain, setNavigatingByChain] = useState<'forward' | 'backward' | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [typeFilteredPokemon, setTypeFilteredPokemon] = useState<any[]>([]);
-  const [currentTypeIndex, setCurrentTypeIndex] = useState<number>(0);
   const [selectedGenerations, setSelectedGenerations] = useState<number[]>([]);
   const [generationFilteredPokemon, setGenerationFilteredPokemon] = useState<number[]>([]);
-  const [currentGenerationIndex, setCurrentGenerationIndex] = useState<number>(0);
   const [isNavigating, setIsNavigating] = useState<boolean>(false);
   const [previousPokemon, setPreviousPokemon] = useState<any>(null);
 
@@ -60,7 +58,6 @@ const PokemonDetails: React.FC = () => {
   const handleTypeChange = (typeNames: (string | number)[]) => {
     const newSelectedTypes = typeNames.map(name => String(name));
     setSelectedTypes(newSelectedTypes);
-    setCurrentTypeIndex(0);
     
     if (newSelectedTypes.length > 0) {
       // Clear name search when filtering by type
@@ -72,13 +69,11 @@ const PokemonDetails: React.FC = () => {
   const clearTypeFilter = () => {
     setSelectedTypes([]);
     setTypeFilteredPokemon([]);
-    setCurrentTypeIndex(0);
   };
 
   const handleGenerationChange = (generationIds: (string | number)[]) => {
     const newSelectedGenerations = generationIds.map(id => Number(id));
     setSelectedGenerations(newSelectedGenerations);
-    setCurrentGenerationIndex(0);
     
     if (newSelectedGenerations.length > 0) {
       // Calculate combined Pokemon IDs from all selected generations
@@ -105,46 +100,30 @@ const PokemonDetails: React.FC = () => {
   const clearGenerationFilter = () => {
     setSelectedGenerations([]);
     setGenerationFilteredPokemon([]);
-    setCurrentGenerationIndex(0);
   };
 
-  const handlePreviousInGeneration = () => {
-    if (generationFilteredPokemon.length > 0 && currentGenerationIndex > 0) {
-      setIsNavigating(true);
-      setPreviousPokemon(pokemon);
-      setCurrentGenerationIndex(currentGenerationIndex - 1);
-      const prevPokemonId = generationFilteredPokemon[currentGenerationIndex - 1];
-      setSearchTerm(prevPokemonId.toString());
+
+  // Get current filtered Pokemon list based on active filters
+  const getFilteredPokemonList = () => {
+    // If both generation and type filters are active
+    if (selectedGenerations.length > 0 && selectedTypes.length > 0) {
+      return pokemonByMultipleTypes || [];
     }
-  };
-
-  const handleNextInGeneration = () => {
-    if (generationFilteredPokemon.length > 0 && currentGenerationIndex < generationFilteredPokemon.length - 1) {
-      setIsNavigating(true);
-      setPreviousPokemon(pokemon);
-      setCurrentGenerationIndex(currentGenerationIndex + 1);
-      const nextPokemonId = generationFilteredPokemon[currentGenerationIndex + 1];
-      setSearchTerm(nextPokemonId.toString());
+    // If only type filter is active
+    else if (selectedTypes.length > 0) {
+      return typeFilteredPokemon;
     }
-  };
-
-  const handlePreviousInType = () => {
-    if (typeFilteredPokemon.length > 0 && currentTypeIndex > 0) {
-      setIsNavigating(true);
-      setPreviousPokemon(pokemon);
-      setCurrentTypeIndex(currentTypeIndex - 1);
-      const prevPokemon = typeFilteredPokemon[currentTypeIndex - 1];
-      setSearchTerm(prevPokemon.name);
+    // If only generation filter is active
+    else if (selectedGenerations.length > 0) {
+      return generationFilteredPokemon.map(id => ({ name: `pokemon-${id}`, url: `https://pokeapi.co/api/v2/pokemon/${id}/`, id }));
     }
-  };
-
-  const handleNextInType = () => {
-    if (typeFilteredPokemon.length > 0 && currentTypeIndex < typeFilteredPokemon.length - 1) {
-      setIsNavigating(true);
-      setPreviousPokemon(pokemon);
-      setCurrentTypeIndex(currentTypeIndex + 1);
-      const nextPokemon = typeFilteredPokemon[currentTypeIndex + 1];
-      setSearchTerm(nextPokemon.name);
+    // No filters - return all Pokemon (1-1025)
+    else {
+      const allPokemon = [];
+      for (let i = 1; i <= 1025; i++) {
+        allPokemon.push({ name: `pokemon-${i}`, url: `https://pokeapi.co/api/v2/pokemon/${i}/`, id: i });
+      }
+      return allPokemon;
     }
   };
 
@@ -153,18 +132,44 @@ const PokemonDetails: React.FC = () => {
   };
 
   const handlePreviousPokemon = () => {
-    if (pokemon && pokemon.id > 1) {
+    if (!pokemon) return;
+    
+    const filteredList = getFilteredPokemonList();
+    if (filteredList.length === 0) return;
+    
+    // Find current Pokemon in the filtered list
+    const currentIndex = filteredList.findIndex(p => {
+      const pokemonId = p.id || parseInt(p.url.match(/\/(\d+)\/$/)?.[1] || '0');
+      return pokemonId === pokemon.id;
+    });
+    
+    if (currentIndex > 0) {
       setIsNavigating(true);
       setPreviousPokemon(pokemon);
-      searchPokemon((pokemon.id - 1).toString());
+      const previousPokemon = filteredList[currentIndex - 1];
+      const previousId = previousPokemon.id || parseInt(previousPokemon.url.match(/\/(\d+)\/$/)?.[1] || '0');
+      searchPokemon(previousId.toString());
     }
   };
 
   const handleNextPokemon = () => {
-    if (pokemon && pokemon.id < 1025) {
+    if (!pokemon) return;
+    
+    const filteredList = getFilteredPokemonList();
+    if (filteredList.length === 0) return;
+    
+    // Find current Pokemon in the filtered list
+    const currentIndex = filteredList.findIndex(p => {
+      const pokemonId = p.id || parseInt(p.url.match(/\/(\d+)\/$/)?.[1] || '0');
+      return pokemonId === pokemon.id;
+    });
+    
+    if (currentIndex >= 0 && currentIndex < filteredList.length - 1) {
       setIsNavigating(true);
       setPreviousPokemon(pokemon);
-      searchPokemon((pokemon.id + 1).toString());
+      const nextPokemon = filteredList[currentIndex + 1];
+      const nextId = nextPokemon.id || parseInt(nextPokemon.url.match(/\/(\d+)\/$/)?.[1] || '0');
+      searchPokemon(nextId.toString());
     }
   };
 
@@ -235,29 +240,17 @@ const PokemonDetails: React.FC = () => {
       if (pokemonByMultipleTypes.length > 0) {
         setTypeFilteredPokemon(pokemonByMultipleTypes);
         // Automatically navigate to first Pokemon of selected types
-        setCurrentTypeIndex(0);
         setSearchTerm(pokemonByMultipleTypes[0].name);
       } else {
         // No Pokemon found for the selected types/generations combination
         setTypeFilteredPokemon([]);
-        setCurrentTypeIndex(0);
       }
     } else if (selectedTypes.length === 0) {
       // Clear type filtered Pokemon when no types are selected
       setTypeFilteredPokemon([]);
-      setCurrentTypeIndex(0);
     }
   }, [pokemonByMultipleTypes, selectedTypes]);
 
-  // Update currentGenerationIndex when Pokemon changes during generation filtering
-  useEffect(() => {
-    if (pokemon && selectedGenerations.length > 0 && generationFilteredPokemon.length > 0) {
-      const pokemonIndex = generationFilteredPokemon.findIndex(id => id === pokemon.id);
-      if (pokemonIndex !== -1) {
-        setCurrentGenerationIndex(pokemonIndex);
-      }
-    }
-  }, [pokemon, selectedGenerations, generationFilteredPokemon]);
 
   // Clear type filter if selected types are not available in the new generation
   useEffect(() => {
@@ -385,80 +378,6 @@ const PokemonDetails: React.FC = () => {
           />
         </div>
 
-        {/* Generation Navigation */}
-        {selectedGenerations.length > 0 && generationFilteredPokemon.length > 0 && (
-          <div style={{
-            marginBottom: '15px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '15px'
-          }}>
-            <button
-              onClick={handlePreviousInGeneration}
-              disabled={isNavigating || currentGenerationIndex <= 0}
-              style={{
-                backgroundColor: (isNavigating || currentGenerationIndex <= 0) ? '#ccc' : '#FF6B35',
-                color: 'white',
-                border: 'none',
-                borderRadius: '25px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                cursor: (isNavigating || currentGenerationIndex <= 0) ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.3s',
-                opacity: isNavigating ? 0.6 : 1
-              }}
-              onMouseOver={(e) => {
-                if (!isNavigating && currentGenerationIndex > 0) {
-                  e.currentTarget.style.backgroundColor = '#E55A2B';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isNavigating && currentGenerationIndex > 0) {
-                  e.currentTarget.style.backgroundColor = '#FF6B35';
-                }
-              }}
-            >
-              ← Previous Generation Pokemon
-            </button>
-            
-            <span style={{
-              fontSize: '14px',
-              fontWeight: 'bold',
-              color: '#666'
-            }}>
-              {currentGenerationIndex + 1} of {generationFilteredPokemon.length} Generation Pokemon
-            </span>
-            
-            <button
-              onClick={handleNextInGeneration}
-              disabled={isNavigating || currentGenerationIndex >= generationFilteredPokemon.length - 1}
-              style={{
-                backgroundColor: (isNavigating || currentGenerationIndex >= generationFilteredPokemon.length - 1) ? '#ccc' : '#FF6B35',
-                color: 'white',
-                border: 'none',
-                borderRadius: '25px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                cursor: (isNavigating || currentGenerationIndex >= generationFilteredPokemon.length - 1) ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.3s',
-                opacity: isNavigating ? 0.6 : 1
-              }}
-              onMouseOver={(e) => {
-                if (!isNavigating && currentGenerationIndex < generationFilteredPokemon.length - 1) {
-                  e.currentTarget.style.backgroundColor = '#E55A2B';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isNavigating && currentGenerationIndex < generationFilteredPokemon.length - 1) {
-                  e.currentTarget.style.backgroundColor = '#FF6B35';
-                }
-              }}
-            >
-              Next Generation Pokemon →
-            </button>
-          </div>
-        )}
 
         {/* Type Filter */}
         <div className="mb-6">
@@ -475,81 +394,6 @@ const PokemonDetails: React.FC = () => {
             color="info"
           />
         </div>
-        
-        {/* Type Filter Navigation */}
-        {selectedTypes.length > 0 && typeFilteredPokemon.length > 0 && (
-          <div style={{
-            marginTop: '15px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '15px'
-          }}>
-            <button
-              onClick={handlePreviousInType}
-              disabled={isNavigating || currentTypeIndex <= 0}
-              style={{
-                backgroundColor: (isNavigating || currentTypeIndex <= 0) ? '#ccc' : '#2196F3',
-                color: 'white',
-                border: 'none',
-                borderRadius: '25px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                cursor: (isNavigating || currentTypeIndex <= 0) ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.3s',
-                opacity: isNavigating ? 0.6 : 1
-              }}
-              onMouseOver={(e) => {
-                if (!isNavigating && currentTypeIndex > 0) {
-                  e.currentTarget.style.backgroundColor = '#1976D2';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isNavigating && currentTypeIndex > 0) {
-                  e.currentTarget.style.backgroundColor = '#2196F3';
-                }
-              }}
-            >
-              ← Previous Type
-            </button>
-            
-            <span style={{
-              fontSize: '14px',
-              fontWeight: 'bold',
-              color: '#666'
-            }}>
-              {currentTypeIndex + 1} of {typeFilteredPokemon.length} Type Pokemon
-            </span>
-            
-            <button
-              onClick={handleNextInType}
-              disabled={isNavigating || currentTypeIndex >= typeFilteredPokemon.length - 1}
-              style={{
-                backgroundColor: (isNavigating || currentTypeIndex >= typeFilteredPokemon.length - 1) ? '#ccc' : '#2196F3',
-                color: 'white',
-                border: 'none',
-                borderRadius: '25px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                cursor: (isNavigating || currentTypeIndex >= typeFilteredPokemon.length - 1) ? 'not-allowed' : 'pointer',
-                transition: 'background-color 0.3s',
-                opacity: isNavigating ? 0.6 : 1
-              }}
-              onMouseOver={(e) => {
-                if (!isNavigating && currentTypeIndex < typeFilteredPokemon.length - 1) {
-                  e.currentTarget.style.backgroundColor = '#1976D2';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!isNavigating && currentTypeIndex < typeFilteredPokemon.length - 1) {
-                  e.currentTarget.style.backgroundColor = '#2196F3';
-                }
-              }}
-            >
-              Next Type →
-            </button>
-          </div>
-        )}
       </div>
 
       {pokemon && (
