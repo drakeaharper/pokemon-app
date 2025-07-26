@@ -16,17 +16,13 @@ const EvolutionCard: React.FC<{
   return (
     <div
       onClick={onClick}
-      style={{
-        textAlign: 'center',
-        padding: '10px',
-        backgroundColor: isCurrent ? '#4CAF50' : '#fff',
-        border: `2px solid ${isCurrent ? '#45a049' : '#ddd'}`,
-        borderRadius: '10px',
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'all 0.3s ease',
-        transform: isCurrent ? 'scale(1.1)' : 'scale(1)',
-        boxShadow: isCurrent ? '0 4px 8px rgba(0,0,0,0.2)' : '0 2px 4px rgba(0,0,0,0.1)'
-      }}
+      className={`text-center p-2.5 rounded-lg transition-all duration-300 ${
+        isCurrent 
+          ? 'bg-green-500 border-2 border-green-600 scale-110 shadow-lg' 
+          : 'bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 shadow-md'
+      } ${
+        onClick ? 'cursor-pointer hover:scale-105' : 'cursor-default'
+      }`}
       onMouseEnter={(e) => {
         if (onClick && !isCurrent) {
           e.currentTarget.style.transform = 'scale(1.05)';
@@ -49,28 +45,26 @@ const EvolutionCard: React.FC<{
           imageRendering: 'pixelated'
         }}
       />
-      <p style={{
-        margin: '5px 0',
-        textTransform: 'capitalize',
-        fontWeight: isCurrent ? 'bold' : 'normal',
-        color: isCurrent ? '#fff' : '#333',
-        fontSize: '14px'
-      }}>
+      <p className={`my-1 capitalize text-sm ${
+        isCurrent 
+          ? 'font-bold text-white' 
+          : 'font-normal text-gray-800 dark:text-gray-200'
+      }`}>
         {evolution.name}
       </p>
-      <p style={{
-        margin: '0',
-        fontSize: '12px',
-        color: isCurrent ? '#fff' : '#666'
-      }}>
+      <p className={`m-0 text-xs ${
+        isCurrent 
+          ? 'text-white' 
+          : 'text-gray-600 dark:text-gray-400'
+      }`}>
         #{evolution.id.toString().padStart(3, '0')}
       </p>
       {evolution.evolutionDetails && (
-        <p style={{
-          margin: '5px 0 0 0',
-          fontSize: '10px',
-          color: isCurrent ? '#e8f5e9' : '#999'
-        }}>
+        <p className={`mt-1 mb-0 text-xs ${
+          isCurrent 
+            ? 'text-green-100' 
+            : 'text-gray-500 dark:text-gray-400'
+        }`}>
           {evolution.evolutionDetails.min_level && `Lv. ${evolution.evolutionDetails.min_level}`}
           {evolution.evolutionDetails.item && `Use ${evolution.evolutionDetails.item.name.replace('-', ' ')}`}
           {evolution.evolutionDetails.trigger === 'trade' && 'Trade'}
@@ -92,11 +86,9 @@ const Arrow: React.FC<{ direction?: 'right' | 'down' }> = ({ direction = 'right'
       width: isDown ? '40px' : '40px',
       height: isDown ? '30px' : 'auto'
     }}>
-      <span style={{
-        fontSize: '24px',
-        color: '#666',
-        transform: isDown ? 'rotate(90deg)' : 'none'
-      }}>
+      <span className={`text-2xl text-gray-600 dark:text-gray-400 ${
+        isDown ? 'rotate-90' : ''
+      }`}>
         →
       </span>
     </div>
@@ -114,15 +106,8 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
 
 
   return (
-    <div style={{
-      margin: '30px 0',
-      padding: '20px',
-      backgroundColor: '#f9f9f9',
-      borderRadius: '15px',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      position: 'relative'
-    }}>
-      <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Evolution Chain</h3>
+    <div className="my-8 p-5 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg relative transition-colors duration-200">
+      <h3 className="text-center mb-5 text-xl font-bold text-gray-800 dark:text-gray-200">Evolution Chain</h3>
       
       {/* Evolution Chain */}
       <div style={{
@@ -202,13 +187,7 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
       </div>
       
       {next.length > 1 && (
-        <p style={{
-          textAlign: 'center',
-          marginTop: '15px',
-          fontSize: '12px',
-          color: '#666',
-          fontStyle: 'italic'
-        }}>
+        <p className="text-center mt-4 text-xs text-gray-600 dark:text-gray-400 italic">
           This Pokemon has multiple evolution paths
         </p>
       )}

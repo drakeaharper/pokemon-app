@@ -600,11 +600,7 @@ const PokemonDetails: React.FC = () => {
                   ← Previous Chain
                 </button>
                 
-                <span style={{
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  color: '#666'
-                }}>
+                <span className="text-base font-bold text-gray-600 dark:text-gray-400">
                   Evolution Chain #{currentEvolutionChainId || '?'}
                 </span>
                 
