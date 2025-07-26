@@ -11,6 +11,26 @@ const AbilityGlossary: React.FC = () => {
   const { data: ability, isLoading, error: abilityError } = useAbility(searchTerm);
   const { searchResults } = useFuzzyAbilitySearch(abilitySearch);
 
+  // Prefetch adjacent abilities for smooth navigation
+  const prefetchIds = [];
+  if (ability) {
+    // Prefetch 2 abilities in each direction
+    for (let i = 1; i <= 2; i++) {
+      if (ability.id - i >= 1) {
+        prefetchIds.push((ability.id - i).toString());
+      }
+      if (ability.id + i <= 367) {
+        prefetchIds.push((ability.id + i).toString());
+      }
+    }
+  }
+  
+  // Prefetch the adjacent abilities
+  useAbility(prefetchIds[0] || null);
+  useAbility(prefetchIds[1] || null);
+  useAbility(prefetchIds[2] || null);
+  useAbility(prefetchIds[3] || null);
+
   const searchAbility = (term?: string) => {
     const searchValue = term || abilitySearch;
     if (!searchValue) {

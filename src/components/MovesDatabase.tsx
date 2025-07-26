@@ -11,6 +11,26 @@ const MovesDatabase: React.FC = () => {
   const { data: move, isLoading, error: moveError } = useMove(searchTerm);
   const { searchResults } = useFuzzyMoveSearch(moveSearch);
 
+  // Prefetch adjacent moves for smooth navigation
+  const prefetchIds = [];
+  if (move) {
+    // Prefetch 2 moves in each direction
+    for (let i = 1; i <= 2; i++) {
+      if (move.id - i >= 1) {
+        prefetchIds.push((move.id - i).toString());
+      }
+      if (move.id + i <= 937) {
+        prefetchIds.push((move.id + i).toString());
+      }
+    }
+  }
+  
+  // Prefetch the adjacent moves
+  useMove(prefetchIds[0] || null);
+  useMove(prefetchIds[1] || null);
+  useMove(prefetchIds[2] || null);
+  useMove(prefetchIds[3] || null);
+
   const searchMove = (term?: string) => {
     const searchValue = term || moveSearch;
     if (!searchValue) {

@@ -11,6 +11,26 @@ const BerriesGuide: React.FC = () => {
   const { data: berry, isLoading, error: berryError } = useBerry(searchTerm);
   const { searchResults } = useBerryFuzzySearch(berryNumber);
 
+  // Prefetch adjacent berries for smooth navigation
+  const prefetchIds = [];
+  if (berry) {
+    // Prefetch 2 berries in each direction
+    for (let i = 1; i <= 2; i++) {
+      if (berry.id - i >= 1) {
+        prefetchIds.push((berry.id - i).toString());
+      }
+      if (berry.id + i <= 64) {
+        prefetchIds.push((berry.id + i).toString());
+      }
+    }
+  }
+  
+  // Prefetch the adjacent berries
+  useBerry(prefetchIds[0] || null);
+  useBerry(prefetchIds[1] || null);
+  useBerry(prefetchIds[2] || null);
+  useBerry(prefetchIds[3] || null);
+
   const searchBerry = (term?: string) => {
     const searchValue = term || berryNumber;
     if (!searchValue) {

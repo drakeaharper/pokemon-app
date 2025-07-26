@@ -11,6 +11,26 @@ const ItemsCatalog: React.FC = () => {
   const { data: item, isLoading, error: itemError } = useItem(searchTerm);
   const { searchResults } = useFuzzyItemSearch(itemSearch);
 
+  // Prefetch adjacent items for smooth navigation
+  const prefetchIds = [];
+  if (item) {
+    // Prefetch 2 items in each direction
+    for (let i = 1; i <= 2; i++) {
+      if (item.id - i >= 1) {
+        prefetchIds.push((item.id - i).toString());
+      }
+      if (item.id + i <= 2000) {
+        prefetchIds.push((item.id + i).toString());
+      }
+    }
+  }
+  
+  // Prefetch the adjacent items
+  useItem(prefetchIds[0] || null);
+  useItem(prefetchIds[1] || null);
+  useItem(prefetchIds[2] || null);
+  useItem(prefetchIds[3] || null);
+
   const searchItem = (term?: string) => {
     const searchValue = term || itemSearch;
     if (!searchValue) {
