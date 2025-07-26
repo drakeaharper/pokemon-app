@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
-import MultiSelect from './MultiSelect';
+import DaisyMultiSelect from './DaisyMultiSelect';
 import { usePokemon, useEvolutionChain, useEvolutionChainById, useEvolutionChainByIdReverse, usePokemonTypes, usePokemonTypesForGeneration, usePokemonByMultipleTypes } from '../hooks/usePokemonQueries';
 import { useFuzzySearch } from '../hooks/useFuzzySearch';
 import { GENERATIONS, getPokemonIdsForGeneration, getPokemonCountForGeneration } from '../utils/generationUtils';
@@ -371,7 +371,7 @@ const PokemonDetails: React.FC = () => {
       }}>
         {/* Generation Filter */}
         <div className="mb-6">
-          <MultiSelect
+          <DaisyMultiSelect
             label="Filter by Generation"
             options={GENERATIONS.map(gen => ({
               id: gen.id,
@@ -381,8 +381,7 @@ const PokemonDetails: React.FC = () => {
             selectedValues={selectedGenerations}
             onChange={handleGenerationChange}
             placeholder="Select generations..."
-            color="orange"
-            className="max-w-sm mx-auto"
+            color="warning"
           />
         </div>
 
@@ -463,7 +462,7 @@ const PokemonDetails: React.FC = () => {
 
         {/* Type Filter */}
         <div className="mb-6">
-          <MultiSelect
+          <DaisyMultiSelect
             label="Filter by Type"
             options={(selectedGenerations.length > 0 ? pokemonTypesForGeneration : pokemonTypes)
               ?.map((type: { name: string; url: string }) => ({
@@ -473,8 +472,7 @@ const PokemonDetails: React.FC = () => {
             selectedValues={selectedTypes}
             onChange={handleTypeChange}
             placeholder="Select types..."
-            color="blue"
-            className="max-w-sm mx-auto"
+            color="info"
           />
         </div>
         

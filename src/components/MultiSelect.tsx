@@ -27,36 +27,41 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   className = "",
   color = 'blue'
 }) => {
-  const selectedOptions = options.filter(option => selectedValues.includes(option.id));
   
-  const colorClasses = {
-    blue: {
-      tag: 'bg-blue-100 text-blue-800 border-blue-200',
-      button: 'border-blue-300 focus:border-blue-500 focus:ring-blue-500',
-      option: 'ui-active:bg-blue-600 ui-active:text-white',
-      selectedOption: 'bg-blue-50 text-blue-900'
-    },
-    orange: {
-      tag: 'bg-orange-100 text-orange-800 border-orange-200',
-      button: 'border-orange-300 focus:border-orange-500 focus:ring-orange-500',
-      option: 'ui-active:bg-orange-600 ui-active:text-white',
-      selectedOption: 'bg-orange-50 text-orange-900'
-    },
-    green: {
-      tag: 'bg-green-100 text-green-800 border-green-200',
-      button: 'border-green-300 focus:border-green-500 focus:ring-green-500',
-      option: 'ui-active:bg-green-600 ui-active:text-white',
-      selectedOption: 'bg-green-50 text-green-900'
-    },
-    purple: {
-      tag: 'bg-purple-100 text-purple-800 border-purple-200',
-      button: 'border-purple-300 focus:border-purple-500 focus:ring-purple-500',
-      option: 'ui-active:bg-purple-600 ui-active:text-white',
-      selectedOption: 'bg-purple-50 text-purple-900'
-    }
-  };
+  // Convert both to strings for comparison to handle type mismatches
+  const selectedOptions = options.filter(option => 
+    selectedValues.map(v => String(v)).includes(String(option.id))
+  );
+  
+  
+  // Define color classes based on prop
+  let tagClasses = '';
+  let buttonClasses = '';
+  let optionClasses = '';
+  let selectedOptionClasses = '';
+  
+  if (color === 'blue') {
+    tagClasses = 'bg-blue-100 text-blue-800 border-blue-200';
+    buttonClasses = 'border-blue-300 focus:border-blue-500 focus:ring-blue-500';
+    optionClasses = 'ui-active:bg-blue-600 ui-active:text-white';
+    selectedOptionClasses = 'bg-blue-50 text-blue-900';
+  } else if (color === 'orange') {
+    tagClasses = 'bg-orange-100 text-orange-800 border-orange-200';
+    buttonClasses = 'border-orange-300 focus:border-orange-500 focus:ring-orange-500';
+    optionClasses = 'ui-active:bg-orange-600 ui-active:text-white';
+    selectedOptionClasses = 'bg-orange-50 text-orange-900';
+  } else if (color === 'green') {
+    tagClasses = 'bg-green-100 text-green-800 border-green-200';
+    buttonClasses = 'border-green-300 focus:border-green-500 focus:ring-green-500';
+    optionClasses = 'ui-active:bg-green-600 ui-active:text-white';
+    selectedOptionClasses = 'bg-green-50 text-green-900';
+  } else if (color === 'purple') {
+    tagClasses = 'bg-purple-100 text-purple-800 border-purple-200';
+    buttonClasses = 'border-purple-300 focus:border-purple-500 focus:ring-purple-500';
+    optionClasses = 'ui-active:bg-purple-600 ui-active:text-white';
+    selectedOptionClasses = 'bg-purple-50 text-purple-900';
+  }
 
-  const colors = colorClasses[color];
 
 
   const handleRemoveOption = (optionId: string | number) => {
@@ -70,17 +75,29 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
   return (
     <div className={`w-full ${className}`}>
       <label className="block text-sm font-medium text-gray-900 mb-2">
-        {label}
+        {label} {selectedValues.length > 0 && `(${selectedValues.length} selected)`}
       </label>
       
       {/* Selected Options Tags */}
       {selectedOptions.length > 0 && (
-        <div className="mb-3">
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-3" style={{ marginBottom: '12px' }}>
+          <div className="flex flex-wrap gap-2" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {selectedOptions.map((option) => (
               <span
                 key={option.id}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${colors.tag}`}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${tagClasses}`}
+                style={{ 
+                  backgroundColor: color === 'orange' ? '#fed7aa' : '#dbeafe',
+                  color: color === 'orange' ? '#c2410c' : '#1e40af',
+                  border: '1px solid',
+                  borderColor: color === 'orange' ? '#fdba74' : '#93c5fd',
+                  padding: '6px 12px',
+                  borderRadius: '9999px',
+                  fontSize: '12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
               >
                 {option.name}
                 <button
@@ -107,7 +124,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
 
       <Listbox value={selectedValues} onChange={onChange} multiple>
         <div className="relative">
-          <Listbox.Button className={`relative w-full cursor-default rounded-lg bg-white py-3 pl-3 pr-10 text-left border ${colors.button} focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm`}>
+          <Listbox.Button className={`relative w-full cursor-default rounded-lg bg-white py-3 pl-3 pr-10 text-left border ${buttonClasses} focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm`}>
             <span className="block truncate text-gray-900">
               {selectedOptions.length === 0 
                 ? placeholder 
@@ -126,15 +143,15 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
           >
             <Listbox.Options className="absolute z-[9999] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               {options.map((option) => {
-                const isSelected = selectedValues.includes(option.id);
+                const isSelected = selectedValues.map(v => String(v)).includes(String(option.id));
                 return (
                   <Listbox.Option
                     key={option.id}
                     value={option.id}
                     className={({ active }) => `
                       relative cursor-default select-none py-2 pl-4 pr-4 
-                      ${active ? colors.option : 'text-gray-900'}
-                      ${isSelected ? colors.selectedOption : ''}
+                      ${active ? optionClasses : 'text-gray-900'}
+                      ${isSelected ? selectedOptionClasses : ''}
                     `}
                   >
                     <div className="flex items-center justify-between">
