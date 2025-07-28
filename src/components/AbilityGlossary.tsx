@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import AbilityCard from './AbilityCard';
 import { useAbility } from '../hooks/useAbilityQueries';
 import { useFuzzyAbilitySearch } from '../hooks/useFuzzyAbilitySearch';
 
 const AbilityGlossary: React.FC = () => {
-  const [abilitySearch, setAbilitySearch] = useState<string>('stench');
-  const [searchTerm, setSearchTerm] = useState<string | null>('stench');
+  const { abilityName: abilityNameParam } = useParams<{ abilityName: string }>();
+  const navigate = useNavigate();
+  
+  const initialAbility = abilityNameParam || 'stench';
+  const [abilitySearch, setAbilitySearch] = useState<string>(initialAbility);
+  const [searchTerm, setSearchTerm] = useState<string | null>(initialAbility);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const { data: ability, isLoading, error: abilityError } = useAbility(searchTerm);
@@ -38,6 +43,11 @@ const AbilityGlossary: React.FC = () => {
     }
     setSearchTerm(searchValue);
     setShowSuggestions(false);
+    
+    // Update URL if it's different from current URL
+    if (searchValue.toLowerCase() !== abilityNameParam?.toLowerCase()) {
+      navigate(`/abilities/${searchValue.toLowerCase()}`);
+    }
   };
 
   const handleInputChange = (value: string) => {
@@ -74,12 +84,24 @@ const AbilityGlossary: React.FC = () => {
     }
   };
 
-  // Update abilitySearch when a successful search occurs
+  // Sync URL parameter to search term on initial load or browser navigation
+  useEffect(() => {
+    if (abilityNameParam && !searchTerm) {
+      setSearchTerm(abilityNameParam);
+      setAbilitySearch(abilityNameParam);
+    }
+  }, [abilityNameParam, searchTerm]);
+
+  // Update URL when ability loads successfully and update search field
   useEffect(() => {
     if (ability) {
       setAbilitySearch(ability.name);
+      // Update URL only if it's different from current ability name
+      if (ability.name.toLowerCase() !== abilityNameParam?.toLowerCase()) {
+        navigate(`/abilities/${ability.name}`, { replace: true });
+      }
     }
-  }, [ability]);
+  }, [ability, abilityNameParam, navigate]);
 
   const error = abilityError ? 'Ability not found. Please try a different name or ID.' : '';
 

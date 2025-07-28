@@ -8,6 +8,7 @@ import ErrorMessage from './ErrorMessage';
 import TypePill from './TypePill';
 import PokemonMoves from './PokemonMoves';
 import PokemonSearch from './PokemonSearch';
+import PokemonAbilities from './PokemonAbilities';
 
 const PokemonDetailPage: React.FC = () => {
   const { pokemonId: pokemonIdParam } = useParams<{ pokemonId: string }>();
@@ -283,26 +284,7 @@ const PokemonDetailPage: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">{flavorText}</p>
               </div>
 
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Abilities</h3>
-                <div className="flex flex-wrap gap-2">
-                  {pokemon.abilities.map((ability) => (
-                    <div
-                      key={ability.ability.name}
-                      className={`
-                        px-3 py-2 rounded-lg font-medium text-sm capitalize
-                        ${ability.is_hidden 
-                          ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border border-purple-300 dark:border-purple-600' 
-                          : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-600'
-                        }
-                      `}
-                    >
-                      {ability.ability.name.replace(/-/g, ' ')}
-                      {ability.is_hidden && ' (Hidden)'}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <PokemonAbilities abilities={pokemon.abilities} />
             </div>
           </div>
       </div>

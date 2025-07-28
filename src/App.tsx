@@ -40,6 +40,7 @@ function App() {
               <Route path="/moves" element={<MovesDatabase />} />
               <Route path="/types" element={<TypeChart />} />
               <Route path="/abilities" element={<AbilityGlossary />} />
+              <Route path="/abilities/:abilityName" element={<AbilityGlossary />} />
               <Route path="/items" element={<ItemsCatalog />} />
               <Route path="/berries" element={<BerriesGuide />} />
               <Route path="/quiz" element={<PokemonQuiz />} />
