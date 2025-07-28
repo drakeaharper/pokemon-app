@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Ability } from '../types/Ability';
 
@@ -31,9 +31,14 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
   // Get generation number
   const generationNumber = ability.generation.name.replace('generation-', '').toUpperCase();
 
+  // State for expandable Pokemon list
+  const [showAllPokemon, setShowAllPokemon] = useState(false);
+  
   // Get Pokemon with this ability
-  const pokemonWithAbility = ability.pokemon.slice(0, 8); // Show first 8 Pokemon
   const totalPokemon = ability.pokemon.length;
+  const pokemonWithAbility = showAllPokemon 
+    ? ability.pokemon 
+    : ability.pokemon.slice(0, 8); // Show first 8 Pokemon by default
 
   return (
     <div className="border-2 border-gray-800 dark:border-gray-300 rounded-2xl p-5 max-w-lg my-2.5 bg-gray-50 dark:bg-gray-800 shadow-md text-gray-800 dark:text-gray-200 font-sans transition-colors duration-200">
@@ -121,9 +126,17 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
           })}
         </div>
         {totalPokemon > 8 && (
-          <p className="m-0 text-xs text-gray-500 dark:text-gray-400 text-center">
-            ...and {totalPokemon - 8} more Pokemon
-          </p>
+          <div className="text-center mt-3">
+            <button
+              onClick={() => setShowAllPokemon(!showAllPokemon)}
+              className="px-3 py-1 text-xs font-medium rounded-full bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-200"
+            >
+              {showAllPokemon 
+                ? `Show Less` 
+                : `Show All ${totalPokemon} Pokemon`
+              }
+            </button>
+          </div>
         )}
         <div className="mt-2 text-xs text-center text-gray-400 dark:text-gray-500">
           <span className="text-green-500">●</span> Normal Ability • 
