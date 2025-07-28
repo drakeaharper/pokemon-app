@@ -16,10 +16,18 @@ export const useDarkMode = () => {
 };
 
 export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize from localStorage or default to false
+  // Initialize from localStorage or check if dark class is already applied
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
+    try {
+      const saved = localStorage.getItem('darkMode');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+      // Fallback: check if dark class is already applied (by the HTML script)
+      return document.documentElement.classList.contains('dark');
+    } catch (e) {
+      return false;
+    }
   });
 
   // Update localStorage and document theme when dark mode changes

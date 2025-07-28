@@ -25,6 +25,20 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script>
+      // Apply dark mode immediately to prevent flash
+      (function() {
+        try {
+          const darkMode = localStorage.getItem('darkMode');
+          if (darkMode && JSON.parse(darkMode)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {
+          // Ignore errors from localStorage access
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
