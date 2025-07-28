@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Ability } from '../types/Ability';
 
 interface AbilityCardProps {
@@ -6,6 +7,12 @@ interface AbilityCardProps {
 }
 
 const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
+  // Helper function to extract Pokemon ID from URL
+  const extractPokemonId = (url: string): string => {
+    const match = url.match(/\/pokemon\/(\d+)\//);
+    return match ? match[1] : '1';
+  };
+
   // Get English name
   const englishName = ability.names.find(
     name => name.language.name === 'en'
@@ -81,23 +88,37 @@ const AbilityCard: React.FC<AbilityCardProps> = ({ ability }) => {
           gap: '6px',
           marginBottom: totalPokemon > 8 ? '8px' : '0'
         }}>
-          {pokemonWithAbility.map((pokemon, index) => (
-            <span
-              key={index}
-              style={{
-                backgroundColor: pokemon.is_hidden ? '#e74c3c' : '#27ae60',
-                color: 'white',
-                padding: '4px 10px',
-                borderRadius: '15px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                textTransform: 'capitalize'
-              }}
-              title={pokemon.is_hidden ? 'Hidden Ability' : 'Normal Ability'}
-            >
-              {pokemon.pokemon.name.replace('-', ' ')}
-            </span>
-          ))}
+          {pokemonWithAbility.map((pokemon, index) => {
+            const pokemonId = extractPokemonId(pokemon.pokemon.url);
+            return (
+              <Link
+                key={index}
+                to={`/${pokemonId}/details`}
+                style={{
+                  backgroundColor: pokemon.is_hidden ? '#e74c3c' : '#27ae60',
+                  color: 'white',
+                  padding: '4px 10px',
+                  borderRadius: '15px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  textTransform: 'capitalize',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                title={`${pokemon.is_hidden ? 'Hidden Ability' : 'Normal Ability'} - Click to view ${pokemon.pokemon.name.replace('-', ' ')}`}
+              >
+                {pokemon.pokemon.name.replace('-', ' ')}
+              </Link>
+            );
+          })}
         </div>
         {totalPokemon > 8 && (
           <p className="m-0 text-xs text-gray-500 dark:text-gray-400 text-center">
