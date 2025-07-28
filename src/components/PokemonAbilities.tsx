@@ -9,14 +9,16 @@ interface PokemonAbilitiesProps {
     };
     is_hidden: boolean;
   }>;
+  pokemonId?: number;
 }
 
 interface AbilityItemProps {
   abilityName: string;
   isHidden: boolean;
+  pokemonId?: number;
 }
 
-const AbilityItem: React.FC<AbilityItemProps> = ({ abilityName, isHidden }) => {
+const AbilityItem: React.FC<AbilityItemProps> = ({ abilityName, isHidden, pokemonId }) => {
   const { data: abilityData, isLoading, error } = useAbilityByName(abilityName);
 
   // Get English effect and flavor text
@@ -35,7 +37,7 @@ const AbilityItem: React.FC<AbilityItemProps> = ({ abilityName, isHidden }) => {
 
   return (
     <Link 
-      to={`/abilities/${abilityName}`}
+      to={`/abilities/${abilityName}${pokemonId ? `?fromPokemon=${pokemonId}` : ''}`}
       className={`
         block rounded-lg p-4 border-2 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg no-underline
         ${isHidden 
@@ -116,7 +118,7 @@ const AbilityItem: React.FC<AbilityItemProps> = ({ abilityName, isHidden }) => {
   );
 };
 
-const PokemonAbilities: React.FC<PokemonAbilitiesProps> = ({ abilities }) => {
+const PokemonAbilities: React.FC<PokemonAbilitiesProps> = ({ abilities, pokemonId }) => {
   return (
     <div className="mb-6">
       <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">Abilities</h3>
@@ -126,6 +128,7 @@ const PokemonAbilities: React.FC<PokemonAbilitiesProps> = ({ abilities }) => {
             key={ability.ability.name}
             abilityName={ability.ability.name}
             isHidden={ability.is_hidden}
+            pokemonId={pokemonId}
           />
         ))}
       </div>

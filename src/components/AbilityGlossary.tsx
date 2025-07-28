@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import AbilityCard from './AbilityCard';
 import { useAbility } from '../hooks/useAbilityQueries';
 import { useFuzzyAbilitySearch } from '../hooks/useFuzzyAbilitySearch';
@@ -7,6 +7,8 @@ import { useFuzzyAbilitySearch } from '../hooks/useFuzzyAbilitySearch';
 const AbilityGlossary: React.FC = () => {
   const { abilityName: abilityNameParam } = useParams<{ abilityName: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromPokemonId = searchParams.get('fromPokemon');
   
   const initialAbility = abilityNameParam || 'stench';
   const [abilitySearch, setAbilitySearch] = useState<string>(initialAbility);
@@ -46,7 +48,8 @@ const AbilityGlossary: React.FC = () => {
     
     // Update URL if it's different from current URL
     if (searchValue.toLowerCase() !== abilityNameParam?.toLowerCase()) {
-      navigate(`/abilities/${searchValue.toLowerCase()}`);
+      const queryString = fromPokemonId ? `?fromPokemon=${fromPokemonId}` : '';
+      navigate(`/abilities/${searchValue.toLowerCase()}${queryString}`);
     }
   };
 
@@ -98,15 +101,28 @@ const AbilityGlossary: React.FC = () => {
       setAbilitySearch(ability.name);
       // Update URL only if it's different from current ability name
       if (ability.name.toLowerCase() !== abilityNameParam?.toLowerCase()) {
-        navigate(`/abilities/${ability.name}`, { replace: true });
+        const queryString = fromPokemonId ? `?fromPokemon=${fromPokemonId}` : '';
+        navigate(`/abilities/${ability.name}${queryString}`, { replace: true });
       }
     }
-  }, [ability, abilityNameParam, navigate]);
+  }, [ability, abilityNameParam, navigate, fromPokemonId]);
 
   const error = abilityError ? 'Ability not found. Please try a different name or ID.' : '';
 
   return (
     <div className="p-5 max-w-4xl mx-auto">
+      {/* Back to Pokemon Button */}
+      {fromPokemonId && (
+        <div className="mb-6">
+          <button
+            onClick={() => navigate(`/${fromPokemonId}/details`)}
+            className="btn btn-ghost btn-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
+          >
+            ← Back to Pokemon #{fromPokemonId}
+          </button>
+        </div>
+      )}
+
       <h1 className="text-center mb-2.5 text-3xl font-bold text-gray-800 dark:text-white">
         Pokemon Ability Glossary
       </h1>

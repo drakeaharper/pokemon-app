@@ -284,7 +284,7 @@ const PokemonDetailPage: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400">{flavorText}</p>
               </div>
 
-              <PokemonAbilities abilities={pokemon.abilities} />
+              <PokemonAbilities abilities={pokemon.abilities} pokemonId={pokemonId} />
             </div>
           </div>
       </div>
