@@ -22,12 +22,14 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return saved ? JSON.parse(saved) : false;
   });
 
-  // Update localStorage and document class when dark mode changes
+  // Update localStorage and document theme when dark mode changes
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
     if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
       document.documentElement.classList.add('dark');
     } else {
+      document.documentElement.setAttribute('data-theme', 'light');
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);

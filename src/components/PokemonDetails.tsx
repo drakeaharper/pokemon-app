@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import PokemonCard from './PokemonCard';
 import EvolutionDisplay from './EvolutionDisplay';
 import DaisyMultiSelect from './DaisyMultiSelect';
@@ -7,8 +8,12 @@ import { useFuzzySearch } from '../hooks/useFuzzySearch';
 import { GENERATIONS, getPokemonIdsForGeneration, getPokemonCountForGeneration } from '../utils/generationUtils';
 
 const PokemonDetails: React.FC = () => {
-  const [pokemonNumber, setPokemonNumber] = useState<string>('25');
-  const [searchTerm, setSearchTerm] = useState<string | null>('25');
+  const { pokemonId } = useParams<{ pokemonId: string }>();
+  const navigate = useNavigate();
+  
+  const initialPokemonId = pokemonId || '25';
+  const [pokemonNumber, setPokemonNumber] = useState<string>(initialPokemonId);
+  const [searchTerm, setSearchTerm] = useState<string | null>(initialPokemonId);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [isShiny, setIsShiny] = useState<boolean>(false);
   const [currentEvolutionChainId, setCurrentEvolutionChainId] = useState<number | null>(null);
@@ -41,6 +46,14 @@ const PokemonDetails: React.FC = () => {
     }
     setSearchTerm(searchValue);
     setShowSuggestions(false);
+    
+    // Update URL if it's a valid Pokemon number and different from current URL
+    if (/^\d+$/.test(searchValue) && searchValue !== pokemonId) {
+      navigate(`/${searchValue}`);
+    } else if (/^[a-zA-Z]/.test(searchValue)) {
+      // If searching by name, don't update URL until Pokemon is found
+      // The useEffect will handle URL update when pokemon data loads
+    }
   };
 
   const handleInputChange = (value: string) => {
@@ -49,11 +62,13 @@ const PokemonDetails: React.FC = () => {
   };
 
   const handleSuggestionClick = (pokemonName: string) => {
-    setPokemonNumber(pokemonName);
-    setSearchTerm(pokemonName);
     setShowSuggestions(false);
     clearTypeFilter(); // Clear type filter when searching by name
     clearGenerationFilter(); // Clear generation filter when searching by name
+    
+    // Simple approach: directly set search term and let the Pokemon hook handle it
+    setSearchTerm(pokemonName);
+    setPokemonNumber(pokemonName);
   };
 
   const handleTypeChange = (typeNames: (string | number)[]) => {
@@ -238,17 +253,29 @@ const PokemonDetails: React.FC = () => {
     }
   };
 
-  // Update pokemonNumber when a successful search occurs
+  // Sync URL parameter to search term on initial load or browser navigation
+  useEffect(() => {
+    if (pokemonId && !searchTerm) {
+      setSearchTerm(pokemonId);
+      setPokemonNumber(pokemonId);
+    }
+  }, [pokemonId, searchTerm]);
+
+  // Update URL when Pokemon loads successfully
   useEffect(() => {
     if (pokemon) {
-      setPokemonNumber(pokemon.id.toString());
       // Reset navigation state when new Pokemon loads
       if (isNavigating) {
         setIsNavigating(false);
         setPreviousPokemon(null);
       }
+      
+      // Update URL only if it's different from current Pokemon ID
+      if (pokemon.id.toString() !== pokemonId) {
+        navigate(`/${pokemon.id}`, { replace: true });
+      }
     }
-  }, [pokemon, isNavigating]);
+  }, [pokemon, isNavigating, pokemonId, navigate]);
 
   // Extract evolution chain ID from current evolution data
   useEffect(() => {

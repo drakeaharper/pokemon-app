@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Pokemon } from '../types/Pokemon';
+import { Pokemon, PokemonSpecies, PokemonForm } from '../types/Pokemon';
 import { EvolutionDisplay } from '../types/Evolution';
 import { fetchEvolutionChain } from '../utils/evolutionUtils';
 import { getPokemonIdsForGeneration } from '../utils/generationUtils';
@@ -11,7 +11,7 @@ interface PokemonListItem {
   id: number;
 }
 
-export const usePokemon = (searchTerm: string | null) => {
+export const usePokemon = (searchTerm: string | number | null) => {
   return useQuery({
     queryKey: ['pokemon', searchTerm],
     queryFn: async (): Promise<Pokemon> => {
@@ -19,13 +19,63 @@ export const usePokemon = (searchTerm: string | null) => {
         throw new Error('No search term provided');
       }
       
+      const identifier = typeof searchTerm === 'string' 
+        ? searchTerm.toLowerCase().trim() 
+        : searchTerm;
+      
       const response = await axios.get<Pokemon>(
-        `https://pokeapi.co/api/v2/pokemon/${searchTerm.toLowerCase().trim()}`
+        `https://pokeapi.co/api/v2/pokemon/${identifier}`
       );
       return response.data;
     },
     enabled: !!searchTerm,
     staleTime: 1000 * 60 * 10, // 10 minutes for Pokemon data
+  });
+};
+
+export const usePokemonSpecies = (pokemonId: number | null) => {
+  return useQuery({
+    queryKey: ['pokemonSpecies', pokemonId],
+    queryFn: async (): Promise<PokemonSpecies> => {
+      if (!pokemonId) {
+        throw new Error('No Pokemon ID provided');
+      }
+      
+      const response = await axios.get<PokemonSpecies>(
+        `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`
+      );
+      return response.data;
+    },
+    enabled: !!pokemonId,
+    staleTime: 1000 * 60 * 15, // 15 minutes for species data
+  });
+};
+
+export const usePokemonForms = (pokemonName: string | null) => {
+  return useQuery({
+    queryKey: ['pokemonForms', pokemonName],
+    queryFn: async (): Promise<PokemonForm[]> => {
+      if (!pokemonName) {
+        throw new Error('No Pokemon name provided');
+      }
+      
+      // First get the Pokemon to find all form URLs
+      const pokemonResponse = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+      );
+      
+      const formUrls = pokemonResponse.data.forms || [];
+      
+      // Fetch all forms
+      const formPromises = formUrls.map((form: any) => 
+        axios.get<PokemonForm>(form.url)
+      );
+      
+      const formResponses = await Promise.all(formPromises);
+      return formResponses.map(response => response.data);
+    },
+    enabled: !!pokemonName,
+    staleTime: 1000 * 60 * 15, // 15 minutes for forms data
   });
 };
 

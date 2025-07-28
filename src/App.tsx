@@ -11,6 +11,7 @@ import AbilityGlossary from './components/AbilityGlossary';
 import ItemsCatalog from './components/ItemsCatalog';
 import PokemonQuiz from './components/PokemonQuiz';
 import BerriesGuide from './components/BerriesGuide';
+import PokemonDetailPage from './components/PokemonDetailPage';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -29,10 +30,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <DarkModeProvider>
         <Router>
-          <div className="App min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+          <div className="App min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
             <NavigationBar />
             <Routes>
               <Route path="/" element={<PokemonDetails />} />
+              <Route path="/:pokemonId" element={<PokemonDetails />} />
+              <Route path="/:pokemonId/details" element={<PokemonDetailPage />} />
               <Route path="/about" element={<Homepage />} />
               <Route path="/moves" element={<MovesDatabase />} />
               <Route path="/types" element={<TypeChart />} />

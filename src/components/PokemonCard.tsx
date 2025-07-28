@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Pokemon } from '../types/Pokemon';
 
 interface PokemonCardProps {
@@ -28,12 +29,18 @@ const typeColors: { [key: string]: string } = {
 };
 
 const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, isShiny = false }) => {
+  const navigate = useNavigate();
   const mainType = pokemon.types[0].type.name;
   const backgroundColor = typeColors[mainType] || '#68A090';
 
+  const handleClick = () => {
+    navigate(`/${pokemon.id}/details`);
+  };
+
   return (
     <div 
-      className="border-2 border-gray-300 dark:border-gray-600"
+      className="border-2 border-gray-300 dark:border-gray-600 cursor-pointer hover:scale-105 transition-transform"
+      onClick={handleClick}
       style={{
         borderRadius: '15px',
         padding: '20px',

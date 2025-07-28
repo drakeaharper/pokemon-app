@@ -89,7 +89,9 @@ export const useQuizGenerator = () => {
             },
             abilities: [],
             types: [],
-            stats: []
+            stats: [],
+            base_experience: null,
+            moves: []
           };
 
           const wrongAnswerOptions = availablePokemon.filter(p => p.name !== pokemonData.name);
@@ -136,7 +138,9 @@ export const useQuizGenerator = () => {
               sprites: fullPokemonData.sprites,
               abilities: fullPokemonData.abilities,
               types: fullPokemonData.types,
-              stats: fullPokemonData.stats
+              stats: fullPokemonData.stats,
+              base_experience: fullPokemonData.base_experience || null,
+              moves: fullPokemonData.moves || []
             };
 
             // Generate wrong abilities from other Pokemon
@@ -220,7 +224,9 @@ export const useQuizGenerator = () => {
               sprites: fullPokemonData.sprites,
               abilities: fullPokemonData.abilities,
               types: fullPokemonData.types,
-              stats: fullPokemonData.stats
+              stats: fullPokemonData.stats,
+              base_experience: fullPokemonData.base_experience || null,
+              moves: fullPokemonData.moves || []
             };
 
             // Generate wrong hidden abilities from other Pokemon
@@ -309,7 +315,9 @@ export const useQuizGenerator = () => {
               sprites: fullPokemonData.sprites,
               abilities: fullPokemonData.abilities,
               types: fullPokemonData.types,
-              stats: fullPokemonData.stats
+              stats: fullPokemonData.stats,
+              base_experience: fullPokemonData.base_experience || null,
+              moves: fullPokemonData.moves || []
             };
 
             // Generate wrong type combinations
