@@ -214,7 +214,7 @@ const PokemonDetailPage: React.FC = () => {
       {/* Main Pokemon Display */}
       <div className="bg-white dark:bg-gray-800 shadow-xl mb-8 rounded-xl p-6">
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Left Column - Image and Basic Info */}
+            {/* Left Column - Image */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
@@ -243,48 +243,54 @@ const PokemonDetailPage: React.FC = () => {
                   </div>
                 </button>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                 #{String(pokemon.id).padStart(3, '0')} • {genus}
               </p>
               
-              <div className="inline-block mb-4">
+              {/* Expanded Image Area */}
+              <div className="flex items-center justify-center h-80 mb-6">
                 <img
                   src={displaySprite || '/placeholder.png'}
                   alt={pokemon.name}
-                  className="w-64 h-64 object-contain mx-auto"
+                  className="max-w-full max-h-full object-contain"
                 />
               </div>
 
-              <div className="flex justify-center gap-2 mb-4">
-                {pokemon.types.map((type) => (
-                  <TypePill
-                    key={type.type.name}
-                    typeName={type.type.name}
-                    size="lg"
-                  />
-                ))}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 dark:text-gray-100">
-                <div>
-                  <p className="font-semibold">Height</p>
-                  <p>{(pokemon.height / 10).toFixed(1)} m</p>
+              {/* Types and Physical Stats moved below image */}
+              <div className="space-y-4">
+                <div className="flex justify-center gap-2">
+                  {pokemon.types.map((type) => (
+                    <TypePill
+                      key={type.type.name}
+                      typeName={type.type.name}
+                      size="lg"
+                    />
+                  ))}
                 </div>
-                <div>
-                  <p className="font-semibold">Weight</p>
-                  <p>{(pokemon.weight / 10).toFixed(1)} kg</p>
+
+                <div className="grid grid-cols-2 gap-4 text-sm text-gray-800 dark:text-gray-100 max-w-xs mx-auto">
+                  <div className="text-center">
+                    <p className="font-semibold">Height</p>
+                    <p>{(pokemon.height / 10).toFixed(1)} m</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-semibold">Weight</p>
+                    <p>{(pokemon.weight / 10).toFixed(1)} kg</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Right Column - Description and Abilities */}
-            <div>
+            <div className="flex flex-col">
               <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Description</h3>
                 <p className="text-gray-600 dark:text-gray-400">{flavorText}</p>
               </div>
 
-              <PokemonAbilities abilities={pokemon.abilities} pokemonId={pokemonId} />
+              <div className="flex-1">
+                <PokemonAbilities abilities={pokemon.abilities} pokemonId={pokemonId} />
+              </div>
             </div>
           </div>
       </div>
