@@ -116,12 +116,12 @@ const PokemonQuiz: React.FC = () => {
                   onClick={() => setSelectedQuizType(quizType.type)}
                   className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
                     selectedQuizType === quizType.type
-                      ? 'border-green-500 bg-green-50 text-green-800'
-                      : 'border-gray-300 bg-white hover:border-green-300'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:border-green-300 dark:hover:border-green-500'
                   }`}
                 >
                   <h3 className="font-bold text-lg">{quizType.label}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{quizType.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{quizType.description}</p>
                 </button>
               ))}
             </div>
@@ -138,7 +138,7 @@ const PokemonQuiz: React.FC = () => {
                   className={`px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
                     numberOfQuestions === num
                       ? 'border-green-500 bg-green-500 text-white'
-                      : 'border-gray-300 bg-white hover:border-green-300'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:border-green-300 dark:hover:border-green-500'
                   }`}
                 >
                   {num}
@@ -155,12 +155,12 @@ const PokemonQuiz: React.FC = () => {
                 onClick={() => setSelectedGeneration(null)}
                 className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
                   selectedGeneration === null
-                    ? 'border-green-500 bg-green-50 text-green-800'
-                    : 'border-gray-300 bg-white hover:border-green-300'
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                    : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:border-green-300 dark:hover:border-green-500'
                 }`}
               >
                 <h4 className="font-bold text-sm">All Generations</h4>
-                <p className="text-xs text-gray-600">No filter</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">No filter</p>
               </button>
               {GENERATIONS.map((gen) => (
                 <button
@@ -168,12 +168,12 @@ const PokemonQuiz: React.FC = () => {
                   onClick={() => setSelectedGeneration(gen.id)}
                   className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
                     selectedGeneration === gen.id
-                      ? 'border-green-500 bg-green-50 text-green-800'
-                      : 'border-gray-300 bg-white hover:border-green-300'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:border-green-300 dark:hover:border-green-500'
                   }`}
                 >
                   <h4 className="font-bold text-sm">{gen.region}</h4>
-                  <p className="text-xs text-gray-600">{gen.name}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">{gen.name}</p>
                 </button>
               ))}
             </div>
@@ -203,10 +203,10 @@ const PokemonQuiz: React.FC = () => {
         {/* Progress Bar */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Question {currentQuestionIndex + 1} of {questions.length}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               Score: {answers.filter(a => a.isCorrect).length}/{answers.length}
             </span>
           </div>
@@ -234,13 +234,13 @@ const PokemonQuiz: React.FC = () => {
                 className={`p-4 rounded-lg border-2 transition-all duration-200 text-left font-medium ${
                   showResult
                     ? option === currentQuestion.correctAnswer
-                      ? 'border-green-500 bg-green-100 text-green-800'
+                      ? 'border-green-500 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
                       : option === selectedAnswer
-                        ? 'border-red-500 bg-red-100 text-red-800'
-                        : 'border-gray-300 bg-gray-100 text-gray-500'
+                        ? 'border-red-500 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'
+                        : 'border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                     : selectedAnswer === option
-                      ? 'border-green-500 bg-green-50 text-green-800'
-                      : 'border-gray-300 bg-white hover:border-green-300'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                      : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 hover:border-green-300 dark:hover:border-green-500 hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >
                 {option}
@@ -269,11 +269,11 @@ const PokemonQuiz: React.FC = () => {
               }`}>
                 {answers[answers.length - 1]?.isCorrect ? 'Correct!' : 'Incorrect!'}
               </div>
-              <div className="text-gray-600">
+              <div className="text-gray-600 dark:text-gray-400">
                 The correct answer is: <span className="font-bold">{currentQuestion.correctAnswer}</span>
               </div>
               {currentQuestionIndex < questions.length - 1 && (
-                <div className="text-sm text-gray-500 mt-2">
+                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                   Next question in 2 seconds...
                 </div>
               )}
