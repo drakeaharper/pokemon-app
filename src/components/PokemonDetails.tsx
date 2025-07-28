@@ -15,6 +15,7 @@ const PokemonDetails: React.FC = () => {
   const [pokemonNumber, setPokemonNumber] = useState<string>(initialPokemonId);
   const [searchTerm, setSearchTerm] = useState<string | null>(initialPokemonId);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState<number>(-1);
   const [isShiny, setIsShiny] = useState<boolean>(false);
   const [currentEvolutionChainId, setCurrentEvolutionChainId] = useState<number | null>(null);
   const [navigatingByChain, setNavigatingByChain] = useState<'forward' | 'backward' | null>(null);
@@ -59,10 +60,12 @@ const PokemonDetails: React.FC = () => {
   const handleInputChange = (value: string) => {
     setPokemonNumber(value);
     setShowSuggestions(value.length > 0 && searchResults.length > 0);
+    setSelectedSuggestionIndex(-1); // Reset selection when typing
   };
 
   const handleSuggestionClick = (pokemonName: string) => {
     setShowSuggestions(false);
+    setSelectedSuggestionIndex(-1); // Reset selection index
     clearTypeFilter(); // Clear type filter when searching by name
     clearGenerationFilter(); // Clear generation filter when searching by name
     
@@ -248,8 +251,46 @@ const PokemonDetails: React.FC = () => {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      searchPokemon();
+    if (!showSuggestions || searchResults.length === 0) {
+      if (e.key === 'Enter') {
+        searchPokemon();
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => 
+          prev < searchResults.length - 1 ? prev + 1 : 0
+        );
+        break;
+      
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => 
+          prev > 0 ? prev - 1 : searchResults.length - 1
+        );
+        break;
+      
+      case 'Enter':
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+          // Select the highlighted suggestion
+          handleSuggestionClick(searchResults[selectedSuggestionIndex].name);
+        } else if (searchResults.length > 0) {
+          // Select the first suggestion if none is highlighted
+          handleSuggestionClick(searchResults[0].name);
+        } else {
+          // Fall back to regular search
+          searchPokemon();
+        }
+        break;
+      
+      case 'Escape':
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+        break;
     }
   };
 
@@ -354,9 +395,12 @@ const PokemonDetails: React.FC = () => {
             placeholder="Enter Pokemon number or name (e.g., 25 or pikachu)"
             value={pokemonNumber}
             onChange={(e) => handleInputChange(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             onFocus={() => setShowSuggestions(pokemonNumber.length > 0 && searchResults.length > 0)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            onBlur={() => setTimeout(() => {
+              setShowSuggestions(false);
+              setSelectedSuggestionIndex(-1);
+            }, 150)}
             style={{
               padding: '10px',
               fontSize: '16px',
@@ -380,7 +424,7 @@ const PokemonDetails: React.FC = () => {
               maxHeight: '300px',
               overflowY: 'auto'
             }}>
-              {searchResults.map((result) => (
+              {searchResults.map((result, index) => (
                 <div
                   key={result.id}
                   onClick={() => handleSuggestionClick(result.name)}
@@ -390,13 +434,34 @@ const PokemonDetails: React.FC = () => {
                     borderBottom: '1px solid #eee',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    backgroundColor: index === selectedSuggestionIndex ? '#4CAF50' : 'white',
+                    color: index === selectedSuggestionIndex ? 'white' : 'black'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                  onMouseEnter={(e) => {
+                    if (index !== selectedSuggestionIndex) {
+                      e.currentTarget.style.backgroundColor = '#f5f5f5';
+                      e.currentTarget.style.color = 'black';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (index !== selectedSuggestionIndex) {
+                      e.currentTarget.style.backgroundColor = 'white';
+                      e.currentTarget.style.color = 'black';
+                    } else {
+                      e.currentTarget.style.backgroundColor = '#4CAF50';
+                      e.currentTarget.style.color = 'white';
+                    }
+                  }}
+                  onMouseOver={() => setSelectedSuggestionIndex(index)}
                 >
                   <span style={{ textTransform: 'capitalize' }}>{result.name}</span>
-                  <span style={{ color: '#666', fontSize: '12px' }}>#{result.id}</span>
+                  <span style={{ 
+                    color: index === selectedSuggestionIndex ? '#e8f5e8' : '#666', 
+                    fontSize: '12px' 
+                  }}>
+                    #{result.id}
+                  </span>
                 </div>
               ))}
             </div>
