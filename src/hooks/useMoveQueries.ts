@@ -56,3 +56,29 @@ export const useMoveByName = (moveName: string | null) => {
     staleTime: 1000 * 60 * 15, // 15 minutes for move data
   });
 };
+
+export const useMovesByType = (typeName: string | null) => {
+  return useQuery({
+    queryKey: ['movesByType', typeName],
+    queryFn: async (): Promise<MoveListItem[]> => {
+      if (!typeName) {
+        throw new Error('No type name provided');
+      }
+      
+      const response = await axios.get(
+        `https://pokeapi.co/api/v2/type/${typeName.toLowerCase()}`
+      );
+      
+      return response.data.moves.map((move: any, index: number) => {
+        const moveId = parseInt(move.url.match(/\/move\/(\d+)\//)?.[1] || '0');
+        return {
+          name: move.name,
+          url: move.url,
+          id: moveId,
+        };
+      }).sort((a: MoveListItem, b: MoveListItem) => a.id - b.id);
+    },
+    enabled: !!typeName,
+    staleTime: 1000 * 60 * 30, // 30 minutes for type-specific moves
+  });
+};
