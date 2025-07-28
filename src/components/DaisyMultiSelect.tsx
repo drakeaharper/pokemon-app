@@ -66,7 +66,7 @@ const DaisyMultiSelect: React.FC<DaisyMultiSelectProps> = ({
 
   return (
     <div className={`w-full max-w-sm mx-auto ${className}`}>
-      <label className="block text-sm font-medium text-gray-900 mb-2">
+      <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
         {label} {selectedValues.length > 0 && `(${selectedValues.length} selected)`}
       </label>
       
@@ -110,14 +110,14 @@ const DaisyMultiSelect: React.FC<DaisyMultiSelectProps> = ({
       <div className="relative w-full" ref={dropdownRef}>
         <button
           type="button"
-          className={`relative w-full cursor-default rounded-lg bg-white py-3 pl-3 pr-10 text-left border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
+          className={`relative w-full cursor-default rounded-lg bg-white dark:bg-gray-800 py-3 pl-3 pr-10 text-left border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm ${
             color === 'warning' 
-              ? 'border-orange-300 focus:border-orange-500 focus:ring-orange-500'
-              : 'border-blue-300 focus:border-blue-500 focus:ring-blue-500'
+              ? 'border-orange-300 dark:border-orange-600 focus:border-orange-500 focus:ring-orange-500'
+              : 'border-blue-300 dark:border-blue-600 focus:border-blue-500 focus:ring-blue-500'
           }`}
           onClick={() => setIsOpen(!isOpen)}
         >
-          <span className="block truncate text-gray-900">
+          <span className="block truncate text-gray-900 dark:text-gray-100">
             {selectedOptions.length === 0 
               ? placeholder 
               : `${selectedOptions.length} selected`}
@@ -135,19 +135,19 @@ const DaisyMultiSelect: React.FC<DaisyMultiSelectProps> = ({
         </button>
         
         {isOpen && (
-          <ul className="absolute z-[9999] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <ul className="absolute z-[9999] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white dark:bg-gray-800 py-1 text-base shadow-lg ring-1 ring-black dark:ring-gray-600 ring-opacity-5 focus:outline-none sm:text-sm">
             {options.map((option) => {
               const isSelected = selectedValues.map(v => String(v)).includes(String(option.id));
               return (
                 <li key={option.id}>
                   <button
                     type="button"
-                    className={`relative cursor-default select-none py-2 pl-4 pr-4 w-full text-left hover:bg-gray-50 ${
+                    className={`relative cursor-default select-none py-2 pl-4 pr-4 w-full text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${
                       isSelected 
                         ? color === 'warning' 
-                          ? 'bg-orange-50 text-orange-900' 
-                          : 'bg-blue-50 text-blue-900'
-                        : 'text-gray-900'
+                          ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-900 dark:text-orange-100' 
+                          : 'bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100'
+                        : 'text-gray-900 dark:text-gray-100'
                     }`}
                     onClick={() => handleToggleOption(option.id)}
                   >

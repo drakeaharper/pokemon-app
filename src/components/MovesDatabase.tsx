@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import MoveCard from './MoveCard';
+import DaisyMultiSelect from './DaisyMultiSelect';
 import { useMove, useMovesByType } from '../hooks/useMoveQueries';
 import { useFuzzyMoveSearch } from '../hooks/useFuzzyMoveSearch';
 import { usePokemonTypes } from '../hooks/usePokemonQueries';
 
 const MovesDatabase: React.FC = () => {
-  const [moveSearch, setMoveSearch] = useState<string>('tackle');
-  const [searchTerm, setSearchTerm] = useState<string | null>('tackle');
+  const { moveName: moveNameParam } = useParams<{ moveName: string }>();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const typeParam = searchParams.get('type');
+  
+  const initialMove = moveNameParam || 'tackle';
+  const [moveSearch, setMoveSearch] = useState<string>(initialMove);
+  const [searchTerm, setSearchTerm] = useState<string | null>(initialMove);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(typeParam ? [typeParam] : []);
   const [filteredMoves, setFilteredMoves] = useState<any[]>([]);
   const [currentFilteredIndex, setCurrentFilteredIndex] = useState<number>(0);
 
   const { data: move, isLoading, error: moveError } = useMove(searchTerm);
   const { searchResults } = useFuzzyMoveSearch(moveSearch);
   const { data: pokemonTypes } = usePokemonTypes();
+  const selectedType = selectedTypes.length > 0 ? selectedTypes[0] : null;
   const { data: movesByType } = useMovesByType(selectedType);
 
   // Prefetch adjacent moves for smooth navigation
@@ -44,6 +53,12 @@ const MovesDatabase: React.FC = () => {
     }
     setSearchTerm(searchValue);
     setShowSuggestions(false);
+    
+    // Update URL if it's different from current URL
+    if (searchValue.toLowerCase() !== moveNameParam?.toLowerCase()) {
+      const queryString = selectedType ? `?type=${selectedType}` : '';
+      navigate(`/moves/${searchValue.toLowerCase()}${queryString}`);
+    }
   };
 
   const handleInputChange = (value: string) => {
@@ -56,25 +71,25 @@ const MovesDatabase: React.FC = () => {
     setSearchTerm(moveName);
     setShowSuggestions(false);
     // Clear type filter when doing direct search
-    setSelectedType(null);
+    setSelectedTypes([]);
   };
 
   const handleTypeChange = (typeNames: (string | number)[]) => {
-    const selectedTypeName = typeNames.length > 0 ? String(typeNames[0]) : null;
-    setSelectedType(selectedTypeName);
+    const typeStrings = typeNames.map(t => String(t));
+    setSelectedTypes(typeStrings);
+    const selectedTypeName = typeStrings.length > 0 ? typeStrings[0] : null;
     
     if (selectedTypeName) {
       // Clear name search when filtering by type
       setMoveSearch('');
       setSearchTerm(null);
       setCurrentFilteredIndex(0);
+      // Update URL with type parameter
+      navigate(`/moves?type=${selectedTypeName}`);
+    } else {
+      // Clear type filter
+      navigate('/moves');
     }
-  };
-
-  const clearTypeFilter = () => {
-    setSelectedType(null);
-    setFilteredMoves([]);
-    setCurrentFilteredIndex(0);
   };
 
   const handlePreviousMove = () => {
@@ -114,12 +129,32 @@ const MovesDatabase: React.FC = () => {
     }
   };
 
-  // Update moveSearch when a successful search occurs
+  // Sync URL parameter to search term on initial load or browser navigation
+  useEffect(() => {
+    if (moveNameParam && !searchTerm) {
+      setSearchTerm(moveNameParam);
+      setMoveSearch(moveNameParam);
+    }
+  }, [moveNameParam, searchTerm]);
+
+  // Update URL when move loads successfully and update search field
   useEffect(() => {
     if (move) {
       setMoveSearch(move.name);
+      // Update URL only if it's different from current move name
+      if (move.name.toLowerCase() !== moveNameParam?.toLowerCase()) {
+        const queryString = selectedType ? `?type=${selectedType}` : '';
+        navigate(`/moves/${move.name}${queryString}`, { replace: true });
+      }
     }
-  }, [move]);
+  }, [move, moveNameParam, navigate, selectedType]);
+
+  // Sync URL type parameter to selectedTypes on initial load
+  useEffect(() => {
+    if (typeParam && selectedTypes.length === 0) {
+      setSelectedTypes([typeParam]);
+    }
+  }, [typeParam, selectedTypes.length]);
 
   // Handle moves by type loading
   useEffect(() => {
@@ -138,35 +173,6 @@ const MovesDatabase: React.FC = () => {
       <h1 className="text-center mb-8 text-3xl font-bold text-gray-800 dark:text-white">
         Pokemon Moves Database
       </h1>
-
-      {/* Type Filter */}
-      <div className="mb-8 max-w-md mx-auto text-center">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Filter by Type
-        </label>
-        <select
-          value={selectedType || ''}
-          onChange={(e) => handleTypeChange(e.target.value ? [e.target.value] : [])}
-          className="select select-bordered select-info w-full max-w-xs bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100"
-        >
-          <option value="">All Types</option>
-          {pokemonTypes?.map((type: { name: string; url: string }) => (
-            <option key={type.name} value={type.name}>
-              {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
-            </option>
-          ))}
-        </select>
-        {selectedType && (
-          <div className="mt-2">
-            <button
-              onClick={clearTypeFilter}
-              className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
-            >
-              Clear Filter
-            </button>
-          </div>
-        )}
-      </div>
       
       <form onSubmit={handleSubmit} className="text-center mb-8 px-5">
         <div className="relative inline-block w-full max-w-lg">
@@ -206,6 +212,22 @@ const MovesDatabase: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Type Filter */}
+      <div className="mb-8">
+        <DaisyMultiSelect
+          label="Filter by Type"
+          options={pokemonTypes?.map((type: { name: string; url: string }) => ({
+            id: type.name,
+            name: type.name.charAt(0).toUpperCase() + type.name.slice(1)
+          })) || []}
+          selectedValues={selectedTypes}
+          onChange={handleTypeChange}
+          placeholder="Select types..."
+          color="info"
+          className="max-w-md mx-auto"
+        />
+      </div>
 
       {isLoading && (
         <div className="text-center text-xl">

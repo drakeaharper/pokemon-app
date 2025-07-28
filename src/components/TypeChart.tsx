@@ -124,7 +124,7 @@ const TypeChart: React.FC = () => {
           • The intersection shows the damage multiplier
         </div>
         <div className="mb-4">
-          • Click type headers to highlight, hover cells for details
+          • Click row/column headers to highlight independently, hover cells for details
         </div>
         
         <div className="inline-block bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-xs text-gray-800 dark:text-gray-200">

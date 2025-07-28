@@ -32,16 +32,34 @@ const typeColors: { [key: string]: string } = {
 };
 
 const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effectivenessMatrix }) => {
-  const [highlightedType, setHighlightedType] = useState<string | null>(null);
+  const [highlightedRow, setHighlightedRow] = useState<string | null>(null);
+  const [highlightedColumn, setHighlightedColumn] = useState<string | null>(null);
   const [hoveredCell, setHoveredCell] = useState<{ attacking: string; defending: string } | null>(null);
 
-  const handleTypeClick = (typeName: string) => {
-    setHighlightedType(highlightedType === typeName ? null : typeName);
+  const handleRowClick = (typeName: string) => {
+    // If no selections exist, highlight both row and column
+    if (!highlightedRow && !highlightedColumn) {
+      setHighlightedRow(typeName);
+      setHighlightedColumn(typeName);
+    } else {
+      // Otherwise just change the row
+      setHighlightedRow(highlightedRow === typeName ? null : typeName);
+    }
+  };
+
+  const handleColumnClick = (typeName: string) => {
+    // If no selections exist, highlight both row and column
+    if (!highlightedRow && !highlightedColumn) {
+      setHighlightedRow(typeName);
+      setHighlightedColumn(typeName);
+    } else {
+      // Otherwise just change the column
+      setHighlightedColumn(highlightedColumn === typeName ? null : typeName);
+    }
   };
 
   const isHighlighted = (attackingType: string, defendingType: string) => {
-    if (!highlightedType) return false;
-    return attackingType === highlightedType || defendingType === highlightedType;
+    return attackingType === highlightedRow || defendingType === highlightedColumn;
   };
 
   return (
@@ -62,11 +80,11 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
         {MAIN_TYPES.map(defendingType => (
           <div
             key={`def-${defendingType}`}
-            onClick={() => handleTypeClick(defendingType)}
+            onClick={() => handleColumnClick(defendingType)}
             className={`text-white flex items-center justify-center rounded cursor-pointer text-xs font-bold uppercase py-2 px-1 transition-all duration-200 ${
-              highlightedType && highlightedType !== defendingType ? 'opacity-50' : 'opacity-100'
+              highlightedColumn && highlightedColumn !== defendingType ? 'opacity-50' : 'opacity-100'
             } ${
-              highlightedType === defendingType ? 'scale-105 shadow-lg' : 'scale-100'
+              highlightedColumn === defendingType ? 'scale-105 shadow-lg' : 'scale-100'
             }`}
             style={{
               backgroundColor: typeColors[defendingType],
@@ -82,11 +100,11 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
           <React.Fragment key={attackingType}>
             {/* Row header (attacking type) */}
             <div
-              onClick={() => handleTypeClick(attackingType)}
+              onClick={() => handleRowClick(attackingType)}
               className={`text-white flex items-center justify-start rounded cursor-pointer text-xs font-bold capitalize py-2 px-2.5 transition-all duration-200 ${
-                highlightedType && highlightedType !== attackingType ? 'opacity-50' : 'opacity-100'
+                highlightedRow && highlightedRow !== attackingType ? 'opacity-50' : 'opacity-100'
               } ${
-                highlightedType === attackingType ? 'scale-102 shadow-lg' : 'scale-100'
+                highlightedRow === attackingType ? 'scale-102 shadow-lg' : 'scale-100'
               }`}
               style={{
                 backgroundColor: typeColors[attackingType],
@@ -111,7 +129,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
                     isHovered ? 'border-2 border-gray-800 dark:border-gray-200 scale-110 shadow-lg' : 
                     cellHighlighted ? 'border-2 border-gray-600 dark:border-gray-400' : 'border border-gray-300 dark:border-gray-600'
                   } ${
-                    highlightedType && !cellHighlighted ? 'opacity-30' : 'opacity-100'
+                    (highlightedRow || highlightedColumn) && !cellHighlighted ? 'opacity-30' : 'opacity-100'
                   }`}
                   style={{
                     backgroundColor: getEffectivenessBackgroundColor(effectiveness)
@@ -183,7 +201,7 @@ const TypeEffectivenessGrid: React.FC<TypeEffectivenessGridProps> = ({ effective
       )}
 
       <div className="mt-4 text-center text-xs text-gray-600 dark:text-gray-400">
-        Click on type headers to highlight rows/columns • Hover over cells for details
+        Click row headers to highlight attacking types • Click column headers to highlight defending types • Hover over cells for details
       </div>
     </div>
   );

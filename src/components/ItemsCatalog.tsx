@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import ItemCard from './ItemCard';
 import { useItem } from '../hooks/useItemQueries';
 import { useFuzzyItemSearch } from '../hooks/useFuzzyItemSearch';
 
 const ItemsCatalog: React.FC = () => {
-  const [itemSearch, setItemSearch] = useState<string>('master-ball');
-  const [searchTerm, setSearchTerm] = useState<string | null>('master-ball');
+  const { itemName: itemNameParam } = useParams<{ itemName: string }>();
+  const navigate = useNavigate();
+  
+  const initialItem = itemNameParam || 'master-ball';
+  const [itemSearch, setItemSearch] = useState<string>(initialItem);
+  const [searchTerm, setSearchTerm] = useState<string | null>(initialItem);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const { data: item, isLoading, error: itemError } = useItem(searchTerm);
@@ -38,6 +43,11 @@ const ItemsCatalog: React.FC = () => {
     }
     setSearchTerm(searchValue);
     setShowSuggestions(false);
+    
+    // Update URL if it's different from current URL
+    if (searchValue.toLowerCase() !== itemNameParam?.toLowerCase()) {
+      navigate(`/items/${searchValue.toLowerCase()}`);
+    }
   };
 
   const handleInputChange = (value: string) => {
@@ -74,12 +84,24 @@ const ItemsCatalog: React.FC = () => {
     }
   };
 
-  // Update itemSearch when a successful search occurs
+  // Sync URL parameter to search term on initial load or browser navigation
+  useEffect(() => {
+    if (itemNameParam && !searchTerm) {
+      setSearchTerm(itemNameParam);
+      setItemSearch(itemNameParam);
+    }
+  }, [itemNameParam, searchTerm]);
+
+  // Update URL when item loads successfully and update search field
   useEffect(() => {
     if (item) {
       setItemSearch(item.name);
+      // Update URL only if it's different from current item name
+      if (item.name.toLowerCase() !== itemNameParam?.toLowerCase()) {
+        navigate(`/items/${item.name}`, { replace: true });
+      }
     }
-  }, [item]);
+  }, [item, itemNameParam, navigate]);
 
   const error = itemError ? 'Item not found. Please try a different name or ID.' : '';
 

@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import BerryCard from './BerryCard';
 import { useBerry } from '../hooks/useBerryQueries';
 import { useBerryFuzzySearch } from '../hooks/useBerryFuzzySearch';
 
 const BerriesGuide: React.FC = () => {
-  const [berryNumber, setBerryNumber] = useState<string>('1');
-  const [searchTerm, setSearchTerm] = useState<string | null>('1');
+  const { berryName: berryNameParam } = useParams<{ berryName: string }>();
+  const navigate = useNavigate();
+  
+  const initialBerry = berryNameParam || '1';
+  const [berryNumber, setBerryNumber] = useState<string>(initialBerry);
+  const [searchTerm, setSearchTerm] = useState<string | null>(initialBerry);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const { data: berry, isLoading, error: berryError } = useBerry(searchTerm);
@@ -38,6 +43,11 @@ const BerriesGuide: React.FC = () => {
     }
     setSearchTerm(searchValue);
     setShowSuggestions(false);
+    
+    // Update URL if it's different from current URL
+    if (searchValue.toLowerCase() !== berryNameParam?.toLowerCase()) {
+      navigate(`/berries/${searchValue.toLowerCase()}`);
+    }
   };
 
   const handleInputChange = (value: string) => {
@@ -74,12 +84,24 @@ const BerriesGuide: React.FC = () => {
     }
   };
 
-  // Update berryNumber when a successful search occurs
+  // Sync URL parameter to search term on initial load or browser navigation
+  useEffect(() => {
+    if (berryNameParam && !searchTerm) {
+      setSearchTerm(berryNameParam);
+      setBerryNumber(berryNameParam);
+    }
+  }, [berryNameParam, searchTerm]);
+
+  // Update URL when berry loads successfully and update search field
   useEffect(() => {
     if (berry) {
-      setBerryNumber(berry.id.toString());
+      setBerryNumber(berry.name);
+      // Update URL only if it's different from current berry name
+      if (berry.name.toLowerCase() !== berryNameParam?.toLowerCase()) {
+        navigate(`/berries/${berry.name}`, { replace: true });
+      }
     }
-  }, [berry]);
+  }, [berry, berryNameParam, navigate]);
 
   const error = berryError ? 'Berry not found. Please try a different number or name.' : '';
 
