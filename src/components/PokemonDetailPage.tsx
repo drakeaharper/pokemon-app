@@ -7,6 +7,7 @@ import LoadingCard from './LoadingCard';
 import ErrorMessage from './ErrorMessage';
 import TypePill from './TypePill';
 import PokemonMoves from './PokemonMoves';
+import PokemonSearch from './PokemonSearch';
 
 const PokemonDetailPage: React.FC = () => {
   const { pokemonId: pokemonIdParam } = useParams<{ pokemonId: string }>();
@@ -15,6 +16,7 @@ const PokemonDetailPage: React.FC = () => {
   const [selectedForm, setSelectedForm] = useState<string | null>(null);
   const [statDisplayMode, setStatDisplayMode] = useState<'base' | 'min' | 'max'>('base');
   const [statLevel, setStatLevel] = useState<50 | 100>(50);
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   const pokemonId = parseInt(pokemonIdParam || '1');
   
@@ -24,6 +26,9 @@ const PokemonDetailPage: React.FC = () => {
   const { data: species, isLoading: speciesLoading } = usePokemonSpecies(pokemonId);
   // Pass Pokemon ID instead of evolution chain URL for proper evolution lookup
   const { data: evolutionData } = useEvolutionChain(pokemonId);
+  
+  // Search resolution - use separate hook to resolve search terms to Pokemon
+  const { data: searchedPokemon, isLoading: searchLoading, error: searchError } = usePokemon(searchTerm);
 
   const isLoading = pokemonLoading || speciesLoading;
 
@@ -32,9 +37,13 @@ const PokemonDetailPage: React.FC = () => {
     setSelectedForm(null);
   }, [pokemonId]);
 
-  if (isLoading) return <LoadingCard />;
-  if (pokemonError) return <ErrorMessage message="Failed to load Pokemon" />;
-  if (!pokemon) return <ErrorMessage message="Pokemon not found" />;
+  // Handle search resolution - when searchedPokemon loads, navigate to its detail page
+  useEffect(() => {
+    if (searchedPokemon && searchTerm) {
+      navigate(`/${searchedPokemon.id}/details`);
+      setSearchTerm(null); // Reset search term
+    }
+  }, [searchedPokemon, searchTerm, navigate]);
 
   const handlePrevious = () => {
     if (pokemonId > 1) {
@@ -47,6 +56,58 @@ const PokemonDetailPage: React.FC = () => {
       navigate(`/${pokemonId + 1}/details`);
     }
   };
+
+  const handleSearch = (searchValue: string) => {
+    if (/^\d+$/.test(searchValue)) {
+      // If it's a number, navigate directly to that Pokemon's detail page
+      navigate(`/${searchValue}/details`);
+    } else {
+      // If it's a name, use search term to resolve to ID first
+      setSearchTerm(searchValue);
+    }
+  };
+
+  if (isLoading && !searchLoading) return <LoadingCard />;
+  
+  // Show search error but keep the search bar
+  if (searchError && searchTerm) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* Navigation Header with Search */}
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => navigate(`/${pokemonId}`)}
+              className="btn btn-ghost btn-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
+            >
+              ← Back to Browser
+            </button>
+          </div>
+          
+          {/* Search Bar */}
+          <div className="flex justify-center">
+            <PokemonSearch 
+              onSearch={handleSearch}
+              placeholder="Search Pokemon..."
+              className="w-full max-w-md"
+            />
+          </div>
+        </div>
+        
+        <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 text-center">
+          <div className="text-red-600 dark:text-red-400 text-lg font-semibold mb-2">
+            Pokemon "{searchTerm}" not found
+          </div>
+          <div className="text-gray-600 dark:text-gray-400">
+            Please try a different Pokemon name or number.
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (pokemonError) return <ErrorMessage message="Failed to load Pokemon" />;
+  if (!pokemon) return <ErrorMessage message="Pokemon not found" />;
 
   const spriteUrl = isShiny 
     ? pokemon.sprites.front_shiny || pokemon.sprites.front_default
@@ -109,32 +170,43 @@ const PokemonDetailPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Navigation Header */}
-      <div className="flex justify-between items-center mb-6">
-        <button
-          onClick={() => navigate(`/${pokemonId}`)}
-          className="btn btn-ghost btn-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
-        >
-          ← Back to Browser
-        </button>
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex justify-between items-center">
           <button
-            onClick={handlePrevious}
-            disabled={pokemonId <= 1}
-            className="btn btn-circle btn-sm"
+            onClick={() => navigate(`/${pokemonId}`)}
+            className="btn btn-ghost btn-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
+            ← Back to Browser
           </button>
-          <button
-            onClick={handleNext}
-            disabled={pokemonId >= 1025}
-            className="btn btn-circle btn-sm"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handlePrevious}
+              disabled={pokemonId <= 1}
+              className="btn btn-circle btn-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:bg-gray-200 dark:disabled:bg-gray-800 disabled:text-gray-400 dark:disabled:text-gray-500"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={pokemonId >= 1025}
+              className="btn btn-circle btn-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 disabled:bg-gray-200 dark:disabled:bg-gray-800 disabled:text-gray-400 dark:disabled:text-gray-500"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="flex justify-center">
+          <PokemonSearch 
+            onSearch={handleSearch}
+            placeholder="Search Pokemon..."
+            className="w-full max-w-md"
+          />
         </div>
       </div>
 
@@ -172,17 +244,6 @@ const PokemonDetailPage: React.FC = () => {
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 #{String(pokemon.id).padStart(3, '0')} • {genus}
-                {selectedForm && (
-                  <span className="flex items-center gap-2 mt-2">
-                    <span className="badge badge-primary">Form Variant</span>
-                    <button 
-                      onClick={() => setSelectedForm(null)}
-                      className="btn btn-xs btn-outline"
-                    >
-                      Reset to Default
-                    </button>
-                  </span>
-                )}
               </p>
               
               <div className="inline-block mb-4">
@@ -246,6 +307,17 @@ const PokemonDetailPage: React.FC = () => {
           </div>
       </div>
 
+      {/* Alternate Forms */}
+      <PokemonForms 
+        pokemonId={pokemonId}
+        currentPokemonName={pokemon.name}
+        selectedForm={selectedForm}
+        onFormSelect={setSelectedForm}
+        isShiny={isShiny}
+        onShinyToggle={() => setIsShiny(!isShiny)}
+        onResetForm={() => setSelectedForm(null)}
+      />
+
       {/* Evolution Chain */}
       {evolutionData && (
         <div className="bg-white dark:bg-gray-800 shadow-xl mb-8 rounded-xl p-6">
@@ -254,16 +326,10 @@ const PokemonDetailPage: React.FC = () => {
             evolutionData={evolutionData}
             onEvolutionClick={(id) => navigate(`/${id}/details`)}
             isShiny={isShiny}
+            hideHeader={true}
           />
         </div>
       )}
-
-      {/* Alternate Forms */}
-      <PokemonForms 
-        pokemonId={pokemonId}
-        currentPokemonName={pokemon.name}
-        onFormSelect={setSelectedForm}
-      />
 
       {/* Base Stats */}
       <div className="bg-white dark:bg-gray-800 shadow-xl mb-8 rounded-xl p-6">

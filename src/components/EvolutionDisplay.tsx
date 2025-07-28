@@ -5,6 +5,7 @@ interface EvolutionDisplayProps {
   evolutionData: EvolutionDisplayType;
   onEvolutionClick?: (pokemonId: number) => void;
   isShiny?: boolean;
+  hideHeader?: boolean;
 }
 
 const EvolutionCard: React.FC<{ 
@@ -95,7 +96,7 @@ const Arrow: React.FC<{ direction?: 'right' | 'down' }> = ({ direction = 'right'
   );
 };
 
-const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEvolutionClick, isShiny = false }) => {
+const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEvolutionClick, isShiny = false, hideHeader = false }) => {
   const { previous, current, next } = evolutionData;
 
   const handleEvolutionClick = (pokemonId: number) => {
@@ -106,8 +107,10 @@ const EvolutionDisplay: React.FC<EvolutionDisplayProps> = ({ evolutionData, onEv
 
 
   return (
-    <div className="my-8 p-5 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg relative transition-colors duration-200">
-      <h3 className="text-center mb-5 text-xl font-bold text-gray-800 dark:text-gray-200">Evolution Chain</h3>
+    <div className={hideHeader ? "" : "my-8 p-5 bg-gray-50 dark:bg-gray-800 rounded-2xl shadow-lg relative transition-colors duration-200"}>
+      {!hideHeader && (
+        <h3 className="text-center mb-5 text-xl font-bold text-gray-800 dark:text-gray-200">Evolution Chain</h3>
+      )}
       
       {/* Evolution Chain */}
       <div style={{

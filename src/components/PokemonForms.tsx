@@ -6,10 +6,14 @@ import TypePill from './TypePill';
 interface PokemonFormsProps {
   pokemonId: number;
   currentPokemonName: string;
+  selectedForm: string | null;
   onFormSelect: (formName: string) => void;
+  isShiny: boolean;
+  onShinyToggle: () => void;
+  onResetForm: () => void;
 }
 
-const PokemonForms: React.FC<PokemonFormsProps> = ({ pokemonId, currentPokemonName, onFormSelect }) => {
+const PokemonForms: React.FC<PokemonFormsProps> = ({ pokemonId, currentPokemonName, selectedForm, onFormSelect, isShiny, onShinyToggle, onResetForm }) => {
   const { data: species, isLoading } = usePokemonSpecies(pokemonId);
 
   if (isLoading) return <LoadingCard />;
@@ -22,13 +26,49 @@ const PokemonForms: React.FC<PokemonFormsProps> = ({ pokemonId, currentPokemonNa
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-xl mb-8 rounded-xl p-6">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Alternate Forms</h2>
+      <div className="flex items-center gap-4 mb-4">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Alternate Forms</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={onShinyToggle}
+            className={`
+              px-3 py-2 rounded-lg font-medium text-sm transition-all duration-200 shadow-lg
+              ${isShiny 
+                ? 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-500' 
+                : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-400 border-2 border-gray-300 dark:border-gray-600'
+              }
+            `}
+            title={isShiny ? "Showing Shiny Forms" : "Show Shiny Forms"}
+          >
+            <div className="flex items-center gap-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill={isShiny ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path>
+                <path d="M5 3v4"></path>
+                <path d="M19 17v4"></path>
+                <path d="M3 5h4"></path>
+                <path d="M17 19h4"></path>
+              </svg>
+              <span className="text-xs font-bold">{isShiny ? 'SHINY' : 'SHINY'}</span>
+            </div>
+          </button>
+          {selectedForm && (
+            <button 
+              onClick={onResetForm}
+              className="px-3 py-2 rounded-lg font-medium text-sm bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-300 dark:border-red-600 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all duration-200"
+            >
+              Reset to Default
+            </button>
+          )}
+        </div>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {alternateForms.map((variety) => (
           <FormCard
             key={variety.pokemon.name}
             formName={variety.pokemon.name}
+            isSelected={selectedForm === variety.pokemon.name}
             onSelect={onFormSelect}
+            isShiny={isShiny}
           />
         ))}
       </div>
@@ -38,10 +78,12 @@ const PokemonForms: React.FC<PokemonFormsProps> = ({ pokemonId, currentPokemonNa
 
 interface FormCardProps {
   formName: string;
+  isSelected: boolean;
   onSelect: (formName: string) => void;
+  isShiny: boolean;
 }
 
-const FormCard: React.FC<FormCardProps> = ({ formName, onSelect }) => {
+const FormCard: React.FC<FormCardProps> = ({ formName, isSelected, onSelect, isShiny }) => {
   const { data: formPokemon, isLoading } = usePokemon(formName);
 
   if (isLoading) {
@@ -58,12 +100,17 @@ const FormCard: React.FC<FormCardProps> = ({ formName, onSelect }) => {
   if (!formPokemon) return null;
 
   const displayName = formatFormName(formName);
-  const sprite = formPokemon.sprites.other?.['official-artwork']?.front_default || 
-                 formPokemon.sprites.front_default;
+  const sprite = isShiny
+    ? (formPokemon.sprites.other?.['official-artwork']?.front_shiny || formPokemon.sprites.front_shiny || formPokemon.sprites.other?.['official-artwork']?.front_default || formPokemon.sprites.front_default)
+    : (formPokemon.sprites.other?.['official-artwork']?.front_default || formPokemon.sprites.front_default);
 
   return (
     <div 
-      className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors rounded-lg p-4 items-center"
+      className={`cursor-pointer transition-colors rounded-lg p-4 items-center border-2 ${
+        isSelected 
+          ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-400 dark:border-blue-500 shadow-lg' 
+          : 'bg-gray-100 dark:bg-gray-700 border-transparent hover:bg-gray-200 dark:hover:bg-gray-600'
+      }`}
       onClick={() => onSelect(formName)}
     >
       <div className="text-center">
