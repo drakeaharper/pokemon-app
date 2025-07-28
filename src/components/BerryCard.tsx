@@ -33,7 +33,7 @@ const BerryCard: React.FC<BerryCardProps> = ({ berry }) => {
   return (
     <div className="max-w-sm mx-auto">
       <div 
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-t-4 transition-all duration-200 hover:scale-105"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-t-4"
         style={{ borderTopColor: dominantColor }}
       >
         {/* Berry Image and Header */}

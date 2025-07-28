@@ -43,7 +43,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
   const categoryName = item.category.name.replace(/-/g, ' ');
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 transition-all duration-300 hover:shadow-lg hover:scale-105 border border-gray-200 dark:border-gray-600">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 border border-gray-200 dark:border-gray-600">
       {/* Header with name and ID */}
       <div className="flex justify-between items-start mb-3">
         <div>
