@@ -36,6 +36,7 @@ const NavigationBar: React.FC = () => {
 
   const navigationItems = [
     { path: '/', label: 'Pokemon Finder', shortLabel: 'Finder' },
+    { path: '/pokemon-grid', label: 'Pokemon Grid', shortLabel: 'Grid' },
     { path: '/moves', label: 'Moves Database', shortLabel: 'Moves' },
     { path: '/types', label: 'Type Chart', shortLabel: 'Types' },
     { path: '/abilities', label: 'Abilities', shortLabel: 'Abilities' },

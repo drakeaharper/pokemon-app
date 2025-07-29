@@ -248,41 +248,17 @@ export const usePokemonTypesForGeneration = (generationId: number | null) => {
     queryFn: async () => {
       if (!generationId) return null;
       
-      const pokemonIds = getPokemonIdsForGeneration(generationId);
-      const typesSet = new Set<string>();
-      
-      // Sample a subset of Pokemon to determine types (for performance)
-      // We'll fetch every 5th Pokemon to get a good representative sample
-      const sampleIds = pokemonIds.filter((_, index) => index % 5 === 0);
-      
-      try {
-        const pokemonPromises = sampleIds.map(async (id) => {
-          try {
-            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
-            return response.data.types.map((type: any) => type.type.name);
-          } catch (error) {
-            return [];
-          }
-        });
-        
-        const allTypes = await Promise.all(pokemonPromises);
-        
-        // Flatten and deduplicate types
-        allTypes.flat().forEach(type => typesSet.add(type));
-        
-        // Convert to array and sort
-        const uniqueTypes = Array.from(typesSet).sort();
-        
-        // Return in the same format as usePokemonTypes
-        return uniqueTypes.map(name => ({ name, url: `https://pokeapi.co/api/v2/type/${name}/` }));
-        
-      } catch (error) {
-        console.warn('Failed to fetch types for generation:', error);
-        return [];
-      }
+      // For now, return all types since we can't efficiently determine generation-specific types
+      // without causing the "every 5th Pokemon" fetching issue. The filtering will happen
+      // client-side in the grid view component.
+      const response = await axios.get('https://pokeapi.co/api/v2/type');
+      return response.data.results.map((type: any) => ({
+        name: type.name,
+        url: type.url
+      }));
     },
     enabled: !!generationId,
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours - generation types rarely change
+    staleTime: 1000 * 60 * 60 * 24, // 24 hours - types rarely change
     gcTime: 1000 * 60 * 60 * 24 * 7, // Keep for 7 days
   });
 };

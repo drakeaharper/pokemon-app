@@ -362,7 +362,7 @@ const PokemonDetails: React.FC = () => {
   // Clear type filter if selected types are not available in the new generation
   useEffect(() => {
     if (selectedGenerations.length > 0 && selectedTypes.length > 0 && pokemonTypesForGeneration) {
-      const availableTypes = pokemonTypesForGeneration.map(type => type.name);
+      const availableTypes = pokemonTypesForGeneration.map((type: { name: string; url: string }) => type.name);
       const unavailableTypes = selectedTypes.filter(type => !availableTypes.includes(type));
       if (unavailableTypes.length > 0) {
         const newSelectedTypes = selectedTypes.filter(type => availableTypes.includes(type));

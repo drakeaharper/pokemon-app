@@ -12,6 +12,7 @@ import ItemsCatalog from './components/ItemsCatalog';
 import PokemonQuiz from './components/PokemonQuiz';
 import BerriesGuide from './components/BerriesGuide';
 import PokemonDetailPage from './components/PokemonDetailPage';
+import PokemonGridView from './components/PokemonGridView';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -36,6 +37,7 @@ function App() {
               <Route path="/" element={<PokemonDetails />} />
               <Route path="/:pokemonId" element={<PokemonDetails />} />
               <Route path="/:pokemonId/details" element={<PokemonDetailPage />} />
+              <Route path="/pokemon-grid" element={<PokemonGridView />} />
               <Route path="/about" element={<Homepage />} />
               <Route path="/moves" element={<MovesDatabase />} />
               <Route path="/moves/:moveName" element={<MovesDatabase />} />
