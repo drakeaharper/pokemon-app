@@ -411,6 +411,7 @@ const PokemonDetailPage: React.FC = () => {
       {/* Pokemon Moves */}
       <PokemonMoves pokemon={pokemon} />
 
+
       {/* Additional Info */}
       <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6">
         <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">Additional Information</h2>

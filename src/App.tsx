@@ -13,6 +13,7 @@ import PokemonQuiz from './components/PokemonQuiz';
 import BerriesGuide from './components/BerriesGuide';
 import PokemonDetailPage from './components/PokemonDetailPage';
 import PokemonGridView from './components/PokemonGridView';
+import FloatingAIChat from './components/FloatingAIChat';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -50,6 +51,7 @@ function App() {
               <Route path="/berries/:berryName" element={<BerriesGuide />} />
               <Route path="/quiz" element={<PokemonQuiz />} />
             </Routes>
+            <FloatingAIChat />
           </div>
         </Router>
       </DarkModeProvider>
