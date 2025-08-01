@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { pokemonAI, generatePokemonContext } from '../services/pokemonAI';
 import { usePokemon, usePokemonSpecies } from '../hooks/usePokemonQueries';
 
@@ -65,66 +65,7 @@ const PokemonAIChat: React.FC<PokemonAIChatProps> = ({ pokemonName, className = 
     scrollToBottom();
   }, [messages]);
 
-  // Handle when Pokemon data becomes available
-  useEffect(() => {
-    if (contextPokemonData && pendingQuestion && !contextPokemonLoading) {
-      console.log('Debug - Pokemon data loaded:', contextPokemonData.name);
-      
-      const { context } = generateContext(pendingQuestion);
-      
-      // Check if we now have actual Pokemon data (not just generic context)
-      const hasSpecificData = context.includes(`is Pokemon #`) || 
-                            context.includes(`meters tall`) || 
-                            context.includes(`Base stats:`);
-      
-      console.log('Debug - useEffect hasSpecificData:', hasSpecificData);
-      
-      if (hasSpecificData) {
-        pokemonAI.answerQuestion(pendingQuestion, context).then(answer => {
-          const aiMessage: Message = {
-            id: (Date.now() + 2).toString(),
-            text: answer,
-            isUser: false,
-            timestamp: new Date()
-          };
-
-          // Remove the waiting message and add the real response
-          setMessages(prev => {
-            const lastMessage = prev[prev.length - 1];
-            if (lastMessage && lastMessage.text.includes('Let me look up')) {
-              return [...prev.slice(0, -1), aiMessage];
-            }
-            return [...prev, aiMessage];
-          });
-          setIsLoading(false);
-          setPendingQuestion(null);
-        }).catch(error => {
-          console.error('Error getting AI response:', error);
-          const errorMessage: Message = {
-            id: (Date.now() + 2).toString(),
-            text: `I'm having trouble finding information about ${contextPokemonName}. Error: ${error instanceof Error ? error.message : String(error)}`,
-            isUser: false,
-            timestamp: new Date()
-          };
-          setMessages(prev => {
-            const lastMessage = prev[prev.length - 1];
-            if (lastMessage && lastMessage.text.includes('Let me look up')) {
-              return [...prev.slice(0, -1), errorMessage];
-            }
-            return [...prev, errorMessage];
-          });
-          setIsLoading(false);
-          setPendingQuestion(null);
-        });
-      }
-    }
-  }, [contextPokemonData, contextPokemonLoading, pendingQuestion]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const generateContext = (question: string): { context: string, detectedPokemon: string | null } => {
+  const generateContext = useCallback((question: string): { context: string, detectedPokemon: string | null } => {
     let context = '';
     let detectedPokemon: string | null = null;
     
@@ -209,6 +150,65 @@ const PokemonAIChat: React.FC<PokemonAIChatProps> = ({ pokemonName, className = 
     }
     
     return { context: context.trim(), detectedPokemon };
+  }, [contextPokemonData, contextSpeciesData, pokemonData, speciesData]);
+
+  // Handle when Pokemon data becomes available
+  useEffect(() => {
+    if (contextPokemonData && pendingQuestion && !contextPokemonLoading) {
+      console.log('Debug - Pokemon data loaded:', contextPokemonData.name);
+      
+      const { context } = generateContext(pendingQuestion);
+      
+      // Check if we now have actual Pokemon data (not just generic context)
+      const hasSpecificData = context.includes(`is Pokemon #`) || 
+                            context.includes(`meters tall`) || 
+                            context.includes(`Base stats:`);
+      
+      console.log('Debug - useEffect hasSpecificData:', hasSpecificData);
+      
+      if (hasSpecificData) {
+        pokemonAI.answerQuestion(pendingQuestion, context).then(answer => {
+          const aiMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            text: answer,
+            isUser: false,
+            timestamp: new Date()
+          };
+
+          // Remove the waiting message and add the real response
+          setMessages(prev => {
+            const lastMessage = prev[prev.length - 1];
+            if (lastMessage && lastMessage.text.includes('Let me look up')) {
+              return [...prev.slice(0, -1), aiMessage];
+            }
+            return [...prev, aiMessage];
+          });
+          setIsLoading(false);
+          setPendingQuestion(null);
+        }).catch(error => {
+          console.error('Error getting AI response:', error);
+          const errorMessage: Message = {
+            id: (Date.now() + 2).toString(),
+            text: `I'm having trouble finding information about ${contextPokemonName}. Error: ${error instanceof Error ? error.message : String(error)}`,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setMessages(prev => {
+            const lastMessage = prev[prev.length - 1];
+            if (lastMessage && lastMessage.text.includes('Let me look up')) {
+              return [...prev.slice(0, -1), errorMessage];
+            }
+            return [...prev, errorMessage];
+          });
+          setIsLoading(false);
+          setPendingQuestion(null);
+        });
+      }
+    }
+  }, [contextPokemonData, contextPokemonLoading, pendingQuestion, contextPokemonName, generateContext]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSendMessage = async () => {
