@@ -1,7 +1,6 @@
 {
-  "short_name": "PokéDex",
-  "name": "Pokemon Card App - Complete Pokédex",
-  "description": "A comprehensive Pokemon encyclopedia with cards, moves, abilities, items, and more",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
@@ -11,37 +10,16 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "sizes": "192x192"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
-  "scope": "/",
   "display": "standalone",
-  "theme_color": "#ef4444",
-  "background_color": "#1f2937",
-  "orientation": "portrait-primary",
-  "categories": ["games", "education", "entertainment"],
-  "shortcuts": [
-    {
-      "name": "Search Pokemon",
-      "short_name": "Search",
-      "description": "Search for any Pokemon",
-      "url": "/search",
-      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Pokemon Quiz",
-      "short_name": "Quiz",
-      "description": "Test your Pokemon knowledge",
-      "url": "/quiz",
-      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
-    }
-  ]
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
 }
